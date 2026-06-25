@@ -122,7 +122,7 @@
         { "nombre": "Centro de Acopio 5ta Transversal", "direccion": "Av. Gran Mariscal y Av. Santa Rosa (ref: entre Zen y Los Hermanos Wasi)", "hora": "9:00 AM a 6:00 PM", "acepta": ["agua potable", "gasas", "alcohol", "algodón", "jeringas", "ropa", "comida no perecedera"] },
         { "nombre": "Sede Econoquesos Entre Av. Santa Rosa y Urdaneta" },
         { "nombre": "Sede Econoquesos Av. Blanco Fambona" },
-        { "nombre": "Sede Econoquesos Av. Cancamutr" },
+        { "nombre": "Sede Econoquesos Av. Cancamure" },
         { "nombre": "Casa Vente Av. Humboldt" },
         { "nombre": "Plaza Miranda (Juventud Solidaria)", "hora": "10:00 AM", "municipio": "Sucre", "acepta": ["ropas", "medicamentos", "sábanas", "agua potable", "enseres"] }
       ]

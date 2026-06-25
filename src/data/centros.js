@@ -73,3 +73,37 @@ export function centrosPorEstado(estado) {
   const e = estados.find((e) => e.estado === estado);
   return e ? e.ciudades : [];
 }
+
+// Zonas prioritarias afectadas por el sismo del 24 de junio de 2026
+export const ZONAS_AFECTADAS = [
+  "Distrito Capital / Caracas",
+  "Miranda",
+  "La Guaira",
+  "Aragua",
+  "Carabobo"
+];
+
+// Lógica de ordenación para colocar zonas afectadas primero
+export function sortCentros(a, b) {
+  const aAfectado = ZONAS_AFECTADAS.includes(a.estado);
+  const bAfectado = ZONAS_AFECTADAS.includes(b.estado);
+  if (aAfectado && !bAfectado) return -1;
+  if (!aAfectado && bAfectado) return 1;
+  
+  // Ordenar alfabéticamente
+  const compEstado = a.estado.localeCompare(b.estado);
+  if (compEstado !== 0) return compEstado;
+  const compCiudad = a.ciudad.localeCompare(b.ciudad);
+  if (compCiudad !== 0) return compCiudad;
+  return a.nombre.localeCompare(b.nombre);
+}
+
+// Lógica de ordenación para estados (zonas afectadas primero)
+export function sortEstados(a, b) {
+  const aAfectado = ZONAS_AFECTADAS.includes(a.estado);
+  const bAfectado = ZONAS_AFECTADAS.includes(b.estado);
+  if (aAfectado && !bAfectado) return -1;
+  if (!aAfectado && bAfectado) return 1;
+  return a.estado.localeCompare(b.estado);
+}
+
