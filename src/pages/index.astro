@@ -520,9 +520,16 @@ const fallbackEnlaces = [
   }
   .stat-num { display: block; font-size: 1.5rem; font-weight: 700; color: var(--blue); line-height: 1.1; margin-bottom: 0.2rem; }
   .stat-lbl { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+  .search-filters {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+    width: 100%;
+  }
   .search-box {
     position: relative;
-    margin-bottom: 1.25rem;
+    flex: 2;
+    min-width: 0;
   }
   .search-icon {
     position: absolute;
@@ -531,9 +538,15 @@ const fallbackEnlaces = [
     pointer-events: none;
     z-index: 10;
   }
-  .search-box input {
+  .filter-box {
+    flex: 1;
+    min-width: 0;
+  }
+  .search-box input,
+  .filter-box select {
     width: 100%;
-    padding: 0.7rem 1rem 0.7rem 2.6rem;
+    height: 46px;
+    box-sizing: border-box;
     border: 1.5px solid var(--border);
     border-radius: var(--radius);
     font-family: inherit;
@@ -541,8 +554,17 @@ const fallbackEnlaces = [
     background: white;
     outline: none;
     transition: border-color .2s, box-shadow .2s;
+    display: block;
   }
-  .search-box input:focus {
+  .search-box input {
+    padding: 0 1rem 0 2.6rem;
+  }
+  .filter-box select {
+    padding: 0 1rem;
+    cursor: pointer;
+  }
+  .search-box input:focus,
+  .filter-box select:focus {
     border-color: var(--blue);
     box-shadow: 0 0 0 3px rgba(0,36,125,0.08);
   }
@@ -657,38 +679,7 @@ const fallbackEnlaces = [
   .cta-body small { font-size: 0.74rem; opacity: .8; }
   .cta-arrow { font-size: 1.2rem; font-weight: 600; }
 
-  /* --- Nuevos Estilos Dinámicos --- */
-  .search-filters {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 0.75rem;
-    margin-bottom: 1.25rem;
-    width: 100%;
-  }
-  .search-box {
-    position: relative;
-    margin-bottom: 0; /* Anular margen original */
-  }
-  .filter-box {
-    width: 100%;
-  }
-  .filter-box select {
-    width: 100%;
-    padding: 0.7rem 1rem;
-    border: 1.5px solid var(--border);
-    border-radius: var(--radius);
-    font-family: inherit;
-    font-size: 0.9rem;
-    background: white;
-    outline: none;
-    cursor: pointer;
-    transition: border-color .2s, box-shadow .2s;
-    height: 100%;
-  }
-  .filter-box select:focus {
-    border-color: var(--blue);
-    box-shadow: 0 0 0 3px rgba(0,36,125,0.08);
-  }
+
   .status-badge {
     font-size: 0.7rem;
     font-weight: 700;
@@ -828,7 +819,7 @@ const fallbackEnlaces = [
   }
   @media (max-width: 640px) {
     .search-filters {
-      grid-template-columns: 1fr;
+      flex-direction: column;
       gap: 0.5rem;
     }
     .stats-row { gap: .5rem; }
