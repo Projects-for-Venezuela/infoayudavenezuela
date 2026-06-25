@@ -1,6 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import { estados, insumos, flagUrl, ZONAS_AFECTADAS, sortEstados } from "../data/centros";
+import { estados, insumos, flagUrl, ZONAS_AFECTADAS, sortEstados, resolveEstado } from "../data/centros";
 
 // Aplanar lista estática de centros para el fallback offline
 const fallbackCentros = estados.flatMap((e: any) => 
@@ -13,8 +13,8 @@ const fallbackCentros = estados.flatMap((e: any) =>
   )
 );
 
-// Ordenar estados inicialmente por zonas afectadas
-const estadosOrdenados = [...estados].sort(sortEstados);
+// Ordenar estados inicialmente por zonas afectadas, excluyendo alias
+const estadosOrdenados = [...estados].filter(e => resolveEstado(e.estado) === e.estado).sort(sortEstados);
 
 // Estadísticas estáticas iniciales
 const totalCentros = fallbackCentros.length;
@@ -101,7 +101,7 @@ const fallbackEnlaces = [
       const isAfectado = ZONAS_AFECTADAS.includes(estado);
       const slugName = estado.replace(/ \/ /g, "--").replace(/ /g, "_");
       return (
-        <a href={`/estado/${slugName}`} class={`card state-card ${isAfectado ? 'card-prioritized' : ''}`} data-name={estado.toLowerCase()}>
+        <a href={`/estado/${slugName}`} class={`card state-card ${isAfectado ? 'card-prioritized' : ''}`}         data-name={estado.toLowerCase() + (estado === "La Guaira" ? " vargas" : "") + (estado === "Distrito Capital" ? " caracas" : "")}>
           <div class="card-img">
             <img src={flagUrl(estado)} alt={`Bandera de ${estado}`} loading="lazy" onerror="this.style.display='none';" />
             {isAfectado && <span class="badge-prioritized">🔴 Zona Afectada</span>}
@@ -271,7 +271,7 @@ const fallbackEnlaces = [
       const slugName = e.estado.replace(/ \/ /g, "--").replace(/ /g, "_");
       const isAfectado = ZONAS_AFECTADAS.includes(e.estado);
       
-      const flagMap: Record<string, string> = { "Distrito Capital / Caracas": "Distrito_Capital" };
+      const flagMap: Record<string, string> = { "Distrito Capital": "Distrito_Capital" };
       const sanitizedName = flagMap[e.estado] || e.estado.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ /g, "_");
       const flagUrl = `/flags/${sanitizedName}.svg`;
 

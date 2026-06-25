@@ -1,9 +1,5 @@
 import raw from "./acopio.json";
 
-const flagMap = {
-  "Distrito Capital / Caracas": "Distrito_Capital",
-};
-
 function sanitize(name) {
   return name
     .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
@@ -15,16 +11,22 @@ export function slug(name) {
 }
 
 export function unslug(slugStr) {
-  return slugStr.replace(/--/g, " / ").replace(/_/g, " ");
+  const name = slugStr.replace(/--/g, " / ").replace(/_/g, " ");
+  return ALIASES[name] || name;
+}
+
+export function resolveEstado(name) {
+  return ALIASES[name] || name;
 }
 
 export function flagUrl(estado) {
-  const file = flagMap[estado] || sanitize(estado);
+  const canonical = resolveEstado(estado);
+  const file = FLAG_MAP[canonical] || sanitize(canonical);
   return `/flags/${file}.svg`;
 }
 
 export const flagColors = {
-  "Distrito Capital / Caracas": ["#CF142B", "#FFCC00", "#CF142B"],
+  "Distrito Capital": ["#CF142B", "#FFCC00", "#CF142B"],
   Miranda: ["#CF142B", "#FFCC00", "#008000"],
   "La Guaira": ["#00247D", "#FFFFFF", "#00247D"],
   Aragua: ["#CF142B", "#FFCC00", "#008000"],
@@ -40,7 +42,7 @@ export const flagColors = {
 };
 
 export const flagIcons = {
-  "Distrito Capital / Caracas": "🏛️",
+  "Distrito Capital": "🏛️",
   Miranda: "⛰️",
   "La Guaira": "🏖️",
   Aragua: "🌋",
@@ -57,7 +59,25 @@ export const flagIcons = {
 
 export const insumos = raw.insumos_generales_aceptados;
 
-export const estados = raw.centros_acopio.reduce((acc, item) => {
+const ALIASES = {
+  "Vargas": "La Guaira",
+  "Distrito Capital / Caracas": "Distrito Capital",
+};
+
+const FLAG_MAP = {
+  "Distrito Capital": "Distrito_Capital",
+};
+
+const TODOS_ESTADOS = [
+  "Amazonas", "Anzoátegui", "Apure", "Aragua", "Barinas", "Bolívar",
+  "Carabobo", "Cojedes", "Delta Amacuro", "Distrito Capital",
+  "Falcón", "Guárico", "La Guaira",
+  "Lara", "Mérida", "Miranda", "Monagas", "Nueva Esparta",
+  "Portuguesa", "Sucre", "Táchira", "Trujillo", "Vargas",
+  "Yaracuy", "Zulia",
+];
+
+const estadosConDatos = raw.centros_acopio.reduce((acc, item) => {
   if (!acc.find((e) => e.estado === item.estado)) {
     acc.push({ estado: item.estado, ciudades: [] });
   }
@@ -69,14 +89,20 @@ export const estados = raw.centros_acopio.reduce((acc, item) => {
   return acc;
 }, []);
 
+export const estados = TODOS_ESTADOS.map(nombre => {
+  const existente = estadosConDatos.find(e => e.estado === nombre);
+  return existente || { estado: nombre, ciudades: [] };
+});
+
 export function centrosPorEstado(estado) {
-  const e = estados.find((e) => e.estado === estado);
+  const canonical = resolveEstado(estado);
+  const e = estados.find((e) => e.estado === canonical);
   return e ? e.ciudades : [];
 }
 
 // Zonas prioritarias afectadas por el sismo del 24 de junio de 2026
 export const ZONAS_AFECTADAS = [
-  "Distrito Capital / Caracas",
+  "Distrito Capital",
   "Miranda",
   "La Guaira",
   "Aragua",

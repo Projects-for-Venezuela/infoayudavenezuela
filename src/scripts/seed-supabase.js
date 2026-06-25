@@ -320,7 +320,7 @@ const MAKRO_ACEPTA = [
 ];
 
 const centrosMakro = [
-  { estado: 'Distrito Capital / Caracas', ciudad: 'Caracas', nombre: 'redvital / Makro Caracas (La Yaguara)', direccion: 'Av. Intercomunal de Antímano, La Yaguara', acepta: MAKRO_ACEPTA },
+  { estado: 'Distrito Capital', ciudad: 'Caracas', nombre: 'redvital / Makro Caracas (La Yaguara)', direccion: 'Av. Intercomunal de Antímano, La Yaguara', acepta: MAKRO_ACEPTA },
   { estado: 'Carabobo', ciudad: 'Valencia', nombre: 'redvital / Makro Valencia', direccion: 'Autopista del Este, Valencia', acepta: MAKRO_ACEPTA },
   { estado: 'Aragua', ciudad: 'Maracay', nombre: 'redvital / Makro Maracay', direccion: 'Av. Intercomunal Maracay-Turmero, Maracay', acepta: MAKRO_ACEPTA },
   { estado: 'Lara', ciudad: 'Barquisimeto', nombre: 'redvital / Makro Barquisimeto', direccion: 'Av. de la Industria, Barquisimeto', acepta: MAKRO_ACEPTA }
