@@ -38,7 +38,7 @@ const catMeta = {
       <span class="cat-count">{numeros_nacionales.length}</span>
     </div>
     <div class="cat-body">
-      {numeros_nacionales.map(item => (
+      {numeros_nacionales.map((item: any) => (
         <a href={`tel:${item.numero}`} class="num-row">
           <div class="num-info">
             <span class="num-number">{item.numero}</span>
@@ -51,7 +51,7 @@ const catMeta = {
   </section>
 
   {Object.entries(catMeta).map(([key, meta]) => {
-    const items = caracas[key];
+    const items = (caracas as any)[key];
     if (!items || items.length === 0) return null;
     return (
       <section class="cat-section">
@@ -61,7 +61,7 @@ const catMeta = {
           <span class="cat-count">{items.length}</span>
         </div>
         <div class="cat-body">
-          {items.map(item => (
+          {items.map((item: any) => (
             <a href={`tel:${item.telefono}`} class="num-row">
               <div class="num-info">
                 <span class="num-number">{item.telefono}</span>
@@ -82,7 +82,7 @@ const catMeta = {
       <span class="cat-count">{caracas.radio_informacion.length}</span>
     </div>
     <div class="cat-body">
-      {caracas.radio_informacion.map(freq => (
+      {caracas.radio_informacion.map((freq: string) => (
         <div class="num-row">
           <div class="num-info">
             <span class="num-number">{freq}</span>

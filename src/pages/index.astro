@@ -1,48 +1,110 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import { estados, insumos, flagUrl, slug } from "../data/centros";
+import { estados, insumos, flagUrl, ZONAS_AFECTADAS, sortEstados } from "../data/centros";
 
-const totalCentros = estados.reduce((s, e) => s + e.ciudades.reduce((s2, c) => s2 + c.centros.length, 0), 0);
+// Aplanar lista estática de centros para el fallback offline
+const fallbackCentros = estados.flatMap((e: any) => 
+  e.ciudades.flatMap((c: any) => 
+    c.centros.map((cnt: any) => ({
+      ...cnt,
+      estado: e.estado,
+      ciudad: c.ciudad
+    }))
+  )
+);
+
+// Ordenar estados inicialmente por zonas afectadas
+const estadosOrdenados = [...estados].sort(sortEstados);
+
+// Estadísticas estáticas iniciales
+const totalCentros = fallbackCentros.length;
 const totalEstados = estados.length;
-const totalCiudades = estados.reduce((s, e) => s + e.ciudades.length, 0);
+const totalCiudades = new Set(fallbackCentros.map((c: any) => c.ciudad)).size;
+
+const fallbackEnlaces = [
+  {
+    titulo: "Cruz Roja Venezolana",
+    descripcion: "Asistencia médica de emergencia, primeros auxilios y canalización de donaciones oficiales.",
+    url: "https://cruzrojavenezolana.org",
+    categoria: "Salud / Asistencia"
+  },
+  {
+    titulo: "Psicólogos sin Fronteras Venezuela",
+    descripcion: "Apoyo psicológico y contención emocional para afectados y familiares de la tragedia.",
+    url: "https://psfvenezuela.org",
+    categoria: "Salud Mental"
+  },
+  {
+    titulo: "Protección Civil Venezuela",
+    descripcion: "Información oficial de alertas, reportes de daños y rescates a nivel nacional.",
+    url: "http://www.proteccioncivil.gob.ve",
+    categoria: "Oficial"
+  }
+];
 ---
 
 <Layout title="Inicio">
+  <!-- Datos de fallback para cargar instantáneamente e integrarse en offline -->
+  <div id="fallbackData" 
+       data-centros={JSON.stringify(fallbackCentros)} 
+       data-estados={JSON.stringify(estadosOrdenados)} 
+       data-enlaces={JSON.stringify(fallbackEnlaces)}
+       style="display: none;"></div>
+
   <div class="alert-box">
     <div class="alert-icon">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
     </div>
-    <span><strong>Sismo 24 de junio de 2026</strong> &mdash; Todos los centros de acopio están recibiendo donaciones</span>
+    <span style="flex: 1;"><strong>Sismo 24 de junio de 2026</strong> &mdash; Todos los centros están operativos</span>
+    <span id="dbStatus" class="status-badge loading">Conectando...</span>
   </div>
 
   <div class="stats-row">
     <div class="stat">
-      <span class="stat-num">{totalCentros}</span>
+      <span class="stat-num" id="statCentros">{totalCentros}</span>
       <span class="stat-lbl">Centros de Acopio</span>
     </div>
     <div class="stat">
-      <span class="stat-num">{totalEstados}</span>
+      <span class="stat-num" id="statEstados">{totalEstados}</span>
       <span class="stat-lbl">Estados</span>
     </div>
     <div class="stat">
-      <span class="stat-num">{totalCiudades}</span>
+      <span class="stat-num" id="statCiudades">{totalCiudades}</span>
       <span class="stat-lbl">Ciudades</span>
     </div>
   </div>
 
-  <div class="search-box">
-    <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-    <input type="text" id="searchInput" placeholder="Buscar estado..." oninput="filterCards(this.value)" />
+  <!-- Buscador y Filtro por Ciudades -->
+  <div class="search-filters">
+    <div class="search-box">
+      <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input type="text" id="searchInput" placeholder="Buscar por estado, ciudad, centro o insumos..." />
+    </div>
+    <div class="filter-box">
+      <select id="citySelect">
+        <option value="">Todas las ciudades</option>
+      </select>
+    </div>
   </div>
 
-  <div class="grid" id="stateGrid">
-    {estados.sort((a, b) => a.estado.localeCompare(b.estado)).map(({ estado, ciudades }) => {
+  <!-- Título de sección dinámico -->
+  <div class="section-header">
+    <h2 id="gridTitle">Estados con centros de acopio</h2>
+    <span id="resultsCount" class="results-count" style="display: none;"></span>
+  </div>
+
+  <!-- Contenedor Principal (Estados o Centros según filtros) -->
+  <div class="grid" id="mainGrid">
+    {estadosOrdenados.map(({ estado, ciudades }) => {
       const count = ciudades.reduce((s, c) => s + c.centros.length, 0);
       const cities = ciudades.map(c => c.ciudad).join(", ");
+      const isAfectado = ZONAS_AFECTADAS.includes(estado);
+      const slugName = estado.replace(/ \/ /g, "--").replace(/ /g, "_");
       return (
-        <a href={`/estado/${slug(estado)}`} class="card" data-name={estado.toLowerCase()}>
+        <a href={`/estado/${slugName}`} class={`card state-card ${isAfectado ? 'card-prioritized' : ''}`} data-name={estado.toLowerCase()}>
           <div class="card-img">
-            <img src={flagUrl(estado)} alt="" loading="lazy" />
+            <img src={flagUrl(estado)} alt={`Bandera de ${estado}`} loading="lazy" onerror="this.style.display='none';" />
+            {isAfectado && <span class="badge-prioritized">🔴 Zona Afectada</span>}
           </div>
           <div class="card-body">
             <div class="card-top">
@@ -56,10 +118,32 @@ const totalCiudades = estados.reduce((s, e) => s + e.ciudades.length, 0);
     })}
   </div>
 
-  <div class="section-card">
+  <div class="section-card" style="margin-top: 1.5rem;">
     <h3 class="section-title">&#128230; Insumos que se están recibiendo</h3>
     <div class="tags">
       {insumos.map((i) => <span class="tag">{i}</span>)}
+    </div>
+  </div>
+
+  <!-- Sección de Sitios Web de Ayuda Externos -->
+  <div class="section-card" style="margin-top: 1.5rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+      <h3 class="section-title" style="margin-bottom: 0;">🔗 Sitios Web y Enlaces de Ayuda</h3>
+      <button id="btnSugerirEnlace" class="btn-sugerir-enlace" aria-label="Sugerir nuevo enlace de ayuda">+ Sugerir Sitio Web</button>
+    </div>
+    <div class="enlaces-grid" id="enlacesGrid">
+      {fallbackEnlaces.map((enlace) => (
+        <div class="enlace-card">
+          <div class="enlace-header">
+            <span class="enlace-cat">{enlace.categoria}</span>
+          </div>
+          <h4>{enlace.titulo}</h4>
+          <p>{enlace.descripcion}</p>
+          <a href={enlace.url} target="_blank" rel="noopener noreferrer" class="enlace-btn">
+            Visitar Sitio Web &rarr;
+          </a>
+        </div>
+      ))}
     </div>
   </div>
 
@@ -76,16 +160,338 @@ const totalCiudades = estados.reduce((s, e) => s + e.ciudades.length, 0);
 </Layout>
 
 <script>
-  function filterCards(value) {
-    const q = value.toLowerCase().trim();
-    document.querySelectorAll("#stateGrid .card").forEach(card => {
-      card.style.display = !q || card.dataset.name.includes(q) ? "" : "none";
+  import { supabase } from "../lib/supabase";
+  import { ZONAS_AFECTADAS, sortCentros } from "../data/centros";
+
+  const fallbackDataEl = document.getElementById('fallbackData') as HTMLElement;
+  const fallbackCentros = JSON.parse(fallbackDataEl.dataset.centros || '[]');
+  const fallbackEstados = JSON.parse(fallbackDataEl.dataset.estados || '[]');
+  const fallbackEnlaces = JSON.parse(fallbackDataEl.dataset.enlaces || '[]');
+
+  let centros: any[] = [...fallbackCentros];
+  let estados: any[] = [...fallbackEstados];
+  let enlaces: any[] = [...fallbackEnlaces];
+
+  const searchInput = document.getElementById('searchInput') as HTMLInputElement;
+  const citySelect = document.getElementById('citySelect') as HTMLSelectElement;
+  const mainGrid = document.getElementById('mainGrid') as HTMLElement;
+  const gridTitle = document.getElementById('gridTitle') as HTMLElement;
+  const resultsCount = document.getElementById('resultsCount') as HTMLElement;
+  const dbStatus = document.getElementById('dbStatus') as HTMLElement;
+  const enlacesGrid = document.getElementById('enlacesGrid') as HTMLElement;
+
+  const statCentros = document.getElementById('statCentros') as HTMLElement;
+  const statEstados = document.getElementById('statEstados') as HTMLElement;
+  const statCiudades = document.getElementById('statCiudades') as HTMLElement;
+
+  // Inicializar ciudades en el select
+  function initCitySelect() {
+    const citiesSet = new Set(centros.map((c: any) => c.ciudad));
+    const uniqueCities = Array.from(citiesSet);
+
+    const affectedCities: string[] = [];
+    const otherCities: string[] = [];
+
+    uniqueCities.forEach((city: any) => {
+      const sample = centros.find((c: any) => c.ciudad === city);
+      if (sample && ZONAS_AFECTADAS.includes(sample.estado)) {
+        affectedCities.push(city);
+      } else {
+        otherCities.push(city);
+      }
     });
+
+    affectedCities.sort();
+    otherCities.sort();
+
+    citySelect.innerHTML = '<option value="">Todas las ciudades</option>';
+
+    if (affectedCities.length > 0) {
+      const optGroupAffected = document.createElement('optgroup');
+      optGroupAffected.label = '🔴 Zonas Afectadas por Sismo';
+      affectedCities.forEach((city: string) => {
+        const opt = document.createElement('option');
+        opt.value = city;
+        opt.textContent = `🔴 ${city}`;
+        optGroupAffected.appendChild(opt);
+      });
+      citySelect.appendChild(optGroupAffected);
+    }
+
+    if (otherCities.length > 0) {
+      const optGroupOther = document.createElement('optgroup');
+      optGroupOther.label = 'Otras ciudades';
+      otherCities.forEach((city: string) => {
+        const opt = document.createElement('option');
+        opt.value = city;
+        opt.textContent = city;
+        optGroupOther.appendChild(opt);
+      });
+      citySelect.appendChild(optGroupOther);
+    }
   }
-  window.filterCards = filterCards;
+
+  // Renderizar la grilla de estados (vista por defecto)
+  function renderEstados() {
+    gridTitle.textContent = "Estados con centros de acopio";
+    resultsCount.style.display = "none";
+    mainGrid.className = "grid";
+
+    const agrupado = centros.reduce((acc: any[], item: any) => {
+      let e = acc.find((x: any) => x.estado === item.estado);
+      if (!e) {
+        e = { estado: item.estado, ciudades: [] };
+        acc.push(e);
+      }
+      let c = e.ciudades.find((x: any) => x.ciudad === item.ciudad);
+      if (!c) {
+        c = { ciudad: item.ciudad, centrosCount: 0 };
+        e.ciudades.push(c);
+      }
+      c.centrosCount++;
+      return acc;
+    }, []);
+
+    agrupado.sort((a: any, b: any) => {
+      const aAfectado = ZONAS_AFECTADAS.includes(a.estado);
+      const bAfectado = ZONAS_AFECTADAS.includes(b.estado);
+      if (aAfectado && !bAfectado) return -1;
+      if (!aAfectado && bAfectado) return 1;
+      return a.estado.localeCompare(b.estado);
+    });
+
+    if (agrupado.length === 0) {
+      mainGrid.innerHTML = '<div class="no-results">No se encontraron centros de acopio activos.</div>';
+      return;
+    }
+
+    mainGrid.innerHTML = agrupado.map((e: any) => {
+      const count = e.ciudades.reduce((sum: number, c: any) => sum + c.centrosCount, 0);
+      const citiesList = e.ciudades.map((c: any) => c.ciudad).join(", ");
+      const slugName = e.estado.replace(/ \/ /g, "--").replace(/ /g, "_");
+      const isAfectado = ZONAS_AFECTADAS.includes(e.estado);
+      
+      const flagMap: Record<string, string> = { "Distrito Capital / Caracas": "Distrito_Capital" };
+      const sanitizedName = flagMap[e.estado] || e.estado.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ /g, "_");
+      const flagUrl = `/flags/${sanitizedName}.svg`;
+
+      return `
+        <a href="/estado/${slugName}" class="card state-card ${isAfectado ? 'card-prioritized' : ''}">
+          <div class="card-img">
+            <img src="${flagUrl}" alt="Bandera de ${e.estado}" loading="lazy" onerror="this.style.display='none';" />
+            ${isAfectado ? '<span class="badge-prioritized">🔴 Zona Afectada</span>' : ''}
+          </div>
+          <div class="card-body">
+            <div class="card-top">
+              <h3>${e.estado}</h3>
+              <span class="card-badge">${count}</span>
+            </div>
+            <p class="card-cities">${citiesList}</p>
+          </div>
+        </a>
+      `;
+    }).join("");
+  }
+
+  // Renderizar la grilla de centros individuales (vista de búsqueda/filtro)
+  function renderCentros(filtered: any[]) {
+    gridTitle.textContent = "Centros de acopio encontrados";
+    resultsCount.textContent = `${filtered.length} resultado${filtered.length !== 1 ? 's' : ''}`;
+    resultsCount.style.display = "inline-block";
+    mainGrid.className = "grid-centros";
+
+    if (filtered.length === 0) {
+      mainGrid.innerHTML = '<div class="no-results">No se encontraron centros de acopio que coincidan con los criterios.</div>';
+      return;
+    }
+
+    mainGrid.innerHTML = filtered.map((c: any) => {
+      const isAfectado = ZONAS_AFECTADAS.includes(c.estado);
+      
+      let aceptaHtml = '';
+      if (c.acepta && c.acepta.length > 0) {
+        aceptaHtml = `
+          <div class="row">
+            <span class="row-label">Aceptan</span>
+            <div class="row-value">
+              <div class="tag-group">
+                ${c.acepta.map((a: string) => `<span class="tag tag-yellow">${a}</span>`).join("")}
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      let necesitanHtml = '';
+      if (c.necesitan && c.necesitan.length > 0) {
+        necesitanHtml = `
+          <div class="row">
+            <span class="row-label">Urgente</span>
+            <div class="row-value">
+              <div class="tag-group">
+                ${c.necesitan.map((n: string) => `<span class="tag tag-red">${n}</span>`).join("")}
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="card centro-card ${isAfectado ? 'card-prioritized' : ''}">
+          <div class="card-head-centro">
+            <div class="card-icon" style="background: ${isAfectado ? 'var(--red)' : 'var(--blue)'};">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+            </div>
+            <div class="card-title-area">
+              <h3>${c.nombre}</h3>
+              <span class="card-loc-meta">${c.ciudad}, ${c.estado}</span>
+            </div>
+            ${isAfectado ? '<span class="badge-prioritized-mini">🔴 Zona Afectada</span>' : ''}
+          </div>
+          <div class="card-body-centro">
+            ${c.direccion ? `<div class="row"><span class="row-label">Dirección</span><div class="row-value">${c.direccion}</div></div>` : ''}
+            ${c.contacto ? `<div class="row"><span class="row-label">Contacto</span><div class="row-value">${c.contacto}</div></div>` : ''}
+            ${c.hora ? `<div class="row"><span class="row-label">Horario</span><div class="row-value">${c.hora}</div></div>` : ''}
+            ${aceptaHtml}
+            ${necesitanHtml}
+            ${c.zelle ? `<div class="row"><span class="row-label">Zelle</span><div class="row-value">${c.zelle}</div></div>` : ''}
+            ${c.pago_movil ? `<div class="row"><span class="row-label">Pago Móvil</span><div class="row-value">${c.pago_movil}</div></div>` : ''}
+          </div>
+        </div>
+      `;
+    }).join("");
+  }
+
+  // Filtrar y actualizar vista
+  function handleFilter() {
+    const q = searchInput.value.toLowerCase().trim();
+    const city = citySelect.value;
+
+    if (!q && !city) {
+      renderEstados();
+      return;
+    }
+
+    let filtered = centros.filter((c: any) => {
+      if (city && c.ciudad !== city) return false;
+
+      if (q) {
+        const matchName = c.nombre.toLowerCase().includes(q);
+        const matchCity = c.ciudad.toLowerCase().includes(q);
+        const matchState = c.estado.toLowerCase().includes(q);
+        const matchDir = c.direccion ? c.direccion.toLowerCase().includes(q) : false;
+        const matchAcepta = c.acepta ? c.acepta.some((a: string) => a.toLowerCase().includes(q)) : false;
+        const matchNecesitan = c.necesitan ? c.necesitan.some((n: string) => n.toLowerCase().includes(q)) : false;
+        return matchName || matchCity || matchState || matchDir || matchAcepta || matchNecesitan;
+      }
+
+      return true;
+    });
+
+    filtered.sort(sortCentros);
+    renderCentros(filtered);
+  }
+
+  // Actualizar estadísticas globales
+  function updateStats() {
+    statCentros.textContent = centros.length.toString();
+    
+    const uniqueStates = new Set(centros.map((c: any) => c.estado)).size;
+    statEstados.textContent = uniqueStates.toString();
+
+    const uniqueCities = new Set(centros.map((c: any) => c.ciudad)).size;
+    statCiudades.textContent = uniqueCities.toString();
+  }
+
+  // Conectar a Supabase
+  async function loadData() {
+    try {
+      dbStatus.textContent = "Conectando...";
+      dbStatus.className = "status-badge loading";
+      
+      if (!supabase) {
+        throw new Error("Supabase client not initialized");
+      }
+      
+      const { data, error } = await supabase
+        .from('centros_acopio')
+        .select('*')
+        .eq('verificado', true);
+
+      if (error) throw error;
+
+      if (data && data.length > 0) {
+        centros = data;
+        updateStats();
+        initCitySelect();
+        handleFilter();
+        dbStatus.textContent = "En Vivo";
+        dbStatus.className = "status-badge live";
+      } else {
+        dbStatus.textContent = "Offline (Local)";
+        dbStatus.className = "status-badge offline";
+      }
+    } catch (err) {
+      console.error("Supabase connection failed, using offline fallback:", err);
+      dbStatus.textContent = "Offline (Local)";
+      dbStatus.className = "status-badge offline";
+      
+      initCitySelect();
+      handleFilter();
+    }
+  }
+
+  async function loadEnlaces() {
+    try {
+      if (!supabase) {
+        throw new Error("Supabase client not initialized");
+      }
+
+      const { data, error } = await supabase
+        .from('enlaces_ayuda')
+        .select('*')
+        .eq('verificado', true);
+
+      if (error) throw error;
+
+      if (data && data.length > 0) {
+        enlaces = data;
+        renderEnlaces();
+      }
+    } catch (err) {
+      console.error("No se pudieron cargar los enlaces de ayuda de Supabase:", err);
+    }
+  }
+
+  function renderEnlaces() {
+    if (!enlacesGrid) return;
+    enlacesGrid.innerHTML = enlaces.map((e: any) => `
+      <div class="enlace-card">
+        <div class="enlace-header">
+          <span class="enlace-cat">${e.categoria}</span>
+        </div>
+        <h4>${e.titulo}</h4>
+        <p>${e.descripcion}</p>
+        <a href="${e.url}" target="_blank" rel="noopener noreferrer" class="enlace-btn">
+          Visitar Sitio Web &rarr;
+        </a>
+      </div>
+    `).join("");
+  }
+
+  searchInput.addEventListener('input', handleFilter);
+  citySelect.addEventListener('change', handleFilter);
+
+  // Inicializar UI inmediatamente con datos locales de fallback
+  initCitySelect();
+  handleFilter();
+
+  loadData();
+  loadEnlaces();
 </script>
 
-<style>
+<style is:global>
+  /* --- Estilos Originales --- */
   .alert-box {
     display: flex;
     align-items: center;
@@ -114,19 +520,33 @@ const totalCiudades = estados.reduce((s, e) => s + e.ciudades.length, 0);
   }
   .stat-num { display: block; font-size: 1.5rem; font-weight: 700; color: var(--blue); line-height: 1.1; margin-bottom: 0.2rem; }
   .stat-lbl { font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+  .search-filters {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+    width: 100%;
+  }
   .search-box {
     position: relative;
-    margin-bottom: 1.25rem;
+    flex: 2;
+    min-width: 0;
   }
   .search-icon {
     position: absolute;
     top: 50%; left: 1rem;
     transform: translateY(-50%);
     pointer-events: none;
+    z-index: 10;
   }
-  .search-box input {
+  .filter-box {
+    flex: 1;
+    min-width: 0;
+  }
+  .search-box input,
+  .filter-box select {
     width: 100%;
-    padding: 0.7rem 1rem 0.7rem 2.6rem;
+    height: 46px;
+    box-sizing: border-box;
     border: 1.5px solid var(--border);
     border-radius: var(--radius);
     font-family: inherit;
@@ -134,8 +554,17 @@ const totalCiudades = estados.reduce((s, e) => s + e.ciudades.length, 0);
     background: white;
     outline: none;
     transition: border-color .2s, box-shadow .2s;
+    display: block;
   }
-  .search-box input:focus {
+  .search-box input {
+    padding: 0 1rem 0 2.6rem;
+  }
+  .filter-box select {
+    padding: 0 1rem;
+    cursor: pointer;
+  }
+  .search-box input:focus,
+  .filter-box select:focus {
     border-color: var(--blue);
     box-shadow: 0 0 0 3px rgba(0,36,125,0.08);
   }
@@ -165,6 +594,7 @@ const totalCiudades = estados.reduce((s, e) => s + e.ciudades.length, 0);
     height: 80px;
     overflow: hidden;
     background: #F1F5F9;
+    position: relative;
   }
   .card-img img {
     width: 100%; height: 100%;
@@ -214,6 +644,21 @@ const totalCiudades = estados.reduce((s, e) => s + e.ciudades.length, 0);
     border-radius: 8px;
     font-size: 0.76rem;
   }
+  .tag-yellow { background: #FFFBEB; color: #92400E; border: 1px solid #FDE68A; }
+  .tag-red { background: #FEF2F2; color: var(--red); border: 1px solid #FECACA; }
+  .tag-group { display: flex; flex-wrap: wrap; gap: 0.25rem; }
+  .row { display: flex; gap: 0.5rem; align-items: flex-start; }
+  .row-label {
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .04em;
+    min-width: 62px;
+    flex-shrink: 0;
+    padding-top: 0.05rem;
+  }
+  .row-value { font-size: 0.85rem; color: var(--text); flex: 1; line-height: 1.4; }
   .cta-emergencia {
     display: flex;
     align-items: center;
@@ -233,9 +678,242 @@ const totalCiudades = estados.reduce((s, e) => s + e.ciudades.length, 0);
   .cta-body strong { display: block; font-size: 0.9rem; font-weight: 600; }
   .cta-body small { font-size: 0.74rem; opacity: .8; }
   .cta-arrow { font-size: 1.2rem; font-weight: 600; }
-  @media (max-width:640px) {
+
+
+  .status-badge {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+  .status-badge.loading {
+    background: #E2E8F0;
+    color: #64748B;
+  }
+  .status-badge.live {
+    background: #DCFCE7;
+    color: #15803D;
+    border: 1px solid #BBF7D0;
+  }
+  .status-badge.offline {
+    background: #FEF3C7;
+    color: #D97706;
+    border: 1px solid #FDE68A;
+  }
+  .card-prioritized {
+    border: 2px solid #FCA5A5 !important;
+    background: #FFF5F5 !important;
+  }
+  .card-prioritized:hover {
+    border-color: #F87171 !important;
+    box-shadow: 0 8px 24px rgba(239, 68, 68, 0.08) !important;
+  }
+  .badge-prioritized {
+    position: absolute;
+    top: 0.5rem;
+    left: 0.5rem;
+    background: var(--red);
+    color: white;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 0.15rem 0.5rem;
+    border-radius: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    box-shadow: 0 2px 6px rgba(207,20,43,0.3);
+  }
+  .badge-prioritized-mini {
+    background: var(--red);
+    color: white;
+    font-size: 0.62rem;
+    font-weight: 700;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    flex-shrink: 0;
+  }
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    border-bottom: 1.5px solid var(--border);
+    padding-bottom: 0.4rem;
+  }
+  .section-header h2 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .results-count {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--muted);
+    background: #F1F5F9;
+    padding: 0.1rem 0.5rem;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+  }
+  .grid-centros {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 0.85rem;
+    margin-bottom: 1.25rem;
+  }
+  .centro-card {
+    background: white;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    transition: all .15s;
+    display: flex;
+    flex-direction: column;
+  }
+  .centro-card:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.04);
+    border-color: #C7CDD8;
+  }
+  .card-head-centro {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.8rem 1rem 0;
+  }
+  .card-title-area {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+  .card-title-area h3 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.3;
+  }
+  .card-loc-meta {
+    font-size: 0.72rem;
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .card-body-centro {
+    padding: 0.6rem 1rem 0.85rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+  .no-results {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2.5rem 1.5rem;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.9rem;
+    width: 100%;
+  }
+  @media (max-width: 640px) {
+    .search-filters {
+      flex-direction: column;
+      gap: 0.5rem;
+    }
     .stats-row { gap: .5rem; }
     .stat-num { font-size: 1.3rem; }
     .grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 480px) {
+    .stats-row {
+      grid-template-columns: 1fr;
+    }
+    .stat {
+      padding: 0.75rem 0.5rem;
+    }
+  }
+
+  /* --- Estilos de Enlaces de Ayuda --- */
+  .enlaces-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 0.85rem;
+    margin-top: 0.75rem;
+  }
+  .enlace-card {
+    background: #F8F9FB;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+  .enlace-header {
+    display: flex;
+    justify-content: space-between;
+  }
+  .enlace-cat {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: var(--blue);
+    background: rgba(0, 36, 125, 0.08);
+    padding: 0.15rem 0.45rem;
+    border-radius: 4px;
+    text-transform: uppercase;
+  }
+  .enlace-card h4 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .enlace-card p {
+    font-size: 0.76rem;
+    color: var(--muted);
+    line-height: 1.45;
+    flex-grow: 1;
+  }
+  .enlace-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    color: var(--blue);
+    border: 1px solid var(--blue);
+    font-size: 0.76rem;
+    font-weight: 600;
+    text-decoration: none;
+    padding: 0.4rem 0.75rem;
+    border-radius: 6px;
+    transition: all 0.15s;
+    text-align: center;
+    margin-top: 0.5rem;
+  }
+  .enlace-btn:hover {
+    background: var(--blue);
+    color: white;
+  }
+
+  /* --- Estilo del Botón de Sugerir Enlaces --- */
+  .btn-sugerir-enlace {
+    background: var(--yellow);
+    color: var(--blue-dark);
+    border: none;
+    padding: 0.35rem 0.8rem;
+    border-radius: 6px;
+    font-size: 0.76rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-sugerir-enlace:hover {
+    background: #F5C200;
+    transform: translateY(-1px);
+  }
+  .btn-sugerir-enlace:active {
+    transform: translateY(0);
   }
 </style>
