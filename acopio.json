@@ -1,7 +1,7 @@
 {
   "centros_acopio": [
     {
-      "estado": "Distrito Capital / Caracas",
+      "estado": "Distrito Capital",
       "ciudad": "Caracas",
       "centros": [
         { "nombre": "Terrazas del Club Hípico", "contacto": "+58 4242109220 / @rotaractcaracas", "necesitan": ["linternas", "mantas", "cobijas", "comida", "agua", "primeros auxilios", "botellones 5L vacíos"] },

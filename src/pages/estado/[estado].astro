@@ -1,6 +1,6 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import { estados, centrosPorEstado, flagUrl, slug, unslug } from "../../data/centros";
+import { estados, centrosPorEstado, resolveEstado, flagUrl, slug, unslug } from "../../data/centros";
 
 export async function getStaticPaths() {
   return estados.map(({ estado }: any) => ({
@@ -11,13 +11,14 @@ export async function getStaticPaths() {
 
 const { estado } = Astro.params;
 const decoded = unslug(estado || '');
+const display = resolveEstado(decoded);
 const ciudades = centrosPorEstado(decoded);
 const total = ciudades.reduce((s: number, c: any) => s + c.centros.length, 0);
 ---
 
-<Layout title={decoded}>
+<Layout title={display}>
   <!-- Meta data para lectura desde el script del cliente -->
-  <div id="stateMeta" data-state={decoded} style="display: none;"></div>
+  <div id="stateMeta" data-state={display} style="display: none;"></div>
 
   <a href="/" class="back-link">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
@@ -29,12 +30,22 @@ const total = ciudades.reduce((s: number, c: any) => s + c.centros.length, 0);
       <img src={flagUrl(decoded)} alt={`Bandera de ${decoded}`} onerror="this.style.display='none';" />
     </div>
     <div>
-      <h1>{decoded}</h1>
+      <h1>{display}</h1>
       <p class="hero-local-meta" id="totalCentrosCount">{total} centro{total !== 1 ? "s" : ""} de acopio habilitado{total !== 1 ? "s" : ""}</p>
     </div>
   </div>
 
-  <div id="centrosContainer">
+  {total === 0 && (
+    <div class="no-data">
+      <div class="no-data-icon">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      </div>
+      <p class="no-data-title">Esta zona aún no tiene información</p>
+      <p class="no-data-desc">No hay centros de acopio registrados en {display} por el momento. Si tienes información, comunícate con las autoridades locales.</p>
+    </div>
+  )}
+
+  <div id="centrosContainer" style={total === 0 ? "display:none" : ""}>
     {ciudades.map(({ ciudad, centros }) => (
       <section class="city-section">
         <div class="city-head">
@@ -284,6 +295,16 @@ const total = ciudades.reduce((s: number, c: any) => s + c.centros.length, 0);
   .tag { font-size: 0.72rem; padding: 0.1rem 0.5rem; border-radius: 6px; }
   .tag-yellow { background: #FFFBEB; color: #92400E; border: 1px solid #FDE68A; }
   .tag-red { background: #FEF2F2; color: var(--red); border: 1px solid #FECACA; }
+  .no-data {
+    text-align: center;
+    padding: 3rem 1.5rem;
+    background: white;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+  }
+  .no-data-icon { color: var(--muted); margin-bottom: 1rem; opacity: 0.5; }
+  .no-data-title { font-size: 1rem; font-weight: 600; color: var(--text); margin-bottom: 0.5rem; }
+  .no-data-desc { font-size: 0.84rem; color: var(--muted); max-width: 380px; margin: 0 auto; line-height: 1.5; }
   @media (max-width:640px) {
     .hero-local { flex-direction: column; align-items: flex-start; }
     .hero-local-flag { width: 100%; height: 95px; }
