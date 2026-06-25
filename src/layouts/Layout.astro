@@ -666,6 +666,10 @@ const { title } = Astro.props;
 
     <script>
       import { supabase } from "../lib/supabase";
+      import { inject } from '@vercel/analytics';
+
+      // Inicializar Vercel Analytics
+      inject();
 
       // --- Lógica de Sugerir Centro de Acopio ---
       const sugerirDialog = document.getElementById('sugerirDialog') as HTMLDialogElement;
