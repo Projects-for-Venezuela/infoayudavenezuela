@@ -197,7 +197,15 @@ const total = ciudades.reduce((s: number, c: any) => s + c.centros.length, 0);
   loadStateData();
 </script>
 <style is:global>
-  .back-link {
+.search-filters { margin-bottom: 1.5rem; }
+  #searchInput {
+    width: 100%;
+    padding: 1rem;
+    border-radius: 12px;
+    border: 2px solid var(--border);
+    font-size: 1rem;
+  }
+.back-link {
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
