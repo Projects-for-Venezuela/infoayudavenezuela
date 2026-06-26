@@ -1,6 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import { estados, insumos, flagUrl, ZONAS_AFECTADAS, sortEstados } from "../data/centros";
+import { estados, insumos, flagUrl, ZONAS_AFECTADAS, sortEstados, resolveEstado } from "../data/centros";
 
 // Aplanar lista estática de centros para el fallback offline
 const fallbackCentros = estados.flatMap((e: any) => 
@@ -13,8 +13,8 @@ const fallbackCentros = estados.flatMap((e: any) =>
   )
 );
 
-// Ordenar estados inicialmente por zonas afectadas
-const estadosOrdenados = [...estados].sort(sortEstados);
+// Ordenar estados inicialmente por zonas afectadas, excluyendo alias
+const estadosOrdenados = [...estados].filter(e => resolveEstado(e.estado) === e.estado).sort(sortEstados);
 
 // Estadísticas estáticas iniciales
 const totalCentros = fallbackCentros.length;
@@ -101,7 +101,7 @@ const fallbackEnlaces = [
       const isAfectado = ZONAS_AFECTADAS.includes(estado);
       const slugName = estado.replace(/ \/ /g, "--").replace(/ /g, "_");
       return (
-        <a href={`/estado/${slugName}`} class={`card state-card ${isAfectado ? 'card-prioritized' : ''}`} data-name={estado.toLowerCase()}>
+        <a href={`/estado/${slugName}`} class={`card state-card ${isAfectado ? 'card-prioritized' : ''}`}         data-name={estado.toLowerCase() + (estado === "La Guaira" ? " vargas" : "") + (estado === "Distrito Capital" ? " caracas" : "")}>
           <div class="card-img">
             <img src={flagUrl(estado)} alt={`Bandera de ${estado}`} loading="lazy" onerror="this.style.display='none';" />
             {isAfectado && <span class="badge-prioritized">🔴 Zona Afectada</span>}
@@ -145,6 +145,7 @@ const fallbackEnlaces = [
         </div>
       ))}
     </div>
+    <button id="btnVerMasEnlaces" class="btn-ver-mas" style="display: none;">Ver más &darr;</button>
   </div>
 
   <a href="/emergencia" class="cta-emergencia">
@@ -271,7 +272,7 @@ const fallbackEnlaces = [
       const slugName = e.estado.replace(/ \/ /g, "--").replace(/ /g, "_");
       const isAfectado = ZONAS_AFECTADAS.includes(e.estado);
       
-      const flagMap: Record<string, string> = { "Distrito Capital / Caracas": "Distrito_Capital" };
+      const flagMap: Record<string, string> = { "Distrito Capital": "Distrito_Capital" };
       const sanitizedName = flagMap[e.estado] || e.estado.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ /g, "_");
       const flagUrl = `/flags/${sanitizedName}.svg`;
 
@@ -465,6 +466,7 @@ const fallbackEnlaces = [
 
   function renderEnlaces() {
     if (!enlacesGrid) return;
+    const total = enlaces.length;
     enlacesGrid.innerHTML = enlaces.map((e: any) => `
       <div class="enlace-card">
         <div class="enlace-header">
@@ -477,6 +479,44 @@ const fallbackEnlaces = [
         </a>
       </div>
     `).join("");
+
+    const btnVerMas = document.getElementById('btnVerMasEnlaces') as HTMLButtonElement;
+    if (total <= 4) {
+      btnVerMas.style.display = 'none';
+      return;
+    }
+
+    // Calcular cuántas tarjetas entran en 2 filas según el ancho real del grid
+    void enlacesGrid.offsetWidth;
+    const cols = getComputedStyle(enlacesGrid).gridTemplateColumns.split(' ').length;
+    const maxVisible = cols * 2;
+
+    const cards = enlacesGrid.querySelectorAll('.enlace-card');
+    cards.forEach((card, i) => {
+      if (i >= maxVisible) card.classList.add('hidden');
+    });
+
+    enlacesGrid.dataset.maxVisible = String(maxVisible);
+    btnVerMas.style.display = '';
+    btnVerMas.textContent = 'Ver más ↓';
+  }
+
+  const btnVerMas = document.getElementById('btnVerMasEnlaces') as HTMLButtonElement;
+  if (btnVerMas) {
+    btnVerMas.addEventListener('click', () => {
+      const hiddenCards = enlacesGrid.querySelectorAll('.enlace-card.hidden');
+      if (hiddenCards.length > 0) {
+        hiddenCards.forEach(c => c.classList.remove('hidden'));
+        btnVerMas.textContent = 'Ver menos ↑';
+      } else {
+        const maxVisible = parseInt(enlacesGrid.dataset.maxVisible || '4');
+        const cards = enlacesGrid.querySelectorAll('.enlace-card');
+        cards.forEach((card, i) => {
+          if (i >= maxVisible) card.classList.add('hidden');
+        });
+        btnVerMas.textContent = 'Ver más ↓';
+      }
+    });
   }
 
   searchInput.addEventListener('input', handleFilter);
@@ -895,6 +935,30 @@ const fallbackEnlaces = [
   .enlace-btn:hover {
     background: var(--blue);
     color: white;
+  }
+
+  .enlace-card.hidden {
+    display: none;
+  }
+  .btn-ver-mas {
+    display: block;
+    width: 100%;
+    margin-top: 0.75rem;
+    padding: 0.5rem;
+    background: white;
+    border: 1.5px dashed var(--border);
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--blue);
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+  .btn-ver-mas:hover {
+    background: #F8F9FB;
+    border-color: var(--blue);
+    color: var(--blue-dark);
   }
 
   /* --- Estilo del Botón de Sugerir Enlaces --- */

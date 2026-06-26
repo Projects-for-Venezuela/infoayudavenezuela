@@ -22,7 +22,11 @@
         { "nombre": "Bomberos Metropolitanos", "telefono": "(0212) 545.45.45" },
         { "nombre": "Bomberos Miranda", "telefono": "(0212) 235.69.67" },
         { "nombre": "Bomberos Plaza Venezuela", "telefono": "(0212) 793.00.39 / 793.64.57" },
-        { "nombre": "Bomberos San Bernardino", "telefono": "(0212) 577.92.09" }
+        { "nombre": "Bomberos San Bernardino", "telefono": "(0212) 577.92.09" },
+        { "nombre": "Bomberos Lara Estación Central", "telefono": "(0251) 231.74.75 / 231.44.75" },
+        { "nombre": "Bomberos Lara Estación Oeste", "telefono": "(0251) 237.16.22" },
+        { "nombre": "Bomberos Lara Estación Sur", "telefono": "(0251) 232.07.77" },
+        { "nombre": "Bomberos Lara Estación Este", "telefono": "(0251) 931.38.62" }
       ],
       "proteccion_civil": [
         { "nombre": "Protección Civil", "telefono": "0800-5588427 / 0800-2668446 / 0800-2624368" },
