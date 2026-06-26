@@ -1,0 +1,80 @@
+<dialog id="reportarNecesidadDialog" class="modal-dialog" aria-labelledby="reportarDialogTitle">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="reportarDialogTitle">🆘 Reportar Necesidad Urgente</h2>
+      <button id="closeNecesidadDialogBtn" class="close-btn" aria-label="Cerrar modal">&times;</button>
+    </div>
+    <form id="reportarNecesidadForm" class="modal-form">
+      <p class="form-help">Reporta un lugar, refugio o persona que necesite ayuda urgente. Será publicado tras ser verificado.</p>
+
+      <div class="form-group">
+        <label for="necFormEstado">Estado *</label>
+        <select id="necFormEstado" required>
+          <option value="">Selecciona un estado</option>
+          <option value="Distrito Capital">Distrito Capital</option>
+          <option value="Miranda">Miranda</option>
+          <option value="La Guaira">La Guaira</option>
+          <option value="Aragua">Aragua</option>
+          <option value="Carabobo">Carabobo</option>
+          <option value="Lara">Lara</option>
+          <option value="Sucre">Sucre</option>
+          <option value="Nueva Esparta">Nueva Esparta</option>
+          <option value="Anzoátegui">Anzoátegui</option>
+          <option value="Bolívar">Bolívar</option>
+          <option value="Barinas">Barinas</option>
+          <option value="Monagas">Monagas</option>
+          <option value="Yaracuy">Yaracuy</option>
+          <option value="Zulia">Zulia</option>
+          <option value="Mérida">Mérida</option>
+          <option value="Táchira">Táchira</option>
+          <option value="Trujillo">Trujillo</option>
+          <option value="Falcón">Falcón</option>
+          <option value="Cojedes">Cojedes</option>
+          <option value="Portuguesa">Portuguesa</option>
+          <option value="Guárico">Guárico</option>
+          <option value="Apure">Apure</option>
+          <option value="Delta Amacuro">Delta Amacuro</option>
+          <option value="Amazonas">Amazonas</option>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="necFormCiudad">Ciudad *</label>
+          <input type="text" id="necFormCiudad" placeholder="Ej. Barquisimeto, Macuto" required />
+        </div>
+        <div class="form-group">
+          <label for="necFormLugar">Lugar / Nombre *</label>
+          <input type="text" id="necFormLugar" placeholder="Ej. Refugio La Paz, Centro Comunitario" required />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="necFormDireccion">Dirección</label>
+        <textarea id="necFormDireccion" rows="2" placeholder="Dirección del lugar que necesita ayuda..."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="necFormNecesitan">¿Qué necesitan URGENTE? *</label>
+        <textarea id="necFormNecesitan" rows="3" placeholder="Describe lo que más necesitan: medicinas, agua, alimentos, ropa, carpas, etc..." required></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="necFormContacto">Contacto</label>
+        <input type="text" id="necFormContacto" placeholder="Teléfono, Instagram, email..." />
+      </div>
+
+      <div class="form-actions">
+        <button type="button" id="cancelNecFormBtn" class="btn btn-secondary">Cancelar</button>
+        <button type="submit" id="submitNecFormBtn" class="btn btn-primary" style="background: var(--red);">Enviar Reporte</button>
+      </div>
+    </form>
+
+    <div id="necFormSuccessMessage" class="form-success-msg" style="display: none;">
+      <div class="success-icon">✓</div>
+      <h3>¡Reporte Enviado!</h3>
+      <p>Gracias por reportar esta necesidad urgente. Los datos han sido registrados de forma segura y se publicarán tan pronto sean verificados por un moderador.</p>
+      <button id="necSuccessCloseBtn" class="btn btn-primary">Entendido</button>
+    </div>
+  </div>
+</dialog>

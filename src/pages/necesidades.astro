@@ -1,0 +1,174 @@
+---
+import "../styles/necesidades.css";
+import Layout from "../layouts/Layout.astro";
+import EmergenciaCTA from "../components/EmergenciaCTA.astro";
+import { TODOS_ESTADOS, sortNecesidades } from "../data/necesidades";
+import { ZONAS_AFECTADAS } from "../data/centros";
+---
+
+<Layout title="Necesidades Urgentes" showHero={false}>
+  <header class="nec-hero">
+    <div class="nec-hero-bg">
+      <div class="nec-hero-content">
+        <span class="nec-hero-badge">ALERTA</span>
+        <h1>Necesidades <span>Urgentes</span></h1>
+        <p>Lugares, refugios y comunidades que requieren asistencia inmediata — <strong>reportado por la comunidad</strong></p>
+      </div>
+    </div>
+  </header>
+
+  <div class="nec-toolbar">
+    <div class="nec-search">
+      <svg class="nec-search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="M21 21l-4.35-4.35"></path></svg>
+      <input type="text" id="necSearchInput" placeholder="Buscar por lugar, ciudad o necesidad..." />
+    </div>
+    <div class="nec-filter">
+      <select id="necEstadoFilter">
+        <option value="">Todos los estados</option>
+        <optgroup label="🔴 Zonas Afectadas">
+          <option value="Distrito Capital">Distrito Capital</option>
+          <option value="Miranda">Miranda</option>
+          <option value="La Guaira">La Guaira</option>
+          <option value="Aragua">Aragua</option>
+          <option value="Carabobo">Carabobo</option>
+        </optgroup>
+        <optgroup label="Otros estados">
+          {TODOS_ESTADOS.filter(e => !ZONAS_AFECTADAS.includes(e)).map(e => (
+            <option value={e}>{e}</option>
+          ))}
+        </optgroup>
+      </select>
+    </div>
+    <button id="necRefreshBtn" class="nec-btn-refresh">
+      <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+      Actualizar
+    </button>
+  </div>
+
+  <div id="necStatus" class="nec-status">Cargando necesidades...</div>
+
+  <div id="necesidadesContainer" class="grid-necesidades">
+    <div class="no-results">Cargando datos...</div>
+  </div>
+
+  <EmergenciaCTA />
+
+  <div class="nec-footer">
+    <a href="/">&larr; Volver al inicio</a>
+  </div>
+</Layout>
+
+<script>
+  import { supabase } from "../lib/supabase";
+  import { ZONAS_AFECTADAS } from "../data/centros";
+
+  const container = document.getElementById('necesidadesContainer') as HTMLElement;
+  const statusEl = document.getElementById('necStatus') as HTMLElement;
+  const searchInput = document.getElementById('necSearchInput') as HTMLInputElement;
+  const estadoFilter = document.getElementById('necEstadoFilter') as HTMLSelectElement;
+  const refreshBtn = document.getElementById('necRefreshBtn') as HTMLButtonElement;
+
+  let necesidades: any[] = [];
+
+  function renderNecesidades(list: any[]) {
+    if (list.length === 0) {
+      container.innerHTML = '<div class="no-results">No hay necesidades urgentes reportadas aún. Si conoces un lugar que necesita ayuda, usa el botón "🆘 Necesidad" en el menú para reportarlo.</div>';
+      return;
+    }
+
+    container.innerHTML = list.map((n: any) => {
+      const isAfectado = ZONAS_AFECTADAS.includes(n.estado);
+      return `
+        <div class="necesidad-card ${isAfectado ? 'card-prioritized' : ''}">
+          <div class="necesidad-head">
+            <div class="necesidad-icon">⚠️</div>
+            <div class="necesidad-title-area">
+              <h3>${n.lugar}</h3>
+              <span class="necesidad-meta">📍 ${n.ciudad}, ${n.estado}</span>
+            </div>
+            <span class="necesidad-badge-urgente">URGENTE</span>
+          </div>
+          <div class="necesidad-body">
+            <div class="row">
+              <span class="row-label">🆘 Necesitan</span>
+              <div class="row-value need-text">${n.que_necesitan}</div>
+            </div>
+            ${n.direccion ? `<div class="row"><span class="row-label">Dirección</span><div class="row-value">${n.direccion}</div></div>` : ''}
+            ${n.contacto ? `<div class="row"><span class="row-label">Contacto</span><div class="row-value">${n.contacto}</div></div>` : ''}
+          </div>
+        </div>
+      `;
+    }).join("");
+  }
+
+  function handleFilter() {
+    const q = searchInput.value.toLowerCase().trim();
+    const estado = estadoFilter.value;
+
+    let filtered = necesidades.filter((n: any) => {
+      if (estado && n.estado !== estado) return false;
+      if (q) {
+        return n.lugar.toLowerCase().includes(q)
+          || n.ciudad.toLowerCase().includes(q)
+          || n.estado.toLowerCase().includes(q)
+          || n.que_necesitan.toLowerCase().includes(q);
+      }
+      return true;
+    });
+
+    filtered.sort((a: any, b: any) => {
+      const aAfectado = ZONAS_AFECTADAS.includes(a.estado);
+      const bAfectado = ZONAS_AFECTADAS.includes(b.estado);
+      if (aAfectado && !bAfectado) return -1;
+      if (!aAfectado && bAfectado) return 1;
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    });
+
+    renderNecesidades(filtered);
+  }
+
+  async function loadData() {
+    try {
+      statusEl.textContent = "Cargando necesidades...";
+      statusEl.className = "nec-status loading";
+      if (!supabase) throw new Error("Supabase client not initialized");
+
+      const { data, error } = await supabase
+        .from('necesidades_urgentes')
+        .select('*')
+        .eq('verificado', true)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      if (data && data.length > 0) {
+        necesidades = data;
+        statusEl.textContent = `${data.length} necesidad${data.length !== 1 ? 'es' : ''} reportada${data.length !== 1 ? 's' : ''}`;
+        statusEl.className = "nec-status live";
+      } else {
+        necesidades = [];
+        statusEl.textContent = "Sin necesidades reportadas";
+        statusEl.className = "nec-status offline";
+      }
+
+      handleFilter();
+    } catch (err) {
+      console.error("Error cargando necesidades:", err);
+      statusEl.textContent = "Error al cargar";
+      statusEl.className = "nec-status offline";
+      container.innerHTML = '<div class="no-results">No se pudieron cargar las necesidades. Verifica tu conexión e intenta de nuevo.</div>';
+    }
+  }
+
+  searchInput.addEventListener('input', handleFilter);
+  estadoFilter.addEventListener('change', handleFilter);
+  refreshBtn.addEventListener('click', () => {
+    const svg = refreshBtn.querySelector('svg');
+    if (svg) svg.classList.add('animate-spin');
+    loadData().finally(() => {
+      if (svg) svg.classList.remove('animate-spin');
+    });
+  });
+
+  loadData();
+</script>

@@ -9,7 +9,7 @@
 
       <div class="form-group">
         <label for="formEnlaceTitulo">Nombre del Sitio / Organización *</label>
-        <input type="text" id="formEnlaceTitulo" placeholder="Ej. Cruz Roja Venezolana o Psicólogos sin Fronteras" required />
+        <input type="text" id="formEnlaceTitulo" placeholder="Ej. Cruz Roja Venezolana o Psicólogos sin Fronteras" required maxlength="120" />
       </div>
 
       <div class="form-group">
@@ -26,12 +26,12 @@
 
       <div class="form-group">
         <label for="formEnlaceDescripcion">Descripción del Servicio / Ayuda *</label>
-        <textarea id="formEnlaceDescripcion" rows="3" placeholder="Describe brevemente qué ayuda ofrece este sitio..." required></textarea>
+        <textarea id="formEnlaceDescripcion" rows="3" maxlength="300" placeholder="Describe brevemente qué ayuda ofrece este sitio..." required></textarea>
       </div>
 
       <div class="form-group">
         <label for="formEnlaceUrl">Dirección Web (URL) *</label>
-        <input type="text" id="formEnlaceUrl" placeholder="Ej. https://cruzrojavenezolana.org" required />
+        <input type="url" id="formEnlaceUrl" placeholder="Ej. https://cruzrojavenezolana.org" required maxlength="300" pattern="^https?://.+" title="La URL debe empezar con http:// o https://" />
       </div>
 
       <div class="form-actions">

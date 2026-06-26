@@ -11,43 +11,58 @@ const catMeta = {
 };
 ---
 
-<Layout title="Números de Emergencia">
-  <a href="/" class="back-link">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-    Volver al inicio
-  </a>
-
-  <div class="page-header">
-    <div class="page-emblem">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+<Layout title="Números de Emergencia"
+  description="Números de emergencia activos en Venezuela 24 horas: Bomberos, Protección Civil, Rescate, Policía, radio informativo. Líneas del 171 y números locales de Caracas."
+  canonical="https://infoayudavenezuela.vercel.app/emergencia"
+  showHero={false}
+>
+  <header class="emg-hero">
+    <div class="emg-hero-bg">
+      <div class="emg-hero-content">
+        <span class="emg-hero-badge">24 HORAS</span>
+        <h1>Números de <span>Emergencia</span></h1>
+        <p>Líneas activas disponibles en Venezuela — <strong>Bomberos, Protección Civil, Rescate, Policía</strong></p>
+      </div>
     </div>
-    <div>
-      <h1>Números de Emergencia</h1>
-      <p>Líneas activas disponibles las 24 horas</p>
-    </div>
-  </div>
+  </header>
 
-  <div class="alert-box alert-red">
+  <div class="emg-alert">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
     <span><strong>Mantén la calma.</strong> Llama solo si es una emergencia real para no saturar las líneas.</span>
   </div>
 
-  <section class="cat-section">
-    <div class="cat-head" style="background:#00247D;">
-      <span class="cat-icon">{'\u{1F3DB}\u{FE0F}'}</span>
+  <section class="emg-section">
+    <div class="emg-section-head" style="background:#00247D;">
+      <span class="emg-section-icon">{'\u{1F3DB}\u{FE0F}'}</span>
       <h2>Nacional</h2>
-      <span class="cat-count">{numeros_nacionales.length}</span>
+      <span class="emg-section-count">{numeros_nacionales.length}</span>
     </div>
-    <div class="cat-body">
+    <div class="emg-section-body">
       {numeros_nacionales.map((item: any) => (
-        <a href={`tel:${item.numero}`} class="num-row">
-          <div class="num-info">
-            <span class="num-number">{item.numero}</span>
-            <span class="num-desc">{item.servicio}</span>
+        <a href={`tel:${item.numero}`} class="emg-row">
+          <div class="emg-row-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
           </div>
-          <svg class="num-call" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
+          <div class="emg-row-info">
+            <span class="emg-row-num">{item.numero}</span>
+            <span class="emg-row-desc">{item.servicio}</span>
+          </div>
+          <svg class="emg-row-call" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </a>
       ))}
+    </div>
+  </section>
+
+  <section class="emg-section">
+    <div class="emg-section-head" style="background:#00247D;">
+      <span class="emg-section-icon">{'\u{1F3E0}\u{FE0F}'}</span>
+      <h2>Caracas</h2>
+      <span class="emg-section-count">
+        {Object.keys(catMeta).reduce((sum, key) => {
+          const items = (caracas as any)[key];
+          return sum + (items ? items.length : 0);
+        }, 0) + (caracas.radio_informacion?.length || 0)}
+      </span>
     </div>
   </section>
 
@@ -55,20 +70,23 @@ const catMeta = {
     const items = (caracas as any)[key];
     if (!items || items.length === 0) return null;
     return (
-      <section class="cat-section">
-        <div class="cat-head" style={`background:${meta.color};`}>
-          <span class="cat-icon">{meta.icon}</span>
-          <h2>{meta.label}</h2>
-          <span class="cat-count">{items.length}</span>
+      <section class="emg-subsection">
+        <div class="emg-subhead">
+          <span class="emg-subicon" style={`background:${meta.color};`}>{meta.icon}</span>
+          <h3>{meta.label}</h3>
+          <span class="emg-section-count">{items.length}</span>
         </div>
-        <div class="cat-body">
+        <div class="emg-section-body">
           {items.map((item: any) => (
-            <a href={`tel:${item.telefono}`} class="num-row">
-              <div class="num-info">
-                <span class="num-number">{item.telefono}</span>
-                <span class="num-desc">{item.nombre}</span>
+            <a href={`tel:${item.telefono}`} class="emg-row">
+              <div class="emg-row-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
               </div>
-              <svg class="num-call" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
+              <div class="emg-row-info">
+                <span class="emg-row-num">{item.telefono}</span>
+                <span class="emg-row-desc">{item.nombre}</span>
+              </div>
+              <svg class="emg-row-call" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </a>
           ))}
         </div>
@@ -76,21 +94,28 @@ const catMeta = {
     );
   })}
 
-  <section class="cat-section">
-    <div class="cat-head" style="background:#6B7280;">
-      <span class="cat-icon">{'\u{1F4FB}'}</span>
-      <h2>Radio Información</h2>
-      <span class="cat-count">{caracas.radio_informacion.length}</span>
+  <section class="emg-subsection">
+    <div class="emg-subhead">
+      <span class="emg-subicon" style="background:#6B7280;">{'\u{1F4FB}'}</span>
+      <h3>Radio Información</h3>
+      <span class="emg-section-count">{caracas.radio_informacion.length}</span>
     </div>
-    <div class="cat-body">
+    <div class="emg-section-body">
       {caracas.radio_informacion.map((freq: string) => (
-        <div class="num-row">
-          <div class="num-info">
-            <span class="num-number">{freq}</span>
-            <span class="num-desc">Frecuencia de radio</span>
+        <div class="emg-row">
+          <div class="emg-row-icon emg-row-icon-muted">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+          </div>
+          <div class="emg-row-info">
+            <span class="emg-row-num">{freq}</span>
+            <span class="emg-row-desc">Frecuencia de radio</span>
           </div>
         </div>
       ))}
     </div>
   </section>
+
+  <div class="emg-footer">
+    <a href="/">&larr; Volver al inicio</a>
+  </div>
 </Layout>

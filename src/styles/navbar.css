@@ -1,6 +1,6 @@
 .flag-bar {
   display: flex;
-  height: 6px;
+  height: 8px;
 }
 .flag-bar span { flex: 1; }
 .flag-bar .y { background: var(--yellow); }
@@ -10,49 +10,46 @@ nav.navbar {
   position: sticky; top: 0; z-index: 100;
   background: var(--blue);
   color: white;
-  padding: 0.65rem 1.25rem;
+  padding: 0.6rem 1.25rem;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-}
-nav.navbar .brand-section {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  flex: 1;
-}
-nav.navbar .brand {
-  font-weight: 700;
-  font-size: 0.95rem;
-  letter-spacing: -0.01em;
-  line-height: 1.2;
-}
-nav.navbar .brand .sub {
-  font-weight: 400;
-  font-size: 0.7rem;
-  opacity: 0.7;
-  display: block;
+  justify-content: center;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.15);
 }
 nav.navbar .nav-actions {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  justify-content: center;
+  gap: 0.65rem;
+  width: 100%;
 }
 nav.navbar .nav-btn {
-  padding: 0.4rem 0.9rem;
-  border-radius: 8px;
-  font-size: 0.78rem;
+  padding: 0.55rem 1rem;
+  border-radius: 10px;
+  font-size: 0.8rem;
   font-weight: 700;
-  border: none;
+  border: 2px solid transparent;
   cursor: pointer;
-  transition: background 0.2s, transform 0.1s;
   text-decoration: none;
   white-space: nowrap;
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
+  justify-content: center;
+  gap: 0.4rem;
   line-height: 1;
+  min-height: 44px;
+  min-width: 44px;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  transition: background 0.2s, border-color 0.2s, transform 0.1s, box-shadow 0.2s;
+}
+nav.navbar .nav-btn:focus-visible {
+  outline: 2px solid white;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(255,255,255,0.3);
+}
+nav.navbar .nav-btn:active {
+  transform: scale(0.96);
 }
 nav.navbar .nav-sugerir {
   background: var(--yellow);
@@ -60,24 +57,52 @@ nav.navbar .nav-sugerir {
 }
 nav.navbar .nav-sugerir:hover {
   background: #F5C200;
-  transform: translateY(-1px);
+  border-color: rgba(0,0,0,0.1);
 }
-nav.navbar .nav-sugerir:active {
-  transform: translateY(0);
+nav.navbar .nav-sugerir:focus-visible {
+  outline-color: var(--yellow);
 }
-nav.navbar .nav-emergencia {
+nav.navbar .nav-emergencia,
+nav.navbar .nav-necesidad {
   background: var(--red);
   color: white;
-  border: 1px solid rgba(255,255,255,0.15);
+  border-color: rgba(255,255,255,0.2);
 }
-nav.navbar .nav-emergencia:hover { background: var(--red-dark); }
-@media (max-width: 640px) {
-  nav.navbar { padding: 0.45rem 0.75rem; gap: 0.4rem; }
-  nav.navbar .brand { font-size: 0.82rem; }
-  nav.navbar .brand .sub { font-size: 0.6rem; }
+nav.navbar .nav-emergencia:hover,
+nav.navbar .nav-necesidad:hover {
+  background: var(--red-dark);
+  border-color: rgba(255,255,255,0.35);
+}
+@media (prefers-reduced-motion: reduce) {
+  nav.navbar .nav-btn {
+    transition: none;
+  }
+  nav.navbar .nav-btn:active {
+    transform: none;
+  }
+  .animate-spin {
+    animation: none;
+  }
+}
+@media (max-width: 900px) {
+  nav.navbar {
+    padding: 0.5rem 0.85rem;
+  }
+  nav.navbar .nav-actions {
+    gap: 0.5rem;
+  }
+  nav.navbar .nav-btn {
+    padding: 0.45rem 0.7rem;
+    min-height: 44px;
+    font-size: 0.74rem;
+  }
+}
+@media (max-width: 480px) {
+  nav.navbar { padding: 0.4rem 0.65rem; }
   nav.navbar .nav-actions { gap: 0.35rem; }
   nav.navbar .nav-btn {
-    padding: 0.35rem 0.55rem;
+    padding: 0.4rem 0.55rem;
+    min-height: 44px;
     font-size: 0.68rem;
   }
   .nav-refresh { gap: 0; }
@@ -87,7 +112,7 @@ nav.navbar .nav-emergencia:hover { background: var(--red-dark); }
 .nav-refresh {
   background: white;
   color: var(--blue);
-  border: 1px solid #E2E8F0;
+  border-color: #E2E8F0;
 }
 .nav-refresh:hover {
   background: #F8FAFC;
