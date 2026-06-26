@@ -6,17 +6,72 @@ import Footer from "../components/Footer.astro";
 
 export interface Props {
   title: string;
+  description?: string;
+  canonical?: string;
+  ogType?: string;
 }
-const { title } = Astro.props;
+
+const {
+  title,
+  description = "Directorio de centros de acopio verificados en Venezuela. Encuentra dónde donar agua, alimentos, medicinas e insumos para los afectados por el sismo del 24 de junio de 2026.",
+  canonical,
+  ogType = "website",
+} = Astro.props;
+
+const siteUrl = "https://infoayudavenezuela.vercel.app";
+const canonicalUrl = canonical || `${siteUrl}${Astro.url.pathname}`;
+const fullTitle = title === "Inicio"
+  ? "Centros de Acopio Venezuela — Directorio de donaciones y ayuda humanitaria"
+  : `${title} | Centros de Acopio Venezuela`;
 ---
+
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es-VE">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{title} | Centros de Acopio Venezuela</title>
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="keywords" content="centros de acopio, donaciones Venezuela, sismo Venezuela, ayuda humanitaria, recolección donativos, damnificados, emergencia nacional, insumos médicos, alimentos no perecederos" />
+    <meta name="robots" content="index, follow" />
+    <meta name="author" content="Centros de Acopio Venezuela" />
+    <meta name="theme-color" content="#00247D" />
+
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="canonical" href={canonicalUrl} />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content={ogType} />
+    <meta property="og:locale" content="es_VE" />
+    <meta property="og:site_name" content="Centros de Acopio Venezuela" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={`${siteUrl}/img/readme.webp`} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={`${siteUrl}/img/readme.webp`} />
+
+    <!-- Datos estructurados (JSON-LD) -->
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Centros de Acopio Venezuela",
+      "url": siteUrl,
+      "description": description,
+      "inLanguage": "es-VE",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": `${siteUrl}/?q={search_term_string}`,
+        "query-input": "required name=search_term_string"
+      }
+    })} />
   </head>
   <body>
     <Navbar />

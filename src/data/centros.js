@@ -28,7 +28,7 @@ export function flagUrl(estado) {
   }
 
   const file = FLAG_MAP[canonical] || sanitize(canonical);
-  return `/flags/${file}.svg`;
+  return `/flags/${file}.webp`;
 }
 
 export const flagColors = {
@@ -121,16 +121,22 @@ const TODOS_ESTADOS = [
 // PROcesamiento seguro para soportar arrays planos de Supabase o JSONs anidados antiguos
 const centrosPlanos = Array.isArray(raw) ? raw : raw.centros_acopio || [];
 
-const estadosConDatos = centrosPlanos.reduce((acc, item) => {
-  let estadoEntry = acc.find((e) => e.estado === item.estado);
+// Agrupamiento O(n) usando Map (en lugar de O(n²) con .find())
+const estadosMap = new Map();
+const estadosConDatosArr = [];
+
+for (const item of centrosPlanos) {
+  let estadoEntry = estadosMap.get(item.estado);
   if (!estadoEntry) {
-    estadoEntry = { estado: item.estado, ciudades: [] };
-    acc.push(estadoEntry);
+    estadoEntry = { estado: item.estado, ciudades: [], _ciudadesMap: new Map() };
+    estadosMap.set(item.estado, estadoEntry);
+    estadosConDatosArr.push(estadoEntry);
   }
 
-  let ciudadEntry = estadoEntry.ciudades.find((c) => c.ciudad === item.ciudad);
+  let ciudadEntry = estadoEntry._ciudadesMap.get(item.ciudad);
   if (!ciudadEntry) {
     ciudadEntry = { ciudad: item.ciudad, centros: [] };
+    estadoEntry._ciudadesMap.set(item.ciudad, ciudadEntry);
     estadoEntry.ciudades.push(ciudadEntry);
   }
 
@@ -149,12 +155,17 @@ const estadosConDatos = centrosPlanos.reduce((acc, item) => {
       verificado: item.verificado,
     });
   }
-  return acc;
-}, []);
+}
 
+// Limpieza de prop internas
+for (const e of estadosConDatosArr) {
+  delete e._ciudadesMap;
+}
+
+// Conversión del array a un Map para lookup O(1) en TODOS_ESTADOS
+const estadosConDatosSet = new Map(estadosConDatosArr.map((e) => [e.estado, e]));
 export const estados = TODOS_ESTADOS.map((nombre) => {
-  const existente = estadosConDatos.find((e) => e.estado === nombre);
-  return existente || { estado: nombre, ciudades: [] };
+  return estadosConDatosSet.get(nombre) || { estado: nombre, ciudades: [] };
 });
 
 export function centrosPorEstado(estado) {
