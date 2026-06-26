@@ -1,6 +1,4 @@
-node_modules
-dist
-.astro
+node_modules/
+dist/
 .env
-.env.local
-*.log
+.vercel
