@@ -1,5 +1,6 @@
 ---
 import "../styles/index.css";
+import "../styles/necesidades.css";
 import Layout from "../layouts/Layout.astro";
 import EnlacesSection from "../components/EnlacesSection.astro";
 import AlertBox from "../components/AlertBox.astro";
@@ -64,6 +65,15 @@ const fallbackEnlaces = [
   <AlertBox />
 
   <StatsRow {totalCentros} {totalEstados} {totalCiudades} />
+
+  <div id="necesidadesPreviewSection" class="section-card" style="display: none;">
+    <div class="necesidad-section-title" style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.9rem; font-weight: 600; margin-bottom: 0.7rem;">
+      <span>🆘</span> Necesidades Urgentes
+      <span id="necPreviewCount" class="card-badge" style="background: var(--red); font-size: 0.68rem;"></span>
+    </div>
+    <div id="necPreviewList" class="necesidad-list"></div>
+    <a href="/necesidades" class="necesidad-cta">Ver todas las necesidades &rarr;</a>
+  </div>
 
   <SearchFilters />
 
@@ -448,6 +458,46 @@ const fallbackEnlaces = [
     }
   }
 
+  // --- Necesidades Urgentes Preview ---
+  const necSection = document.getElementById('necesidadesPreviewSection') as HTMLElement;
+  const necPreviewList = document.getElementById('necPreviewList') as HTMLElement;
+  const necPreviewCount = document.getElementById('necPreviewCount') as HTMLElement;
+
+  async function loadNecesidadesPreview() {
+    try {
+      if (!supabase) return;
+      const { data, error } = await supabase
+        .from('necesidades_urgentes')
+        .select('*')
+        .eq('verificado', true)
+        .order('created_at', { ascending: false })
+        .limit(5);
+
+      if (error) throw error;
+
+      if (data && data.length > 0) {
+        necPreviewCount.textContent = data.length.toString();
+        necPreviewList.innerHTML = data.map((n: any) => {
+          const isAfectado = ZONAS_AFECTADAS.includes(n.estado);
+          const needPreview = n.que_necesitan.length > 80 ? n.que_necesitan.substring(0, 80) + '...' : n.que_necesitan;
+          return `
+            <a href="/necesidades" class="necesidad-mini-card">
+              <div class="necesidad-mini-icon">⚠️</div>
+              <div class="necesidad-mini-body">
+                <h4>${isAfectado ? '🔴 ' : ''}${n.lugar}</h4>
+                <p>📍 ${n.ciudad}, ${n.estado}</p>
+                <p class="necesidad-mini-need">${needPreview}</p>
+              </div>
+            </a>
+          `;
+        }).join("");
+        necSection.style.display = 'block';
+      }
+    } catch (err) {
+      // Silently fail - no needs section shown
+    }
+  }
+
   // Debounce para evitar refiltrar en cada tecla (mejora rendimiento)
   function debounce<T extends (...args: any[]) => void>(fn: T, ms: number): (...args: Parameters<T>) => void {
     let t: ReturnType<typeof setTimeout> | null = null;
@@ -464,8 +514,10 @@ const fallbackEnlaces = [
   initCitySelect();
   handleFilter();
   loadData();
+  loadNecesidadesPreview();
   // Refresh every 5 minutes (300000 ms)
   setInterval(loadData, 300000);
+  setInterval(loadNecesidadesPreview, 300000);
 </script>
 
 <style is:global>

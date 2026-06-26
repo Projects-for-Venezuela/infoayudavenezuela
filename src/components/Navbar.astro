@@ -3,28 +3,25 @@ import "../styles/navbar.css";
 import "../styles/modal.css";
 import SugerirCentroModal from "./SugerirCentroModal.astro";
 import SugerirEnlaceModal from "./SugerirEnlaceModal.astro";
+import ReportarNecesidadModal from "./ReportarNecesidadModal.astro";
 ---
 
 <div class="flag-bar"><span class="y"></span><span class="b"></span><span class="r"></span></div>
 <nav class="navbar">
-  <div class="brand-section">
-    <div class="brand">
-      Centros de Acopio
-      <span class="sub">Venezuela</span>
-    </div>
-  </div>
   <div class="nav-actions">
     <button id="navRefreshBtn" class="nav-refresh nav-btn" title="Actualizar Datos">
       <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
       <span>Actualizar</span>
     </button>
     <button id="navSugerirBtn" class="nav-sugerir nav-btn">+ Sugerir Centro</button>
+    <button id="navNecesidadBtn" class="nav-necesidad nav-btn">🆘 Necesidad</button>
     <a href="/emergencia" class="nav-emergencia nav-btn">&#128222; Emergencia</a>
   </div>
 </nav>
 
 <SugerirCentroModal />
 <SugerirEnlaceModal />
+<ReportarNecesidadModal />
 
 <script>
   import { supabase } from "../lib/supabase";
@@ -230,6 +227,75 @@ import SugerirEnlaceModal from "./SugerirEnlaceModal.astro";
       } catch (err) {
         console.error('Error insertando enlace en Supabase:', err);
         alert('Hubo un error al enviar tu sugerencia. Por favor verifica tu conexión e intenta de nuevo.');
+      } finally {
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+      }
+    });
+  }
+
+  // --- Reportar Necesidad Urgente ---
+  const reportarNecesidadDialog = document.getElementById('reportarNecesidadDialog') as HTMLDialogElement;
+  const navNecesidadBtn = document.getElementById('navNecesidadBtn') as HTMLButtonElement;
+  const closeNecesidadDialogBtn = document.getElementById('closeNecesidadDialogBtn') as HTMLButtonElement;
+  const cancelNecFormBtn = document.getElementById('cancelNecFormBtn') as HTMLButtonElement;
+  const reportarNecesidadForm = document.getElementById('reportarNecesidadForm') as HTMLFormElement;
+  const necFormSuccessMessage = document.getElementById('necFormSuccessMessage') as HTMLElement;
+  const necSuccessCloseBtn = document.getElementById('necSuccessCloseBtn') as HTMLButtonElement;
+
+  if (navNecesidadBtn) {
+    navNecesidadBtn.addEventListener('click', () => {
+      reportarNecesidadForm.style.display = 'flex';
+      necFormSuccessMessage.style.display = 'none';
+      reportarNecesidadForm.reset();
+      reportarNecesidadDialog.showModal();
+    });
+  }
+
+  const closeNecForm = () => { reportarNecesidadDialog.close(); };
+  if (closeNecesidadDialogBtn) closeNecesidadDialogBtn.addEventListener('click', closeNecForm);
+  if (cancelNecFormBtn) cancelNecFormBtn.addEventListener('click', closeNecForm);
+  if (necSuccessCloseBtn) necSuccessCloseBtn.addEventListener('click', closeNecForm);
+
+  reportarNecesidadDialog.addEventListener('click', (e) => {
+    const r = reportarNecesidadDialog.getBoundingClientRect();
+    if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) {
+      reportarNecesidadDialog.close();
+    }
+  });
+
+  if (reportarNecesidadForm) {
+    reportarNecesidadForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const submitBtn = document.getElementById('submitNecFormBtn') as HTMLButtonElement;
+      const originalText = submitBtn.textContent || '';
+      submitBtn.textContent = 'Enviando...';
+      submitBtn.disabled = true;
+
+      const estado = (document.getElementById('necFormEstado') as HTMLSelectElement).value;
+      const ciudad = (document.getElementById('necFormCiudad') as HTMLInputElement).value.trim();
+      const lugar = (document.getElementById('necFormLugar') as HTMLInputElement).value.trim();
+      const direccion = (document.getElementById('necFormDireccion') as HTMLTextAreaElement).value.trim() || null;
+      const que_necesitan = (document.getElementById('necFormNecesitan') as HTMLTextAreaElement).value.trim();
+      const contacto = (document.getElementById('necFormContacto') as HTMLInputElement).value.trim() || null;
+
+      if (!supabase) {
+        alert('El sistema está operando en modo local/sin conexión. No se pueden procesar reportes de necesidad en este momento.');
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+        return;
+      }
+
+      try {
+        const { error } = await supabase.from('necesidades_urgentes').insert({
+          estado, ciudad, lugar, direccion, que_necesitan, contacto, verificado: false
+        });
+        if (error) throw error;
+        reportarNecesidadForm.style.display = 'none';
+        necFormSuccessMessage.style.display = 'flex';
+      } catch (err) {
+        console.error('Error insertando necesidad urgente en Supabase:', err);
+        alert('Hubo un error al enviar tu reporte. Por favor verifica tu conexión e intenta de nuevo.');
       } finally {
         submitBtn.textContent = originalText;
         submitBtn.disabled = false;
