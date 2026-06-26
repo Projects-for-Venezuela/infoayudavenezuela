@@ -21,6 +21,8 @@
 
 <br>
 
+# Centros de Acopio Venezuela
+
 El **24 de junio de 2026**, dos sismos de magnitud **7.5 y 7.2** sacudieron la región central de Venezuela, afectando severamente a Caracas y los estados Miranda, La Guaira, Aragua y Carabobo.
 
 Esta plataforma **centraliza la información de los centros de acopio** habilitados en todo el país, permitiendo que los ciudadanos encuentren rápidamente dónde llevar donaciones y consulten los números de emergencia activos. Es un proyecto de código abierto impulsado por la comunidad.
