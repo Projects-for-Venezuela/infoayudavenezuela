@@ -22,6 +22,11 @@ export function resolveEstado(name) {
 
 export function flagUrl(estado) {
   const canonical = resolveEstado(estado);
+
+  if (canonical === "Internacional") {
+    return "https://upload.wikimedia.org/wikipedia/commons/e/e1/Globe.svg";
+  }
+
   const file = FLAG_MAP[canonical] || sanitize(canonical);
   return `/flags/${file}.svg`;
 }
@@ -85,6 +90,7 @@ const FLAG_MAP = {
 };
 
 const TODOS_ESTADOS = [
+  "Internacional",
   "Amazonas",
   "Anzoátegui",
   "Apure",

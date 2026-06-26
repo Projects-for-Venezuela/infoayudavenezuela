@@ -17,6 +17,10 @@ const fallbackCentros = estados.flatMap((e: any) =>
 // Ordenar estados inicialmente por zonas afectadas, excluyendo alias
 const estadosOrdenados = [...estados].filter(e => resolveEstado(e.estado) === e.estado).sort(sortEstados);
 
+// Separar nacionales de internacional para la vista estática
+const estadosNacionales = estadosOrdenados.filter(e => e.estado !== 'Internacional');
+const estadoInternacional = estadosOrdenados.find(e => e.estado === 'Internacional');
+
 // Estadísticas estáticas iniciales
 const totalCentros = fallbackCentros.length;
 const totalEstados = estados.length;
@@ -45,7 +49,6 @@ const fallbackEnlaces = [
 ---
 
 <Layout title="Inicio">
-  <!-- Datos de fallback para cargar instantáneamente e integrarse en offline -->
   <div id="fallbackData" 
        data-centros={JSON.stringify(fallbackCentros)} 
        data-estados={JSON.stringify(estadosOrdenados)}
@@ -66,7 +69,7 @@ const fallbackEnlaces = [
     </div>
     <div class="stat">
       <span class="stat-num" id="statEstados">{totalEstados}</span>
-      <span class="stat-lbl">Estados</span>
+      <span class="stat-lbl">Estados / Paises</span>
     </div>
     <div class="stat">
       <span class="stat-num" id="statCiudades">{totalCiudades}</span>
@@ -74,7 +77,6 @@ const fallbackEnlaces = [
     </div>
   </div>
 
-  <!-- Buscador y Filtro por Ciudades -->
   <div class="search-filters">
     <div class="search-box">
       <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
@@ -87,17 +89,15 @@ const fallbackEnlaces = [
     </div>
   </div>
 
-  <!-- Título de sección dinámico -->
   <div class="section-header">
     <h2 id="gridTitle">Estados con centros de acopio</h2>
     <span id="resultsCount" class="results-count" style="display: none;"></span>
   </div>
 
-  <!-- Contenedor Principal (Estados o Centros según filtros) -->
   <div class="grid" id="mainGrid">
-    {estadosOrdenados.map(({ estado, ciudades }) => {
-      const count = ciudades.reduce((s, c) => s + c.centros.length, 0);
-      const cities = ciudades.map(c => c.ciudad).join(", ");
+    {estadosNacionales.map(({ estado, ciudades }) => {
+      const count = ciudades.reduce((s: number, c: any) => s + c.centros.length, 0);
+      const cities = ciudades.map((c: any) => c.ciudad).join(", ");
       const isAfectado = ZONAS_AFECTADAS.includes(estado);
       const slugName = estado.replace(/ \/ /g, "--").replace(/ /g, "_");
       return (
@@ -116,6 +116,26 @@ const fallbackEnlaces = [
         </a>
       );
     })}
+
+    {estadoInternacional && (
+      <>
+        <div class="section-header divider-internacional" style="grid-column: 1 / -1; margin-top: 1rem;">
+          <h2>🌎 Apoyo Internacional</h2>
+        </div>
+        <a href="/estado/internacional" class="card state-card">
+          <div class="card-img" style="display: flex; align-items: center; justify-content: center; background: #E0F2FE;">
+            <span style="font-size: 3rem;">🌍</span>
+          </div>
+          <div class="card-body">
+            <div class="card-top">
+              <h3>Internacional</h3>
+              <span class="card-badge">{estadoInternacional.ciudades.reduce((s: number, c: any) => s + c.centros.length, 0)}</span>
+            </div>
+            <p class="card-cities">{estadoInternacional.ciudades.map((c: any) => c.ciudad).join(" • ")}</p>
+          </div>
+        </a>
+      </>
+    )}
   </div>
 
   <div class="section-card" style="margin-top: 1.5rem;">
@@ -161,24 +181,49 @@ const fallbackEnlaces = [
   const statEstados = document.getElementById('statEstados') as HTMLElement;
   const statCiudades = document.getElementById('statCiudades') as HTMLElement;
 
+  // Utilidad para extraer código de país de la ciudad internacional
+  function getCountryCode(locationStr: string) {
+    const loc = locationStr.toLowerCase();
+    if (loc.includes('colombia')) return 'co';
+    if (loc.includes('chile')) return 'cl';
+    if (loc.includes('argentina')) return 'ar';
+    if (loc.includes('peru') || loc.includes('perú')) return 'pe';
+    if (loc.includes('ecuador')) return 'ec';
+    if (loc.includes('mexico') || loc.includes('méxico')) return 'mx';
+    if (loc.includes('españa') || loc.includes('spain')) return 'es';
+    if (loc.includes('usa') || loc.includes('eeuu') || loc.includes('estados unidos') || loc.includes('miami') || loc.includes('florida')) return 'us';
+    if (loc.includes('panama') || loc.includes('panamá')) return 'pa';
+    if (loc.includes('brasil') || loc.includes('brazil')) return 'br';
+    if (loc.includes('uruguay')) return 'uy';
+    if (loc.includes('costa rica')) return 'cr';
+    if (loc.includes('republica dominicana')) return 'do';
+    return null;
+  }
+
   // Inicializar ciudades en el select
   function initCitySelect() {
     const citiesSet = new Set(centros.map((c: any) => c.ciudad));
-    const uniqueCities = Array.from(citiesSet);
+    const uniqueCities = Array.from(citiesSet) as string[];
 
     const affectedCities: string[] = [];
+    const internationalCities: string[] = [];
     const otherCities: string[] = [];
 
-    uniqueCities.forEach((city: any) => {
+    uniqueCities.forEach((city: string) => {
       const sample = centros.find((c: any) => c.ciudad === city);
-      if (sample && ZONAS_AFECTADAS.includes(sample.estado)) {
-        affectedCities.push(city);
-      } else {
-        otherCities.push(city);
+      if (sample) {
+        if (ZONAS_AFECTADAS.includes(sample.estado)) {
+          affectedCities.push(city);
+        } else if (sample.estado === 'Internacional') {
+          internationalCities.push(city);
+        } else {
+          otherCities.push(city);
+        }
       }
     });
 
     affectedCities.sort();
+    internationalCities.sort();
     otherCities.sort();
 
     citySelect.innerHTML = '<option value="">Todas las ciudades</option>';
@@ -197,7 +242,7 @@ const fallbackEnlaces = [
 
     if (otherCities.length > 0) {
       const optGroupOther = document.createElement('optgroup');
-      optGroupOther.label = 'Otras ciudades';
+      optGroupOther.label = 'Otras ciudades nacionales';
       otherCities.forEach((city: string) => {
         const opt = document.createElement('option');
         opt.value = city;
@@ -205,6 +250,18 @@ const fallbackEnlaces = [
         optGroupOther.appendChild(opt);
       });
       citySelect.appendChild(optGroupOther);
+    }
+
+    if (internationalCities.length > 0) {
+      const optGroupIntl = document.createElement('optgroup');
+      optGroupIntl.label = '🌎 Apoyo Internacional';
+      internationalCities.forEach((city: string) => {
+        const opt = document.createElement('option');
+        opt.value = city;
+        opt.textContent = `🌎 ${city}`;
+        optGroupIntl.appendChild(opt);
+      });
+      citySelect.appendChild(optGroupIntl);
     }
   }
 
@@ -229,7 +286,11 @@ const fallbackEnlaces = [
       return acc;
     }, []);
 
-    agrupado.sort((a: any, b: any) => {
+    // Separar Internacional de Nacionales
+    const nacionales = agrupado.filter((e: any) => e.estado !== 'Internacional');
+    const internacional = agrupado.find((e: any) => e.estado === 'Internacional');
+
+    nacionales.sort((a: any, b: any) => {
       const aAfectado = ZONAS_AFECTADAS.includes(a.estado);
       const bAfectado = ZONAS_AFECTADAS.includes(b.estado);
       if (aAfectado && !bAfectado) return -1;
@@ -242,7 +303,7 @@ const fallbackEnlaces = [
       return;
     }
 
-    mainGrid.innerHTML = agrupado.map((e: any) => {
+    let html = nacionales.map((e: any) => {
       const count = e.ciudades.reduce((sum: number, c: any) => sum + c.centrosCount, 0);
       const citiesList = e.ciudades.map((c: any) => c.ciudad).join(", ");
       const slugName = e.estado.replace(/ \/ /g, "--").replace(/ /g, "_");
@@ -268,6 +329,30 @@ const fallbackEnlaces = [
         </a>
       `;
     }).join("");
+
+    if (internacional) {
+      const count = internacional.ciudades.reduce((sum: number, c: any) => sum + c.centrosCount, 0);
+      const citiesList = internacional.ciudades.map((c: any) => c.ciudad).join(" • ");
+      html += `
+        <div class="section-header divider-internacional" style="grid-column: 1 / -1; margin-top: 1rem;">
+          <h2>🌎 Apoyo Internacional</h2>
+        </div>
+        <a href="/estado/Internacional" class="card state-card">
+          <div class="card-img" style="display: flex; align-items: center; justify-content: center; background: #E0F2FE;">
+            <span style="font-size: 3rem;">🌍</span>
+          </div>
+          <div class="card-body">
+            <div class="card-top">
+              <h3>Internacional</h3>
+              <span class="card-badge">${count}</span>
+            </div>
+            <p class="card-cities">${citiesList}</p>
+          </div>
+        </a>
+      `;
+    }
+
+    mainGrid.innerHTML = html;
   }
 
   // Renderizar la grilla de centros individuales (vista de búsqueda/filtro)
@@ -284,6 +369,7 @@ const fallbackEnlaces = [
 
     mainGrid.innerHTML = filtered.map((c: any) => {
       const isAfectado = ZONAS_AFECTADAS.includes(c.estado);
+      const isInternacional = c.estado === 'Internacional';
       
       let aceptaHtml = '';
       if (c.acepta && c.acepta.length > 0) {
@@ -313,15 +399,31 @@ const fallbackEnlaces = [
         `;
       }
 
+      // Inyección automática de la bandera internacional vía FlagCDN
+      let flagHtml = '';
+      if (isInternacional) {
+        const countryCode = getCountryCode(c.ciudad);
+        if (countryCode) {
+          flagHtml = `<img src="https://flagcdn.com/20x15/${countryCode}.png" alt="Bandera" style="vertical-align: sub; margin-right: 6px; border-radius: 2px;" />`;
+        } else {
+          flagHtml = `🌎 `;
+        }
+      }
+
       return `
         <div class="card centro-card ${isAfectado ? 'card-prioritized' : ''}">
           <div class="card-head-centro">
-            <div class="card-icon" style="background: ${isAfectado ? 'var(--red)' : 'var(--blue)'};">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+            <div class="card-icon" style="background: ${isAfectado ? 'var(--red)' : isInternacional ? '#0284C7' : 'var(--blue)'};">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                ${isInternacional 
+                  ? '<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>'
+                  : '<rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/>'
+                }
+              </svg>
             </div>
             <div class="card-title-area">
               <h3>${c.nombre}</h3>
-              <span class="card-loc-meta">${c.ciudad}, ${c.estado}</span>
+              <span class="card-loc-meta">${flagHtml}${isInternacional ? c.ciudad : `${c.ciudad}, ${c.estado}`}</span>
             </div>
             ${isAfectado ? '<span class="badge-prioritized-mini">🔴 Zona Afectada</span>' : ''}
           </div>
@@ -688,6 +790,9 @@ const fallbackEnlaces = [
     font-size: 0.95rem;
     font-weight: 600;
     color: var(--text);
+  }
+  .divider-internacional h2 {
+    color: #0284C7; /* Color distinto para internacional */
   }
   .results-count {
     font-size: 0.72rem;
