@@ -71,6 +71,12 @@ nav.navbar .nav-emergencia {
   border: 1px solid rgba(255,255,255,0.15);
 }
 nav.navbar .nav-emergencia:hover { background: var(--red-dark); }
+nav.navbar .nav-necesidad {
+  background: var(--red);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.15);
+}
+nav.navbar .nav-necesidad:hover { background: #B91C1C; }
 @media (max-width: 640px) {
   nav.navbar { padding: 0.45rem 0.75rem; gap: 0.4rem; }
   nav.navbar .brand { font-size: 0.82rem; }
