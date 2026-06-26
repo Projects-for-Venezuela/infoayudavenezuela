@@ -1,5 +1,6 @@
 ---
 import "../styles/enlaces.css";
+import { safeUrl } from "../lib/escape";
 
 export interface Props {
   enlaces: any[];
@@ -21,7 +22,7 @@ const { enlaces } = Astro.props;
         </div>
         <h4>{enlace.titulo}</h4>
         <p>{enlace.descripcion}</p>
-        <a href={enlace.url} target="_blank" rel="noopener noreferrer" class="enlace-btn">
+        <a href={safeUrl(enlace.url) || '#'} target="_blank" rel="noopener noreferrer" class="enlace-btn">
           Visitar Sitio Web &rarr;
         </a>
       </div>
@@ -34,6 +35,7 @@ const { enlaces } = Astro.props;
 
 <script>
   import { supabase } from "../lib/supabase";
+  import { escapeHtml, safeUrl } from "../lib/escape";
 
   const fallbackEl = document.getElementById('enlacesFallbackData') as HTMLElement;
   const fallbackData = JSON.parse(fallbackEl?.dataset?.enlaces || '[]');
@@ -44,18 +46,24 @@ const { enlaces } = Astro.props;
   function renderEnlaces() {
     if (!enlacesGrid) return;
     const total = enlaces.length;
-    enlacesGrid.innerHTML = enlaces.map((e: any) => `
+    enlacesGrid.innerHTML = enlaces.map((e: any) => {
+      const safeCategoria = escapeHtml(e.categoria);
+      const safeTitulo = escapeHtml(e.titulo);
+      const safeDescripcion = escapeHtml(e.descripcion);
+      const safeHref = safeUrl(e.url) || '#';
+      return `
       <div class="enlace-card">
         <div class="enlace-header">
-          <span class="enlace-cat">${e.categoria}</span>
+          <span class="enlace-cat">${safeCategoria}</span>
         </div>
-        <h4>${e.titulo}</h4>
-        <p>${e.descripcion}</p>
-        <a href="${e.url}" target="_blank" rel="noopener noreferrer" class="enlace-btn">
+        <h4>${safeTitulo}</h4>
+        <p>${safeDescripcion}</p>
+        <a href="${safeHref}" target="_blank" rel="noopener noreferrer" class="enlace-btn">
           Visitar Sitio Web &rarr;
         </a>
       </div>
-    `).join("");
+    `;
+    }).join("");
 
     const btnVerMas = document.getElementById('btnVerMasEnlaces') as HTMLButtonElement;
     if (total <= 4) {
@@ -100,7 +108,7 @@ const { enlaces } = Astro.props;
       if (!supabase) throw new Error("Supabase client not initialized");
       const { data, error } = await supabase
         .from('enlaces_ayuda')
-        .select('*')
+        .select('id,titulo,descripcion,url,categoria,verificado')
         .eq('verificado', true);
       if (error) throw error;
       if (data && data.length > 0) {
