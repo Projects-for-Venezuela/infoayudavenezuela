@@ -1,0 +1,101 @@
+<dialog id="sugerirDialog" class="modal-dialog" aria-labelledby="sugerirDialogTitle">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="sugerirDialogTitle">Sugerir Centro de Acopio</h2>
+      <button id="closeDialogBtn" class="close-btn" aria-label="Cerrar modal">&times;</button>
+    </div>
+    <form id="sugerirForm" class="modal-form">
+      <p class="form-help">Ingresa los datos del centro de acopio. Se publicará en vivo una vez sea verificado.</p>
+
+      <div class="form-group">
+        <label for="formEstado">Estado *</label>
+        <select id="formEstado" required>
+          <option value="">Selecciona un estado</option>
+          <option value="Distrito Capital">Distrito Capital</option>
+          <option value="Miranda">Miranda</option>
+          <option value="La Guaira">La Guaira</option>
+          <option value="Aragua">Aragua</option>
+          <option value="Carabobo">Carabobo</option>
+          <option value="Lara">Lara</option>
+          <option value="Sucre">Sucre</option>
+          <option value="Nueva Esparta">Nueva Esparta</option>
+          <option value="Anzoátegui">Anzoátegui</option>
+          <option value="Bolívar">Bolívar</option>
+          <option value="Barinas">Barinas</option>
+          <option value="Monagas">Monagas</option>
+          <option value="Yaracuy">Yaracuy</option>
+          <option value="Zulia">Zulia</option>
+          <option value="Mérida">Mérida</option>
+          <option value="Táchira">Táchira</option>
+          <option value="Trujillo">Trujillo</option>
+          <option value="Falcón">Falcón</option>
+          <option value="Cojedes">Cojedes</option>
+          <option value="Portuguesa">Portuguesa</option>
+          <option value="Guárico">Guárico</option>
+          <option value="Apure">Apure</option>
+          <option value="Delta Amacuro">Delta Amacuro</option>
+          <option value="Amazonas">Amazonas</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="formCiudad">Ciudad *</label>
+        <input type="text" id="formCiudad" placeholder="Ej. Barquisimeto, Altamira" required />
+      </div>
+
+      <div class="form-group">
+        <label for="formNombre">Nombre del Centro *</label>
+        <input type="text" id="formNombre" placeholder="Ej. Iglesia La Paz o Gimnasio Fitness" required />
+      </div>
+
+      <div class="form-group">
+        <label for="formDireccion">Dirección Completa</label>
+        <textarea id="formDireccion" rows="2" placeholder="Dirección exacta del centro de acopio..."></textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="formContacto">Contacto / Teléfono</label>
+          <input type="text" id="formContacto" placeholder="Ej. 0424-1234567 o @instagram" />
+        </div>
+        <div class="form-group">
+          <label for="formHora">Horario de Atención</label>
+          <input type="text" id="formHora" placeholder="Ej. 8:00 AM a 5:00 PM" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="formAcepta">¿Qué insumos aceptan? (Separados por comas)</label>
+        <input type="text" id="formAcepta" placeholder="Ej. Agua potable, Alimentos no perecederos, Ropa" />
+      </div>
+
+      <div class="form-group">
+        <label for="formNecesitan">¿Qué insumos necesitan URGENTE? (Separados por comas)</label>
+        <input type="text" id="formNecesitan" placeholder="Ej. Medicinas, Fórmulas infantiles, Mantas" />
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="formPagoMovil">Pago Móvil (Opcional)</label>
+          <input type="text" id="formPagoMovil" placeholder="Ej. Banesco / V-12345678 / 0414-1234567" />
+        </div>
+        <div class="form-group">
+          <label for="formZelle">Zelle (Opcional)</label>
+          <input type="email" id="formZelle" placeholder="Ej. correo@ejemplo.com" />
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" id="cancelFormBtn" class="btn btn-secondary">Cancelar</button>
+        <button type="submit" id="submitFormBtn" class="btn btn-primary">Enviar Sugerencia</button>
+      </div>
+    </form>
+
+    <div id="formSuccessMessage" class="form-success-msg" style="display: none;">
+      <div class="success-icon">✓</div>
+      <h3>¡Sugerencia Enviada!</h3>
+      <p>Muchas gracias por tu valioso aporte para ayudar a los afectados. Los datos han sido registrados de forma segura y se publicarán tan pronto sean verificados por un moderador.</p>
+      <button id="successCloseBtn" class="btn btn-primary">Entendido</button>
+    </div>
+  </div>
+</dialog>
