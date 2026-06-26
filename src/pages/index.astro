@@ -1,5 +1,6 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import EnlacesSection from "../components/EnlacesSection.astro";
 import { estados, insumos, flagUrl, ZONAS_AFECTADAS, sortEstados, resolveEstado } from "../data/centros";
 
 // Aplanar lista estática de centros para el fallback offline
@@ -47,8 +48,7 @@ const fallbackEnlaces = [
   <!-- Datos de fallback para cargar instantáneamente e integrarse en offline -->
   <div id="fallbackData" 
        data-centros={JSON.stringify(fallbackCentros)} 
-       data-estados={JSON.stringify(estadosOrdenados)} 
-       data-enlaces={JSON.stringify(fallbackEnlaces)}
+       data-estados={JSON.stringify(estadosOrdenados)}
        style="display: none;"></div>
 
   <div class="alert-box">
@@ -125,28 +125,7 @@ const fallbackEnlaces = [
     </div>
   </div>
 
-  <!-- Sección de Sitios Web de Ayuda Externos -->
-  <div class="section-card" style="margin-top: 1.5rem;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
-      <h3 class="section-title" style="margin-bottom: 0;">🔗 Sitios Web y Enlaces de Ayuda</h3>
-      <button id="btnSugerirEnlace" class="btn-sugerir-enlace" aria-label="Sugerir nuevo enlace de ayuda">+ Sugerir Sitio Web</button>
-    </div>
-    <div class="enlaces-grid" id="enlacesGrid">
-      {fallbackEnlaces.map((enlace) => (
-        <div class="enlace-card">
-          <div class="enlace-header">
-            <span class="enlace-cat">{enlace.categoria}</span>
-          </div>
-          <h4>{enlace.titulo}</h4>
-          <p>{enlace.descripcion}</p>
-          <a href={enlace.url} target="_blank" rel="noopener noreferrer" class="enlace-btn">
-            Visitar Sitio Web &rarr;
-          </a>
-        </div>
-      ))}
-    </div>
-    <button id="btnVerMasEnlaces" class="btn-ver-mas" style="display: none;">Ver más &darr;</button>
-  </div>
+  <EnlacesSection enlaces={fallbackEnlaces} />
 
   <a href="/emergencia" class="cta-emergencia">
     <span class="cta-icon">
@@ -167,11 +146,9 @@ const fallbackEnlaces = [
   const fallbackDataEl = document.getElementById('fallbackData') as HTMLElement;
   const fallbackCentros = JSON.parse(fallbackDataEl.dataset.centros || '[]');
   const fallbackEstados = JSON.parse(fallbackDataEl.dataset.estados || '[]');
-  const fallbackEnlaces = JSON.parse(fallbackDataEl.dataset.enlaces || '[]');
 
   let centros: any[] = [...fallbackCentros];
   let estados: any[] = [...fallbackEstados];
-  let enlaces: any[] = [...fallbackEnlaces];
 
   const searchInput = document.getElementById('searchInput') as HTMLInputElement;
   const citySelect = document.getElementById('citySelect') as HTMLSelectElement;
@@ -179,7 +156,6 @@ const fallbackEnlaces = [
   const gridTitle = document.getElementById('gridTitle') as HTMLElement;
   const resultsCount = document.getElementById('resultsCount') as HTMLElement;
   const dbStatus = document.getElementById('dbStatus') as HTMLElement;
-  const enlacesGrid = document.getElementById('enlacesGrid') as HTMLElement;
 
   const statCentros = document.getElementById('statCentros') as HTMLElement;
   const statEstados = document.getElementById('statEstados') as HTMLElement;
@@ -442,83 +418,6 @@ const fallbackEnlaces = [
     }
   }
 
-  async function loadEnlaces() {
-    try {
-      if (!supabase) {
-        throw new Error("Supabase client not initialized");
-      }
-
-      const { data, error } = await supabase
-        .from('enlaces_ayuda')
-        .select('*')
-        .eq('verificado', true);
-
-      if (error) throw error;
-
-      if (data && data.length > 0) {
-        enlaces = data;
-        renderEnlaces();
-      }
-    } catch (err) {
-      console.error("No se pudieron cargar los enlaces de ayuda de Supabase:", err);
-    }
-  }
-
-  function renderEnlaces() {
-    if (!enlacesGrid) return;
-    const total = enlaces.length;
-    enlacesGrid.innerHTML = enlaces.map((e: any) => `
-      <div class="enlace-card">
-        <div class="enlace-header">
-          <span class="enlace-cat">${e.categoria}</span>
-        </div>
-        <h4>${e.titulo}</h4>
-        <p>${e.descripcion}</p>
-        <a href="${e.url}" target="_blank" rel="noopener noreferrer" class="enlace-btn">
-          Visitar Sitio Web &rarr;
-        </a>
-      </div>
-    `).join("");
-
-    const btnVerMas = document.getElementById('btnVerMasEnlaces') as HTMLButtonElement;
-    if (total <= 4) {
-      btnVerMas.style.display = 'none';
-      return;
-    }
-
-    // Calcular cuántas tarjetas entran en 2 filas según el ancho real del grid
-    void enlacesGrid.offsetWidth;
-    const cols = getComputedStyle(enlacesGrid).gridTemplateColumns.split(' ').length;
-    const maxVisible = cols * 2;
-
-    const cards = enlacesGrid.querySelectorAll('.enlace-card');
-    cards.forEach((card, i) => {
-      if (i >= maxVisible) card.classList.add('hidden');
-    });
-
-    enlacesGrid.dataset.maxVisible = String(maxVisible);
-    btnVerMas.style.display = '';
-    btnVerMas.textContent = 'Ver más ↓';
-  }
-
-  const btnVerMas = document.getElementById('btnVerMasEnlaces') as HTMLButtonElement;
-  if (btnVerMas) {
-    btnVerMas.addEventListener('click', () => {
-      const hiddenCards = enlacesGrid.querySelectorAll('.enlace-card.hidden');
-      if (hiddenCards.length > 0) {
-        hiddenCards.forEach(c => c.classList.remove('hidden'));
-        btnVerMas.textContent = 'Ver menos ↑';
-      } else {
-        const maxVisible = parseInt(enlacesGrid.dataset.maxVisible || '4');
-        const cards = enlacesGrid.querySelectorAll('.enlace-card');
-        cards.forEach((card, i) => {
-          if (i >= maxVisible) card.classList.add('hidden');
-        });
-        btnVerMas.textContent = 'Ver más ↓';
-      }
-    });
-  }
-
   searchInput.addEventListener('input', handleFilter);
   citySelect.addEventListener('change', handleFilter);
 
@@ -527,7 +426,6 @@ const fallbackEnlaces = [
   handleFilter();
 
   loadData();
-  loadEnlaces();
 </script>
 
 <style is:global>
@@ -873,111 +771,5 @@ const fallbackEnlaces = [
     .stat {
       padding: 0.75rem 0.5rem;
     }
-  }
-
-  /* --- Estilos de Enlaces de Ayuda --- */
-  .enlaces-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 0.85rem;
-    margin-top: 0.75rem;
-  }
-  .enlace-card {
-    background: #F8F9FB;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 1rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 0.5rem;
-  }
-  .enlace-header {
-    display: flex;
-    justify-content: space-between;
-  }
-  .enlace-cat {
-    font-size: 0.65rem;
-    font-weight: 700;
-    color: var(--blue);
-    background: rgba(0, 36, 125, 0.08);
-    padding: 0.15rem 0.45rem;
-    border-radius: 4px;
-    text-transform: uppercase;
-  }
-  .enlace-card h4 {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--text);
-  }
-  .enlace-card p {
-    font-size: 0.76rem;
-    color: var(--muted);
-    line-height: 1.45;
-    flex-grow: 1;
-  }
-  .enlace-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background: white;
-    color: var(--blue);
-    border: 1px solid var(--blue);
-    font-size: 0.76rem;
-    font-weight: 600;
-    text-decoration: none;
-    padding: 0.4rem 0.75rem;
-    border-radius: 6px;
-    transition: all 0.15s;
-    text-align: center;
-    margin-top: 0.5rem;
-  }
-  .enlace-btn:hover {
-    background: var(--blue);
-    color: white;
-  }
-
-  .enlace-card.hidden {
-    display: none;
-  }
-  .btn-ver-mas {
-    display: block;
-    width: 100%;
-    margin-top: 0.75rem;
-    padding: 0.5rem;
-    background: white;
-    border: 1.5px dashed var(--border);
-    border-radius: 8px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: var(--blue);
-    cursor: pointer;
-    transition: all 0.15s;
-    font-family: inherit;
-  }
-  .btn-ver-mas:hover {
-    background: #F8F9FB;
-    border-color: var(--blue);
-    color: var(--blue-dark);
-  }
-
-  /* --- Estilo del Botón de Sugerir Enlaces --- */
-  .btn-sugerir-enlace {
-    background: var(--yellow);
-    color: var(--blue-dark);
-    border: none;
-    padding: 0.35rem 0.8rem;
-    border-radius: 6px;
-    font-size: 0.76rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-  .btn-sugerir-enlace:hover {
-    background: #F5C200;
-    transform: translateY(-1px);
-  }
-  .btn-sugerir-enlace:active {
-    transform: translateY(0);
   }
 </style>
