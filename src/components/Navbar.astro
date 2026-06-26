@@ -91,6 +91,28 @@ import ReportarNecesidadModal from "./ReportarNecesidadModal.astro";
       const pago_movil = (document.getElementById('formPagoMovil') as HTMLInputElement).value.trim() || null;
       const zelle = (document.getElementById('formZelle') as HTMLInputElement).value.trim() || null;
 
+      // Validación cliente: rechazar contenido HTML en cualquier campo
+      const htmlPattern = /<[^>]*>/;
+      const campos = [ciudad, nombre, direccion, contacto, hora, pago_movil, zelle, ...acepta, ...necesitan];
+      if (campos.some((v) => v && htmlPattern.test(v))) {
+        alert('No se permite HTML en los campos del formulario. Por favor, elimina las etiquetas < > e intenta de nuevo.');
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+        return;
+      }
+      if (ciudad.length < 2 || ciudad.length > 60) {
+        alert('La ciudad debe tener entre 2 y 60 caracteres.');
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+        return;
+      }
+      if (nombre.length < 2 || nombre.length > 120) {
+        alert('El nombre debe tener entre 2 y 120 caracteres.');
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+        return;
+      }
+
       if (!supabase) {
         alert('El sistema está operando en modo local/sin conexión. No se pueden procesar sugerencias de nuevos centros en este momento.');
         submitBtn.textContent = originalText;
@@ -124,15 +146,15 @@ import ReportarNecesidadModal from "./ReportarNecesidadModal.astro";
   const enlaceFormSuccessMessage = document.getElementById('enlaceFormSuccessMessage') as HTMLElement;
   const enlaceSuccessCloseBtn = document.getElementById('enlaceSuccessCloseBtn') as HTMLButtonElement;
 
-  document.addEventListener('click', (e) => {
-    const target = e.target as HTMLElement;
-    if (target && target.id === 'btnSugerirEnlace') {
+  const btnSugerirEnlace = document.getElementById('btnSugerirEnlace') as HTMLButtonElement | null;
+  if (btnSugerirEnlace) {
+    btnSugerirEnlace.addEventListener('click', () => {
       sugerirEnlaceForm.style.display = 'flex';
       enlaceFormSuccessMessage.style.display = 'none';
       sugerirEnlaceForm.reset();
       sugerirEnlaceDialog.showModal();
-    }
-  });
+    });
+  }
 
   const closeEnlaceForm = () => { sugerirEnlaceDialog.close(); };
   if (closeEnlaceDialogBtn) closeEnlaceDialogBtn.addEventListener('click', closeEnlaceForm);
@@ -159,6 +181,40 @@ import ReportarNecesidadModal from "./ReportarNecesidadModal.astro";
       const descripcion = (document.getElementById('formEnlaceDescripcion') as HTMLTextAreaElement).value.trim();
       let url = (document.getElementById('formEnlaceUrl') as HTMLInputElement).value.trim();
       if (url && !/^https?:\/\//i.test(url)) url = 'https://' + url;
+
+      // Validación cliente: rechazar HTML en los campos y validar esquema URL
+      const htmlPattern = /<[^>]*>/;
+      const campos = [titulo, descripcion, categoria];
+      if (campos.some((v) => v && htmlPattern.test(v))) {
+        alert('No se permite HTML en los campos del formulario. Por favor, elimina las etiquetas < > e intenta de nuevo.');
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+        return;
+      }
+      if (titulo.length < 2 || titulo.length > 120) {
+        alert('El título debe tener entre 2 y 120 caracteres.');
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+        return;
+      }
+      if (descripcion.length < 2 || descripcion.length > 300) {
+        alert('La descripción debe tener entre 2 y 300 caracteres.');
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+        return;
+      }
+      if (!url || !/^https?:\/\//i.test(url)) {
+        alert('La URL debe empezar con http:// o https://');
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+        return;
+      }
+      if (url.length > 300) {
+        alert('La URL es demasiado larga (máximo 300 caracteres).');
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+        return;
+      }
 
       if (!supabase) {
         alert('El sistema está operando en modo local/sin conexión. No se pueden procesar sugerencias de nuevos enlaces en este momento.');

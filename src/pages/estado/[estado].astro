@@ -16,9 +16,14 @@ const display = resolveEstado(decoded);
 const esInternacional = display === 'Internacional';
 const ciudades = centrosPorEstado(decoded);
 const total = ciudades.reduce((s: number, c: any) => s + c.centros.length, 0);
+
+const description = esInternacional
+  ? `Centros de acopio internacionales para ayudar a los afectados por el sismo en Venezuela. Donaciones desde el exterior.`
+  : `Centros de acopio verificados en ${display}, Venezuela. ${total} centro${total !== 1 ? 's' : ''} activo${total !== 1 ? 's' : ''}. Encuentra dónde donar agua, alimentos, medicinas e insumos.`;
+const canonical = `https://infoayudavenezuela.vercel.app/estado/${estado}`;
 ---
 
-<Layout title={display}>
+<Layout title={display} {description} {canonical}>
   <div id="stateMeta" data-state={display} style="display: none;"></div>
 
   <a href="/" class="back-link">
@@ -82,6 +87,7 @@ const total = ciudades.reduce((s: number, c: any) => s + c.centros.length, 0);
 
 <script>
   import { supabase } from "../../lib/supabase";
+  import { escapeHtml, escapeArray } from "../../lib/escape";
 
   const stateMetaEl = document.getElementById('stateMeta') as HTMLElement;
   const decodedState = stateMetaEl?.dataset?.state || '';
@@ -129,22 +135,31 @@ const total = ciudades.reduce((s: number, c: any) => s + c.centros.length, 0);
 
     let html = '';
     Object.entries(ciudadesMap).forEach(([ciudad, centros]: [string, any[]]) => {
+      const safeCiudad = escapeHtml(ciudad);
       html += `
         <section class="city-section">
           <div class="city-head">
             ${esInternacional
               ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0284C7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>'
               : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>'}
-            <h2>${ciudad}</h2>
+            <h2>${safeCiudad}</h2>
             <span class="city-count">${centros.length}</span>
           </div>
           <div class="card-list">
             ${centros.map((centro: any) => {
-              const aceptaHtml = centro.acepta?.length
-                ? `<div class="row"><span class="row-label">Aceptan</span><div class="row-value"><div class="tag-group">${centro.acepta.map((a: string) => `<span class="tag tag-yellow">${a}</span>`).join("")}</div></div></div>`
+              const safeNombre = escapeHtml(centro.nombre);
+              const safeDireccion = escapeHtml(centro.direccion);
+              const safeContacto = escapeHtml(centro.contacto);
+              const safeHora = escapeHtml(centro.hora);
+              const safeZelle = escapeHtml(centro.zelle);
+              const safePagoMovil = escapeHtml(centro.pago_movil);
+              const safeAcepta = escapeArray(centro.acepta);
+              const safeNecesitan = escapeArray(centro.necesitan);
+              const aceptaHtml = safeAcepta.length
+                ? `<div class="row"><span class="row-label">Aceptan</span><div class="row-value"><div class="tag-group">${safeAcepta.map((a: string) => `<span class="tag tag-yellow">${a}</span>`).join("")}</div></div></div>`
                 : '';
-              const necesitanHtml = centro.necesitan?.length
-                ? `<div class="row"><span class="row-label">Urgente</span><div class="row-value"><div class="tag-group">${centro.necesitan.map((n: string) => `<span class="tag tag-red">${n}</span>`).join("")}</div></div></div>`
+              const necesitanHtml = safeNecesitan.length
+                ? `<div class="row"><span class="row-label">Urgente</span><div class="row-value"><div class="tag-group">${safeNecesitan.map((n: string) => `<span class="tag tag-red">${n}</span>`).join("")}</div></div></div>`
                 : '';
               return `
                 <div class="card">
@@ -154,15 +169,15 @@ const total = ciudades.reduce((s: number, c: any) => s + c.centros.length, 0);
                         ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>'
                         : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>'}
                     </div>
-                    <h3>${centro.nombre}</h3>
+                    <h3>${safeNombre}</h3>
                   </div>
                   <div class="card-body">
-                    ${centro.direccion ? `<div class="row"><span class="row-label">Dirección</span><div class="row-value">${centro.direccion}</div></div>` : ''}
-                    ${centro.contacto ? `<div class="row"><span class="row-label">Contacto</span><div class="row-value">${centro.contacto}</div></div>` : ''}
-                    ${centro.hora ? `<div class="row"><span class="row-label">Horario</span><div class="row-value">${centro.hora}</div></div>` : ''}
+                    ${centro.direccion ? `<div class="row"><span class="row-label">Dirección</span><div class="row-value">${safeDireccion}</div></div>` : ''}
+                    ${centro.contacto ? `<div class="row"><span class="row-label">Contacto</span><div class="row-value">${safeContacto}</div></div>` : ''}
+                    ${centro.hora ? `<div class="row"><span class="row-label">Horario</span><div class="row-value">${safeHora}</div></div>` : ''}
                     ${aceptaHtml}${necesitanHtml}
-                    ${centro.zelle ? `<div class="row"><span class="row-label">Zelle</span><div class="row-value">${centro.zelle}</div></div>` : ''}
-                    ${centro.pago_movil ? `<div class="row"><span class="row-label">Pago Móvil</span><div class="row-value">${centro.pago_movil}</div></div>` : ''}
+                    ${centro.zelle ? `<div class="row"><span class="row-label">Zelle</span><div class="row-value">${safeZelle}</div></div>` : ''}
+                    ${centro.pago_movil ? `<div class="row"><span class="row-label">Pago Móvil</span><div class="row-value">${safePagoMovil}</div></div>` : ''}
                   </div>
                 </div>
               `;
@@ -252,7 +267,7 @@ const total = ciudades.reduce((s: number, c: any) => s + c.centros.length, 0);
 
       const { data, error } = await supabase
         .from('centros_acopio')
-        .select('*')
+        .select('id,nombre,ciudad,estado,direccion,contacto,hora,acepta,necesitan,zelle,pago_movil,verificado')
         .eq('estado', decodedState)
         .eq('verificado', true);
 
@@ -281,7 +296,17 @@ const total = ciudades.reduce((s: number, c: any) => s + c.centros.length, 0);
     }
   }
 
-  searchInput?.addEventListener('input', handleFilter);
+  // Debounce para evitar refiltrar en cada tecla (mejora rendimiento)
+  function debounce<T extends (...args: any[]) => void>(fn: T, ms: number): (...args: Parameters<T>) => void {
+    let t: ReturnType<typeof setTimeout> | null = null;
+    return (...args: Parameters<T>) => {
+      if (t) clearTimeout(t);
+      t = setTimeout(() => fn(...args), ms);
+    };
+  }
+  const debouncedFilter = debounce(handleFilter, 250);
+
+  searchInput?.addEventListener('input', debouncedFilter);
   cityFilter?.addEventListener('change', handleFilter);
   countryFilter?.addEventListener('change', onPaisChange);
 

@@ -53,7 +53,10 @@ const fallbackEnlaces = [
 ];
 ---
 
-<Layout title="Inicio">
+<Layout title="Inicio"
+  description="Directorio de centros de acopio verificados en Venezuela. Encuentra dónde donar agua, alimentos, medicinas e insumos para los afectados por el sismo del 24 de junio de 2026. Cobertura nacional e internacional."
+  canonical="https://infoayudavenezuela.vercel.app/"
+>
   <div id="fallbackData" 
        data-centros={JSON.stringify(fallbackCentros)} 
        data-estados={JSON.stringify(estadosOrdenados)}
@@ -134,6 +137,7 @@ const fallbackEnlaces = [
 <script>
   import { supabase } from "../lib/supabase";
   import { ZONAS_AFECTADAS, sortCentros } from "../data/centros";
+  import { escapeHtml, escapeArray, safeUrl } from "../lib/escape";
 
   const fallbackDataEl = document.getElementById('fallbackData') as HTMLElement;
   const fallbackCentros = JSON.parse(fallbackDataEl.dataset.centros || '[]');
@@ -240,14 +244,22 @@ const fallbackEnlaces = [
     resultsCount.style.display = "none";
     mainGrid.className = "grid";
 
-    const agrupado = centros.reduce((acc: any[], item: any) => {
-      let e = acc.find((x: any) => x.estado === item.estado);
-      if (!e) { e = { estado: item.estado, ciudades: [] }; acc.push(e); }
-      let c = e.ciudades.find((x: any) => x.ciudad === item.ciudad);
-      if (!c) { c = { ciudad: item.ciudad, centrosCount: 0 }; e.ciudades.push(c); }
-      c.centrosCount++;
+    const agrupado = centros.reduce((acc: { em: Map<string, any>, ea: any[] }, item: any) => {
+      let edto = acc.em.get(item.estado);
+      if (!edto) {
+        edto = { estado: item.estado, ciudades: [] as any[], cm: new Map<string, any>() };
+        acc.em.set(item.estado, edto);
+        acc.ea.push(edto);
+      }
+      let cdto = edto.cm.get(item.ciudad);
+      if (!cdto) {
+        cdto = { ciudad: item.ciudad, centrosCount: 0 };
+        edto.cm.set(item.ciudad, cdto);
+        edto.ciudades.push(cdto);
+      }
+      cdto.centrosCount++;
       return acc;
-    }, []);
+    }, { em: new Map<string, any>(), ea: [] as any[] }).ea.map((e: any) => ({ estado: e.estado, ciudades: e.ciudades }));
 
     // Separar Internacional de Nacionales
     const nacionales = agrupado.filter((e: any) => e.estado !== 'Internacional');
@@ -268,19 +280,21 @@ const fallbackEnlaces = [
 
     let html = nacionales.map((e: any) => {
       const count = e.ciudades.reduce((sum: number, c: any) => sum + c.centrosCount, 0);
-      const citiesList = e.ciudades.map((c: any) => c.ciudad).join(", ");
+      const citiesList = escapeHtml(e.ciudades.map((c: any) => c.ciudad).join(", "));
       const slugName = e.estado.replace(/ \/ /g, "--").replace(/ /g, "_");
       const isAfectado = ZONAS_AFECTADAS.includes(e.estado);
       const sanitizedName = ({ "Distrito Capital": "Distrito_Capital" } as Record<string, string>)[e.estado] || e.estado.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ /g, "_");
+      const safeEstado = escapeHtml(e.estado);
+      const safeAlt = escapeHtml(`Bandera de ${e.estado}`);
 
       return `
         <a href="/estado/${slugName}" class="card state-card ${isAfectado ? 'card-prioritized' : ''}">
           <div class="card-img">
-            <img src="/flags/${sanitizedName}.svg" alt="Bandera de ${e.estado}" loading="lazy" onerror="this.style.display='none';" />
+            <img src="/flags/${sanitizedName}.webp" alt="${safeAlt}" loading="lazy" onerror="this.style.display='none';" />
             ${isAfectado ? '<span class="badge-prioritized">🔴 Zona Afectada</span>' : ''}
           </div>
           <div class="card-body">
-            <div class="card-top"><h3>${e.estado}</h3><span class="card-badge">${count}</span></div>
+            <div class="card-top"><h3>${safeEstado}</h3><span class="card-badge">${count}</span></div>
             <p class="card-cities">${citiesList}</p>
           </div>
         </a>
@@ -289,7 +303,7 @@ const fallbackEnlaces = [
 
     if (internacional) {
       const count = internacional.ciudades.reduce((sum: number, c: any) => sum + c.centrosCount, 0);
-      const citiesList = internacional.ciudades.map((c: any) => c.ciudad).join(" • ");
+      const citiesList = escapeHtml(internacional.ciudades.map((c: any) => c.ciudad).join(" • "));
       html += `
         <div class="section-header divider-internacional" style="grid-column: 1 / -1; margin-top: 1rem;">
           <h2>🌎 Apoyo Internacional</h2>
@@ -326,12 +340,23 @@ const fallbackEnlaces = [
     mainGrid.innerHTML = filtered.map((c: any) => {
       const isAfectado = ZONAS_AFECTADAS.includes(c.estado);
       const isInternacional = c.estado === 'Internacional';
-      
-      const aceptaHtml = c.acepta?.length
-        ? `<div class="row"><span class="row-label">Aceptan</span><div class="row-value"><div class="tag-group">${c.acepta.map((a: string) => `<span class="tag tag-yellow">${a}</span>`).join("")}</div></div></div>`
+
+      const safeNombre = escapeHtml(c.nombre);
+      const safeCiudad = escapeHtml(c.ciudad);
+      const safeEstado = escapeHtml(c.estado);
+      const safeDireccion = escapeHtml(c.direccion);
+      const safeContacto = escapeHtml(c.contacto);
+      const safeHora = escapeHtml(c.hora);
+      const safeZelle = escapeHtml(c.zelle);
+      const safePagoMovil = escapeHtml(c.pago_movil);
+      const safeAcepta = escapeArray(c.acepta);
+      const safeNecesitan = escapeArray(c.necesitan);
+
+      const aceptaHtml = safeAcepta.length
+        ? `<div class="row"><span class="row-label">Aceptan</span><div class="row-value"><div class="tag-group">${safeAcepta.map((a: string) => `<span class="tag tag-yellow">${a}</span>`).join("")}</div></div></div>`
         : '';
-      const necesitanHtml = c.necesitan?.length
-        ? `<div class="row"><span class="row-label">Urgente</span><div class="row-value"><div class="tag-group">${c.necesitan.map((n: string) => `<span class="tag tag-red">${n}</span>`).join("")}</div></div></div>`
+      const necesitanHtml = safeNecesitan.length
+        ? `<div class="row"><span class="row-label">Urgente</span><div class="row-value"><div class="tag-group">${safeNecesitan.map((n: string) => `<span class="tag tag-red">${n}</span>`).join("")}</div></div></div>`
         : '';
 
       // Inyección automática de la bandera internacional vía FlagCDN
@@ -357,18 +382,18 @@ const fallbackEnlaces = [
               </svg>
             </div>
             <div class="card-title-area">
-              <h3>${c.nombre}</h3>
-              <span class="card-loc-meta">${flagHtml}${isInternacional ? c.ciudad : `${c.ciudad}, ${c.estado}`}</span>
+              <h3>${safeNombre}</h3>
+              <span class="card-loc-meta">${flagHtml}${isInternacional ? safeCiudad : `${safeCiudad}, ${safeEstado}`}</span>
             </div>
             ${isAfectado ? '<span class="badge-prioritized-mini">🔴 Zona Afectada</span>' : ''}
           </div>
           <div class="card-body-centro">
-            ${c.direccion ? `<div class="row"><span class="row-label">Dirección</span><div class="row-value">${c.direccion}</div></div>` : ''}
-            ${c.contacto ? `<div class="row"><span class="row-label">Contacto</span><div class="row-value">${c.contacto}</div></div>` : ''}
-            ${c.hora ? `<div class="row"><span class="row-label">Horario</span><div class="row-value">${c.hora}</div></div>` : ''}
+            ${c.direccion ? `<div class="row"><span class="row-label">Dirección</span><div class="row-value">${safeDireccion}</div></div>` : ''}
+            ${c.contacto ? `<div class="row"><span class="row-label">Contacto</span><div class="row-value">${safeContacto}</div></div>` : ''}
+            ${c.hora ? `<div class="row"><span class="row-label">Horario</span><div class="row-value">${safeHora}</div></div>` : ''}
             ${aceptaHtml}${necesitanHtml}
-            ${c.zelle ? `<div class="row"><span class="row-label">Zelle</span><div class="row-value">${c.zelle}</div></div>` : ''}
-            ${c.pago_movil ? `<div class="row"><span class="row-label">Pago Móvil</span><div class="row-value">${c.pago_movil}</div></div>` : ''}
+            ${c.zelle ? `<div class="row"><span class="row-label">Zelle</span><div class="row-value">${safeZelle}</div></div>` : ''}
+            ${c.pago_movil ? `<div class="row"><span class="row-label">Pago Móvil</span><div class="row-value">${safePagoMovil}</div></div>` : ''}
           </div>
         </div>
       `;
@@ -407,7 +432,10 @@ const fallbackEnlaces = [
       dbStatus.className = "status-badge loading";
       if (!supabase) throw new Error("Supabase client not initialized");
 
-      const { data, error } = await supabase.from('centros_acopio').select('*').eq('verificado', true);
+      const { data, error } = await supabase
+        .from('centros_acopio')
+        .select('id,nombre,ciudad,estado,direccion,contacto,hora,acepta,necesitan,zelle,pago_movil,verificado')
+        .eq('verificado', true);
       if (error) throw error;
 
       if (data && data.length > 0) {
@@ -470,7 +498,17 @@ const fallbackEnlaces = [
     }
   }
 
-  searchInput.addEventListener('input', handleFilter);
+  // Debounce para evitar refiltrar en cada tecla (mejora rendimiento)
+  function debounce<T extends (...args: any[]) => void>(fn: T, ms: number): (...args: Parameters<T>) => void {
+    let t: ReturnType<typeof setTimeout> | null = null;
+    return (...args: Parameters<T>) => {
+      if (t) clearTimeout(t);
+      t = setTimeout(() => fn(...args), ms);
+    };
+  }
+  const debouncedFilter = debounce(handleFilter, 250);
+
+  searchInput.addEventListener('input', debouncedFilter);
   citySelect.addEventListener('change', handleFilter);
 
   initCitySelect();

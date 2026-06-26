@@ -48,7 +48,16 @@ create table public.centros_acopio (
   zelle text,
   pago_movil text,
   verificado boolean default true,
-  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  -- Constraints de validación para prevenir payloads excesivos y vacíos
+  constraint chk_estado_len check (char_length(estado) between 2 and 60),
+  constraint chk_ciudad_len check (char_length(ciudad) between 2 and 60),
+  constraint chk_nombre_len check (char_length(nombre) between 2 and 120),
+  constraint chk_direccion_len check (direccion is null or char_length(direccion) <= 300),
+  constraint chk_contacto_len check (contacto is null or char_length(contacto) <= 100),
+  constraint chk_hora_len check (hora is null or char_length(hora) <= 60),
+  constraint chk_zelle_len check (zelle is null or char_length(zelle) <= 120),
+  constraint chk_pago_movil_len check (pago_movil is null or char_length(pago_movil) <= 100)
 );
 
 -- Habilitar RLS (Row Level Security)
@@ -59,8 +68,17 @@ create policy "Permitir lectura pública" on public.centros_acopio
   for select using (true);
   
 -- Crear política para permitir sugerencias públicas (inserción) de nuevos centros
+-- Las inserciones anónimas sólo se permiten con verificado=false (moderación obligatoria)
+-- y con longitudes válidas (defensa en profundidad además de las constraints de tabla)
 create policy "Permitir sugerir nuevos centros" on public.centros_acopio
-  for insert with check (true);
+  for insert with check (
+    verificado = false
+    and char_length(estado) between 2 and 60
+    and char_length(ciudad) between 2 and 60
+    and char_length(nombre) between 2 and 120
+    and (direccion is null or char_length(direccion) <= 300)
+    and (contacto is null or char_length(contacto) <= 100)
+  );
 
 -- Crear tabla para Enlaces de Ayuda
 create table public.enlaces_ayuda (
@@ -70,7 +88,13 @@ create table public.enlaces_ayuda (
   url text not null,
   categoria text not null,
   verificado boolean default false,
-  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+  -- Constraints de validación
+  constraint chk_enlace_titulo_len check (char_length(titulo) between 2 and 120),
+  constraint chk_enlace_desc_len check (char_length(descripcion) between 2 and 300),
+  constraint chk_enlace_url_len check (char_length(url) between 8 and 300),
+  constraint chk_enlace_url_scheme check (url ~ '^https?://'),
+  constraint chk_enlace_categoria_len check (char_length(categoria) between 2 and 60)
 );
 
 -- Habilitar RLS
@@ -81,8 +105,23 @@ create policy "Permitir lectura pública de enlaces" on public.enlaces_ayuda
   for select using (true);
 
 -- Política para permitir sugerencias públicas de enlaces
+-- Sólo se permiten inserciones anónimas con verificado=false y URL http(s) válida
 create policy "Permitir sugerir nuevos enlaces" on public.enlaces_ayuda
-  for insert with check (true);
+  for insert with check (
+    verificado = false
+    and char_length(titulo) between 2 and 120
+    and char_length(descripcion) between 2 and 300
+    and url ~ '^https?://'
+  );
+
+-- =========================================================================
+-- ÍNDICES para optimizar las consultas frecuentes (filtrado por estado, verificado)
+-- =========================================================================
+create index if not exists idx_centros_acopio_estado on public.centros_acopio (estado);
+create index if not exists idx_centros_acopio_verificado on public.centros_acopio (verificado);
+create index if not exists idx_centros_acopio_estado_verificado on public.centros_acopio (estado, verificado);
+create index if not exists idx_centros_acopio_ciudad on public.centros_acopio (ciudad);
+create index if not exists idx_enlaces_ayuda_verificado on public.enlaces_ayuda (verificado);
 `;
 
 console.log(CREATE_TABLE_SQL);
