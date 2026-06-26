@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./public/img/readme.png" alt="Centros de Acopio Venezuela" width="100%">
+  <img src="./public/img/readme.webp" alt="Centros de Acopio Venezuela" width="100%">
 </p>
 
 # Centros de Acopio Venezuela
