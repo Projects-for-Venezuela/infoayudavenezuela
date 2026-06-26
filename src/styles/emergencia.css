@@ -1,6 +1,9 @@
 /* ─── Hero ─── */
 .emg-hero {
-  margin: -1.5rem -1.5rem 1.5rem;
+  width: 100vw;
+  margin-top: -1.5rem;
+  margin-left: calc(-50vw + 50%);
+  margin-bottom: 1.5rem;
   overflow: hidden;
 }
 .emg-hero-bg {
@@ -220,16 +223,18 @@ a.emg-row:hover .emg-row-call {
 
 /* ─── Responsive ─── */
 @media (max-width: 768px) {
+  .emg-hero { margin-top: -1.5rem; }
   .emg-hero-bg { padding: 2rem 1.25rem; }
   .emg-hero-content h1 { font-size: 1.35rem; }
 }
 @media (max-width: 640px) {
-  .emg-hero { margin: -1rem -1rem 1rem; }
+  .emg-hero { margin-top: -1rem; margin-bottom: 1rem; }
   .emg-hero-bg { padding: 1.5rem 1rem; }
   .emg-hero-content h1 { font-size: 1.2rem; }
   .emg-row-num { font-size: 0.95rem; }
   .emg-row { padding: 0.6rem; }
 }
 @media (max-width: 480px) {
+  .emg-hero { margin-top: -1rem; }
   .emg-hero-content h1 { font-size: 1.1rem; }
 }

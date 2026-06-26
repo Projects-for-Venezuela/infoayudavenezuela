@@ -1,7 +1,9 @@
 /* ─── Hero ─── */
 .nec-hero {
-  margin: -1.5rem -1.5rem 1.5rem;
-  border-radius: 0;
+  width: 100vw;
+  margin-top: -1.5rem;
+  margin-left: calc(-50vw + 50%);
+  margin-bottom: 1.5rem;
   overflow: hidden;
 }
 .nec-hero-bg {
@@ -333,6 +335,7 @@
 
 /* ─── Responsive ─── */
 @media (max-width: 768px) {
+  .nec-hero { margin-top: -1.5rem; }
   .nec-hero-bg { padding: 2rem 1.25rem; }
   .nec-hero-content h1 { font-size: 1.35rem; }
   .nec-toolbar { flex-wrap: wrap; }
@@ -340,12 +343,13 @@
   .nec-btn-refresh { width: 100%; justify-content: center; }
 }
 @media (max-width: 640px) {
-  .nec-hero { margin: -1rem -1rem 1rem; }
+  .nec-hero { margin-top: -1rem; margin-bottom: 1rem; }
   .nec-hero-bg { padding: 1.5rem 1rem; }
   .nec-hero-content h1 { font-size: 1.2rem; }
   .grid-necesidades { grid-template-columns: 1fr; }
 }
 @media (max-width: 480px) {
+  .nec-hero { margin-top: -1rem; }
   .nec-hero-content h1 { font-size: 1.1rem; }
   .nec-search input { font-size: 0.82rem; }
 }

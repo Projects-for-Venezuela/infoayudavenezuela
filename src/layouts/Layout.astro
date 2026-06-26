@@ -9,20 +9,22 @@ export interface Props {
   description?: string;
   canonical?: string;
   ogType?: string;
+  showHero?: boolean;
 }
 
 const {
   title,
-  description = "Directorio de centros de acopio verificados en Venezuela. Encuentra dónde donar agua, alimentos, medicinas e insumos para los afectados por el sismo del 24 de junio de 2026.",
+  description = "Info Ayuda Venezuela — Directorio de ayuda humanitaria. Centros de acopio, necesidades urgentes y números de emergencia para los afectados por el sismo del 24 de junio de 2026.",
   canonical,
   ogType = "website",
+  showHero = true,
 } = Astro.props;
 
 const siteUrl = "https://infoayudavenezuela.vercel.app";
 const canonicalUrl = canonical || `${siteUrl}${Astro.url.pathname}`;
 const fullTitle = title === "Inicio"
-  ? "Centros de Acopio Venezuela — Directorio de donaciones y ayuda humanitaria"
-  : `${title} | Centros de Acopio Venezuela`;
+  ? "Info Ayuda Venezuela — Directorio de ayuda humanitaria"
+  : `${title} | Info Ayuda Venezuela`;
 ---
 
 <!DOCTYPE html>
@@ -34,7 +36,7 @@ const fullTitle = title === "Inicio"
     <meta name="description" content={description} />
     <meta name="keywords" content="centros de acopio, donaciones Venezuela, sismo Venezuela, ayuda humanitaria, recolección donativos, damnificados, emergencia nacional, insumos médicos, alimentos no perecederos" />
     <meta name="robots" content="index, follow" />
-    <meta name="author" content="Centros de Acopio Venezuela" />
+    <meta name="author" content="Info Ayuda Venezuela" />
     <meta name="theme-color" content="#00247D" />
 
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
@@ -44,7 +46,7 @@ const fullTitle = title === "Inicio"
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content={ogType} />
     <meta property="og:locale" content="es_VE" />
-    <meta property="og:site_name" content="Centros de Acopio Venezuela" />
+    <meta property="og:site_name" content="Info Ayuda Venezuela" />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonicalUrl} />
@@ -62,7 +64,7 @@ const fullTitle = title === "Inicio"
     <script type="application/ld+json" set:html={JSON.stringify({
       "@context": "https://schema.org",
       "@type": "WebSite",
-      "name": "Centros de Acopio Venezuela",
+      "name": "Info Ayuda Venezuela",
       "url": siteUrl,
       "description": description,
       "inLanguage": "es-VE",
@@ -75,7 +77,7 @@ const fullTitle = title === "Inicio"
   </head>
   <body>
     <Navbar />
-    <Hero />
+    {showHero && <Hero />}
     <main>
       <slot />
     </main>
