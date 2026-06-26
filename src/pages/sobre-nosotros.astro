@@ -1,0 +1,106 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Acerca de | Centros de Acopio Venezuela">
+  <div class="about-container">
+    <a href="/" class="back-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      Volver al inicio
+    </a>
+
+    <div class="hero-local">
+      <div>
+        <h1>Sobre esta iniciativa</h1>
+        <p class="hero-local-meta">Centralizando la ayuda para los afectados por el sismo del 24 de junio de 2026.</p>
+      </div>
+    </div>
+
+    <div class="about-grid">
+      <!-- 1. El Propósito -->
+      <div class="section-card">
+        <h3 class="section-title">🎯 El Propósito</h3>
+        <p class="text-content">
+          Tras la emergencia nacional, la información sobre dónde donar y qué insumos se necesitaban comenzó a dispersarse rápidamente. 
+          Esta plataforma nace con un único objetivo: <strong>centralizar todos los centros de acopio verificados en un solo lugar</strong>, accesible para cualquier persona, incluso con conexiones inestables.
+        </p>
+      </div>
+
+      <!-- 2. Equipo y Contactos -->
+      <div class="section-card">
+        <h3 class="section-title">👨‍💻 Quiénes están detrás</h3>
+        <p class="text-content">
+          Somos un equipo de desarrolladores radicados en Venezuela. Al vivir de cerca el impacto de la emergencia, decidimos aportar creando esta herramienta tecnológica para facilitar la logística comunitaria.
+        </p>
+        
+        <div class="footer-contacts">
+          <h4 class="contacts-title">Contacto / Soporte Técnico</h4>
+          <div class="contacts-list">
+            {[
+              { name: "Enyell Duarte", phone: "+58 412-3557704", email: "enyelldev@gmail.com" },
+              { name: "Adel Gannem", phone: "+58 424-5785645", email: "adelganndev@gmail.com" },
+              { name: "Fabrizio Franco", phone: "+58 426-7239855", email: "fabriziofrancotami@gmail.com" }
+            ].map(dev => (
+              <div class="contact-row">
+                <span class="dev-name">{dev.name}</span>
+                <div class="dev-links">
+                  <a href={`tel:${dev.phone.replace(/ /g, '')}`}>
+                    <span class="icon">📞</span> {dev.phone}
+                  </a>
+                  <a href={`mailto:${dev.email}`}>
+                    <span class="icon">✉️</span> {dev.email}
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <h3 class="section-title">🤝 Cómo Colaborar</h3>
+        <p class="text-content">
+          Esta plataforma es mantenida de forma voluntaria. Si conoces un centro de acopio que no está en la lista, o notas que alguna información ha cambiado, tu reporte salva vidas.
+        </p>
+        <div class="button-group">
+          <button id="btnReportarCentro" class="btn btn-primary" style="width: 100%;">
+            Reportar un nuevo centro
+          </button>
+        </div>
+      </div>
+
+      <div class="section-card disclaimer-card">
+        <h3 class="section-title disclaimer-title">⚠️ Descargo de Responsabilidad</h3>
+        <p class="disclaimer-text">
+          Recomendamos encarecidamente <strong>contactar a los números o redes sociales indicados en cada centro</strong> antes de movilizarse para confirmar disponibilidad.
+        </p>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .about-container { max-width: 800px; margin: 0 auto; padding-bottom: 2rem; }
+  .about-grid { display: flex; flex-direction: column; gap: 1.5rem; }
+  .text-content { line-height: 1.6; color: #4b5563; font-size: 1rem; margin-top: 0.5rem; }
+  
+  /* Contactos */
+  .footer-contacts { margin-top: 2rem; }
+  .contacts-title { margin-bottom: 1rem; color: #374151; font-size: 1rem; border-bottom: 1px solid #e5e7eb; padding-bottom: 0.5rem; }
+  .contacts-list { display: flex; flex-direction: column; gap: 12px; }
+  .contact-row { display: flex; flex-direction: column; gap: 4px; padding: 8px 0; }
+  .dev-name { font-weight: 700; color: #111827; }
+  .dev-links { display: flex; gap: 15px; flex-wrap: wrap; }
+  .dev-links a { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; color: #00247D; text-decoration: none; }
+  .dev-links a:hover { text-decoration: underline; }
+
+  @media (min-width: 600px) {
+    .contact-row { flex-direction: row; align-items: center; justify-content: space-between; }
+  }
+
+  /* Botones y tarjetas */
+  .btn { display: inline-flex; align-items: center; justify-content: center; padding: 0.75rem 1.25rem; border-radius: 8px; font-weight: 600; cursor: pointer; border: none; }
+  .btn-primary { background-color: #00247D; color: #ffffff; }
+  .disclaimer-card { border-left: 5px solid #CF142B; background-color: #fef2f2; padding-left: 15px }
+  .disclaimer-text { color: #991b1b; font-size: 0.9rem; }
+</style>
