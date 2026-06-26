@@ -7,18 +7,22 @@ import { ZONAS_AFECTADAS } from "../data/centros";
 ---
 
 <Layout title="Necesidades Urgentes">
-  <header class="hero">
-    <div class="stars">&#9733; &#9733; &#9733; &#9733; &#9733; &#9733; &#9733; &#9733;</div>
-    <h1>🆘 Centros que <span>más necesitan</span> ayuda</h1>
-    <p>Lugares, refugios y comunidades que requieren asistencia urgente — <strong>reportado por la comunidad</strong></p>
+  <header class="nec-hero">
+    <div class="nec-hero-bg">
+      <div class="nec-hero-content">
+        <span class="nec-hero-badge">ALERTA</span>
+        <h1>Necesidades <span>Urgentes</span></h1>
+        <p>Lugares, refugios y comunidades que requieren asistencia inmediata — <strong>reportado por la comunidad</strong></p>
+      </div>
+    </div>
   </header>
 
-  <div class="search-filters" style="margin-bottom: 1.5rem;">
-    <div class="search-box">
-      <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="M21 21l-4.35-4.35"></path></svg>
+  <div class="nec-toolbar">
+    <div class="nec-search">
+      <svg class="nec-search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="M21 21l-4.35-4.35"></path></svg>
       <input type="text" id="necSearchInput" placeholder="Buscar por lugar, ciudad o necesidad..." />
     </div>
-    <div class="filter-box">
+    <div class="nec-filter">
       <select id="necEstadoFilter">
         <option value="">Todos los estados</option>
         <optgroup label="🔴 Zonas Afectadas">
@@ -35,13 +39,13 @@ import { ZONAS_AFECTADAS } from "../data/centros";
         </optgroup>
       </select>
     </div>
-    <button id="necRefreshBtn" class="btn btn-secondary" style="flex-shrink: 0; height: 46px; display: inline-flex; align-items: center; gap: 0.35rem;">
+    <button id="necRefreshBtn" class="nec-btn-refresh">
       <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
       Actualizar
     </button>
   </div>
 
-  <div id="necStatus" class="status-badge loading" style="margin-bottom: 1rem;">Cargando necesidades...</div>
+  <div id="necStatus" class="nec-status">Cargando necesidades...</div>
 
   <div id="necesidadesContainer" class="grid-necesidades">
     <div class="no-results">Cargando datos...</div>
@@ -49,8 +53,8 @@ import { ZONAS_AFECTADAS } from "../data/centros";
 
   <EmergenciaCTA />
 
-  <div style="margin-top: 1.25rem; text-align: center;">
-    <a href="/" class="btn btn-secondary" style="display: inline-flex; align-items: center; gap: 0.35rem; text-decoration: none;">&larr; Volver al inicio</a>
+  <div class="nec-footer">
+    <a href="/">&larr; Volver al inicio</a>
   </div>
 </Layout>
 
@@ -87,7 +91,7 @@ import { ZONAS_AFECTADAS } from "../data/centros";
           <div class="necesidad-body">
             <div class="row">
               <span class="row-label">🆘 Necesitan</span>
-              <div class="row-value">${n.que_necesitan}</div>
+              <div class="row-value need-text">${n.que_necesitan}</div>
             </div>
             ${n.direccion ? `<div class="row"><span class="row-label">Dirección</span><div class="row-value">${n.direccion}</div></div>` : ''}
             ${n.contacto ? `<div class="row"><span class="row-label">Contacto</span><div class="row-value">${n.contacto}</div></div>` : ''}
@@ -126,7 +130,7 @@ import { ZONAS_AFECTADAS } from "../data/centros";
   async function loadData() {
     try {
       statusEl.textContent = "Cargando necesidades...";
-      statusEl.className = "status-badge loading";
+      statusEl.className = "nec-status loading";
       if (!supabase) throw new Error("Supabase client not initialized");
 
       const { data, error } = await supabase
@@ -140,18 +144,18 @@ import { ZONAS_AFECTADAS } from "../data/centros";
       if (data && data.length > 0) {
         necesidades = data;
         statusEl.textContent = `${data.length} necesidad${data.length !== 1 ? 'es' : ''} reportada${data.length !== 1 ? 's' : ''}`;
-        statusEl.className = "status-badge live";
+        statusEl.className = "nec-status live";
       } else {
         necesidades = [];
         statusEl.textContent = "Sin necesidades reportadas";
-        statusEl.className = "status-badge offline";
+        statusEl.className = "nec-status offline";
       }
 
       handleFilter();
     } catch (err) {
       console.error("Error cargando necesidades:", err);
       statusEl.textContent = "Error al cargar";
-      statusEl.className = "status-badge offline";
+      statusEl.className = "nec-status offline";
       container.innerHTML = '<div class="no-results">No se pudieron cargar las necesidades. Verifica tu conexión e intenta de nuevo.</div>';
     }
   }
