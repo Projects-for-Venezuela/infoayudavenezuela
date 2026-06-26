@@ -2,6 +2,25 @@
   <img src="./public/img/readme.webp" alt="Centros de Acopio Venezuela" width="100%">
 </p>
 
+<p align="center">
+  <img src="https://img.shields.io/badge/astro-%232C2052.svg?style=for-the-badge&logo=astro&logoColor=white" alt="Astro">
+  <img src="https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E" alt="Javascript">
+  <img src="https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript">
+  <img src="https://img.shields.io/badge/supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white" alt="Supabase">
+  <img src="https://img.shields.io/badge/postgres-%23316192.svg?style=for-the-badge&logo=postgresql&logoColor=white" alt="Postgres">
+  <img src="https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white" alt="CSS3">
+  <img src="https://img.shields.io/badge/vercel-%23000000.svg?style=for-the-badge&logo=vercel&logoColor=white" alt="Vercel">
+  <img src="https://img.shields.io/badge/pnpm-%234a4a4a.svg?style=for-the-badge&logo=pnpm&logoColor=f69220" alt="Vercel">
+</p>
+
+<p align="center">
+  <strong>Encuentra centros de acopio y números de emergencia activos en todo el país.</strong>
+  <br>
+  Carga al instante incluso en conexiones móviles inestables.
+</p>
+
+<br>
+
 # Centros de Acopio Venezuela
 
 El **24 de junio de 2026**, dos sismos de magnitud **7.5 y 7.2** sacudieron la región central de Venezuela, afectando severamente a Caracas y los estados Miranda, La Guaira, Aragua y Carabobo.
@@ -9,16 +28,6 @@ El **24 de junio de 2026**, dos sismos de magnitud **7.5 y 7.2** sacudieron la r
 Esta plataforma **centraliza la información de los centros de acopio** habilitados en todo el país, permitiendo que los ciudadanos encuentren rápidamente dónde llevar donaciones y consulten los números de emergencia activos. Es un proyecto de código abierto impulsado por la comunidad.
 
 ---
-
-## Stack
-
-| Capa | Tecnología |
-|---|---|
-| Framework | [Astro 7](https://astro.build) (SSG) |
-| Base de datos | [Supabase](https://supabase.com) (PostgreSQL) |
-| Estilos | CSS nativo con variables personalizadas |
-| Hosting | Preparado para Vercel |
-| Analítica | @vercel/analytics |
 
 ## Funcionalidades
 
@@ -83,7 +92,7 @@ src/
 pnpm install
 
 # Iniciar servidor de desarrollo
-pnpm run dev
+pnpm dev
 
 # Compilar para producción
 pnpm build
@@ -120,8 +129,10 @@ Toda contribución que ayude a mejorar la respuesta ante emergencias es bienveni
 
 ---
 
-Hecho con ❤️ por la comunidad venezolana — **Venezuela se levanta**
-
-<a href="https://github.com/Nokx1z/infoayudavenezuela/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=Nokx1z/infoayudavenezuela" />
-</a>
+<p align="center">
+  Hecho con ❤️ por la comunidad venezolana — <strong>Venezuela se levanta</strong>
+  <br><br>
+  <a href="https://github.com/Nokx1z/infoayudavenezuela/graphs/contributors">
+    <img src="https://contrib.rocks/image?repo=Nokx1z/infoayudavenezuela" />
+  </a>
+</p>
