@@ -17,7 +17,6 @@ const total = ciudades.reduce((s: number, c: any) => s + c.centros.length, 0);
 ---
 
 <Layout title={display}>
-  <!-- Meta data para lectura desde el script del cliente -->
   <div id="stateMeta" data-state={display} style="display: none;"></div>
 
   <a href="/" class="back-link">
@@ -35,17 +34,15 @@ const total = ciudades.reduce((s: number, c: any) => s + c.centros.length, 0);
     </div>
   </div>
 
-  {total === 0 && (
-    <div class="no-data">
-      <div class="no-data-icon">
-        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-      </div>
-      <p class="no-data-title">Esta zona aún no tiene información</p>
-      <p class="no-data-desc">No hay centros de acopio registrados en {display} por el momento. Si tienes información, comunícate con las autoridades locales.</p>
+  <div id="noDataBlock" class="no-data" style={total > 0 ? "display: none;" : "display: flex;"}>
+    <div class="no-data-icon">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
     </div>
-  )}
+    <p class="no-data-title">Esta zona aún no tiene información</p>
+    <p class="no-data-desc">No hay centros de acopio registrados en {display} por el momento. Si tienes información, comunícate con las autoridades locales.</p>
+  </div>
 
-  <div id="centrosContainer" style={total === 0 ? "display:none" : ""}>
+  <div id="centrosContainer" style={total === 0 ? "display: none;" : ""}>
     {ciudades.map(({ ciudad, centros }) => (
       <section class="city-section">
         <div class="city-head">
@@ -68,10 +65,10 @@ const total = ciudades.reduce((s: number, c: any) => s + c.centros.length, 0);
                 {centro.contacto && <div class="row"><span class="row-label">Contacto</span><div class="row-value">{centro.contacto}</div></div>}
                 {centro.hora && <div class="row"><span class="row-label">Horario</span><div class="row-value">{centro.hora}</div></div>}
                 {centro.acepta?.length > 0 && (
-                  <div class="row"><span class="row-label">Aceptan</span><div class="row-value"><div class="tag-group">{centro.acepta.map((a) => <span class="tag tag-yellow">{a}</span>)}</div></div></div>
+                  <div class="row"><span class="row-label">Aceptan</span><div class="row-value"><div class="tag-group">{centro.acepta.map((a: string) => <span class="tag tag-yellow">{a}</span>)}</div></div></div>
                 )}
                 {centro.necesitan?.length > 0 && (
-                  <div class="row"><span class="row-label">Urgente</span><div class="row-value"><div class="tag-group">{centro.necesitan.map((n) => <span class="tag tag-red">{n}</span>)}</div></div></div>
+                  <div class="row"><span class="row-label">Urgente</span><div class="row-value"><div class="tag-group">{centro.necesitan.map((n: string) => <span class="tag tag-red">{n}</span>)}</div></div></div>
                 )}
                 {centro.zelle && <div class="row"><span class="row-label">Zelle</span><div class="row-value">{centro.zelle}</div></div>}
                 {centro.pago_movil && <div class="row"><span class="row-label">Pago Móvil</span><div class="row-value">{centro.pago_movil}</div></div>}
@@ -91,6 +88,7 @@ const total = ciudades.reduce((s: number, c: any) => s + c.centros.length, 0);
   const decodedState = stateMetaEl?.dataset?.state || '';
   const totalEl = document.getElementById('totalCentrosCount') as HTMLElement;
   const centrosContainer = document.getElementById('centrosContainer') as HTMLElement;
+  const noDataBlock = document.getElementById('noDataBlock') as HTMLElement;
 
   async function loadStateData() {
     try {
@@ -107,7 +105,9 @@ const total = ciudades.reduce((s: number, c: any) => s + c.centros.length, 0);
       if (error) throw error;
 
       if (data && data.length > 0) {
-        // Agrupar centros por ciudad
+        if (noDataBlock) noDataBlock.style.display = "none";
+        if (centrosContainer) centrosContainer.style.display = "block";
+
         const ciudadesMap: Record<string, any[]> = {};
         data.forEach((c: any) => {
           if (!ciudadesMap[c.ciudad]) {
@@ -184,6 +184,10 @@ const total = ciudades.reduce((s: number, c: any) => s + c.centros.length, 0);
         });
 
         centrosContainer.innerHTML = html;
+      } else {
+        if (centrosContainer) centrosContainer.style.display = "none";
+        if (noDataBlock) noDataBlock.style.display = "flex";
+        totalEl.textContent = "0 centros de acopio habilitados";
       }
     } catch (err) {
       console.error("Supabase failed, retaining static fallback:", err);
@@ -192,7 +196,6 @@ const total = ciudades.reduce((s: number, c: any) => s + c.centros.length, 0);
 
   loadStateData();
 </script>
-
 <style is:global>
   .back-link {
     display: inline-flex;
