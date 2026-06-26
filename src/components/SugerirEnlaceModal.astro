@@ -1,0 +1,50 @@
+<dialog id="sugerirEnlaceDialog" class="modal-dialog" aria-labelledby="sugerirEnlaceTitle">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="sugerirEnlaceTitle">Sugerir Sitio de Ayuda</h2>
+      <button id="closeEnlaceDialogBtn" class="close-btn" aria-label="Cerrar modal">&times;</button>
+    </div>
+    <form id="sugerirEnlaceForm" class="modal-form">
+      <p class="form-help">Sugiere un sitio web, portal o recurso de ayuda. Se publicará una vez sea verificado.</p>
+
+      <div class="form-group">
+        <label for="formEnlaceTitulo">Nombre del Sitio / Organización *</label>
+        <input type="text" id="formEnlaceTitulo" placeholder="Ej. Cruz Roja Venezolana o Psicólogos sin Fronteras" required />
+      </div>
+
+      <div class="form-group">
+        <label for="formEnlaceCategoria">Categoría *</label>
+        <select id="formEnlaceCategoria" required>
+          <option value="">Selecciona una categoría</option>
+          <option value="Salud / Asistencia">Salud / Asistencia</option>
+          <option value="Salud Mental">Salud Mental</option>
+          <option value="Donaciones">Donaciones</option>
+          <option value="Oficial">Oficial</option>
+          <option value="Otros">Otros</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="formEnlaceDescripcion">Descripción del Servicio / Ayuda *</label>
+        <textarea id="formEnlaceDescripcion" rows="3" placeholder="Describe brevemente qué ayuda ofrece este sitio..." required></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="formEnlaceUrl">Dirección Web (URL) *</label>
+        <input type="text" id="formEnlaceUrl" placeholder="Ej. https://cruzrojavenezolana.org" required />
+      </div>
+
+      <div class="form-actions">
+        <button type="button" id="cancelEnlaceFormBtn" class="btn btn-secondary">Cancelar</button>
+        <button type="submit" id="submitEnlaceFormBtn" class="btn btn-primary">Enviar Sugerencia</button>
+      </div>
+    </form>
+
+    <div id="enlaceFormSuccessMessage" class="form-success-msg" style="display: none;">
+      <div class="success-icon">✓</div>
+      <h3>¡Sugerencia de Enlace Enviada!</h3>
+      <p>Gracias por registrar este recurso de ayuda. Será publicado tras ser verificado por el equipo de moderación.</p>
+      <button id="enlaceSuccessCloseBtn" class="btn btn-primary">Entendido</button>
+    </div>
+  </div>
+</dialog>
