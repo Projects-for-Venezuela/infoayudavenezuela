@@ -1,3 +1,10 @@
+---
+import "../styles/navbar.css";
+import "../styles/modal.css";
+import SugerirCentroModal from "./SugerirCentroModal.astro";
+import SugerirEnlaceModal from "./SugerirEnlaceModal.astro";
+---
+
 <div class="flag-bar"><span class="y"></span><span class="b"></span><span class="r"></span></div>
 <nav class="navbar">
   <div class="brand-section">
@@ -12,411 +19,13 @@
   </div>
 </nav>
 
-<!-- Modal Dialog para Sugerir Nuevos Centros de Acopio -->
-<dialog id="sugerirDialog" class="modal-dialog" aria-labelledby="sugerirDialogTitle">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h2 id="sugerirDialogTitle">Sugerir Centro de Acopio</h2>
-      <button id="closeDialogBtn" class="close-btn" aria-label="Cerrar modal">&times;</button>
-    </div>
-    <form id="sugerirForm" class="modal-form">
-      <p class="form-help">Ingresa los datos del centro de acopio. Se publicará en vivo una vez sea verificado.</p>
-
-      <div class="form-group">
-        <label for="formEstado">Estado *</label>
-        <select id="formEstado" required>
-          <option value="">Selecciona un estado</option>
-          <option value="Distrito Capital">Distrito Capital</option>
-          <option value="Miranda">Miranda</option>
-          <option value="La Guaira">La Guaira</option>
-          <option value="Aragua">Aragua</option>
-          <option value="Carabobo">Carabobo</option>
-          <option value="Lara">Lara</option>
-          <option value="Sucre">Sucre</option>
-          <option value="Nueva Esparta">Nueva Esparta</option>
-          <option value="Anzoátegui">Anzoátegui</option>
-          <option value="Bolívar">Bolívar</option>
-          <option value="Barinas">Barinas</option>
-          <option value="Monagas">Monagas</option>
-          <option value="Yaracuy">Yaracuy</option>
-          <option value="Zulia">Zulia</option>
-          <option value="Mérida">Mérida</option>
-          <option value="Táchira">Táchira</option>
-          <option value="Trujillo">Trujillo</option>
-          <option value="Falcón">Falcón</option>
-          <option value="Cojedes">Cojedes</option>
-          <option value="Portuguesa">Portuguesa</option>
-          <option value="Guárico">Guárico</option>
-          <option value="Apure">Apure</option>
-          <option value="Delta Amacuro">Delta Amacuro</option>
-          <option value="Amazonas">Amazonas</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label for="formCiudad">Ciudad *</label>
-        <input type="text" id="formCiudad" placeholder="Ej. Barquisimeto, Altamira" required />
-      </div>
-
-      <div class="form-group">
-        <label for="formNombre">Nombre del Centro *</label>
-        <input type="text" id="formNombre" placeholder="Ej. Iglesia La Paz o Gimnasio Fitness" required />
-      </div>
-
-      <div class="form-group">
-        <label for="formDireccion">Dirección Completa</label>
-        <textarea id="formDireccion" rows="2" placeholder="Dirección exacta del centro de acopio..."></textarea>
-      </div>
-
-      <div class="form-row">
-        <div class="form-group">
-          <label for="formContacto">Contacto / Teléfono</label>
-          <input type="text" id="formContacto" placeholder="Ej. 0424-1234567 o @instagram" />
-        </div>
-        <div class="form-group">
-          <label for="formHora">Horario de Atención</label>
-          <input type="text" id="formHora" placeholder="Ej. 8:00 AM a 5:00 PM" />
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label for="formAcepta">¿Qué insumos aceptan? (Separados por comas)</label>
-        <input type="text" id="formAcepta" placeholder="Ej. Agua potable, Alimentos no perecederos, Ropa" />
-      </div>
-
-      <div class="form-group">
-        <label for="formNecesitan">¿Qué insumos necesitan URGENTE? (Separados por comas)</label>
-        <input type="text" id="formNecesitan" placeholder="Ej. Medicinas, Fórmulas infantiles, Mantas" />
-      </div>
-
-      <div class="form-row">
-        <div class="form-group">
-          <label for="formPagoMovil">Pago Móvil (Opcional)</label>
-          <input type="text" id="formPagoMovil" placeholder="Ej. Banesco / V-12345678 / 0414-1234567" />
-        </div>
-        <div class="form-group">
-          <label for="formZelle">Zelle (Opcional)</label>
-          <input type="email" id="formZelle" placeholder="Ej. correo@ejemplo.com" />
-        </div>
-      </div>
-
-      <div class="form-actions">
-        <button type="button" id="cancelFormBtn" class="btn btn-secondary">Cancelar</button>
-        <button type="submit" id="submitFormBtn" class="btn btn-primary">Enviar Sugerencia</button>
-      </div>
-    </form>
-
-    <div id="formSuccessMessage" class="form-success-msg" style="display: none;">
-      <div class="success-icon">✓</div>
-      <h3>¡Sugerencia Enviada!</h3>
-      <p>Muchas gracias por tu valioso aporte para ayudar a los afectados. Los datos han sido registrados de forma segura y se publicarán tan pronto sean verificados por un moderador.</p>
-      <button id="successCloseBtn" class="btn btn-primary">Entendido</button>
-    </div>
-  </div>
-</dialog>
-
-<!-- Modal Dialog para Sugerir Sitios de Ayuda -->
-<dialog id="sugerirEnlaceDialog" class="modal-dialog" aria-labelledby="sugerirEnlaceTitle">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h2 id="sugerirEnlaceTitle">Sugerir Sitio de Ayuda</h2>
-      <button id="closeEnlaceDialogBtn" class="close-btn" aria-label="Cerrar modal">&times;</button>
-    </div>
-    <form id="sugerirEnlaceForm" class="modal-form">
-      <p class="form-help">Sugiere un sitio web, portal o recurso de ayuda. Se publicará una vez sea verificado.</p>
-
-      <div class="form-group">
-        <label for="formEnlaceTitulo">Nombre del Sitio / Organización *</label>
-        <input type="text" id="formEnlaceTitulo" placeholder="Ej. Cruz Roja Venezolana o Psicólogos sin Fronteras" required />
-      </div>
-
-      <div class="form-group">
-        <label for="formEnlaceCategoria">Categoría *</label>
-        <select id="formEnlaceCategoria" required>
-          <option value="">Selecciona una categoría</option>
-          <option value="Salud / Asistencia">Salud / Asistencia</option>
-          <option value="Salud Mental">Salud Mental</option>
-          <option value="Donaciones">Donaciones</option>
-          <option value="Oficial">Oficial</option>
-          <option value="Otros">Otros</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label for="formEnlaceDescripcion">Descripción del Servicio / Ayuda *</label>
-        <textarea id="formEnlaceDescripcion" rows="3" placeholder="Describe brevemente qué ayuda ofrece este sitio..." required></textarea>
-      </div>
-
-      <div class="form-group">
-        <label for="formEnlaceUrl">Dirección Web (URL) *</label>
-        <input type="text" id="formEnlaceUrl" placeholder="Ej. https://cruzrojavenezolana.org" required />
-      </div>
-
-      <div class="form-actions">
-        <button type="button" id="cancelEnlaceFormBtn" class="btn btn-secondary">Cancelar</button>
-        <button type="submit" id="submitEnlaceFormBtn" class="btn btn-primary">Enviar Sugerencia</button>
-      </div>
-    </form>
-
-    <div id="enlaceFormSuccessMessage" class="form-success-msg" style="display: none;">
-      <div class="success-icon">✓</div>
-      <h3>¡Sugerencia de Enlace Enviada!</h3>
-      <p>Gracias por registrar este recurso de ayuda. Será publicado tras ser verificado por el equipo de moderación.</p>
-      <button id="enlaceSuccessCloseBtn" class="btn btn-primary">Entendido</button>
-    </div>
-  </div>
-</dialog>
-
-<style is:global>
-  .flag-bar {
-    display: flex;
-    height: 6px;
-  }
-  .flag-bar span { flex: 1; }
-  .flag-bar .y { background: var(--yellow); }
-  .flag-bar .b { background: var(--blue); }
-  .flag-bar .r { background: var(--red); }
-  nav.navbar {
-    position: sticky; top: 0; z-index: 100;
-    background: var(--blue);
-    color: white;
-    padding: 0.65rem 1.25rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.75rem;
-  }
-  nav.navbar .brand-section {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    flex: 1;
-  }
-  nav.navbar .brand {
-    font-weight: 700;
-    font-size: 0.95rem;
-    letter-spacing: -0.01em;
-    line-height: 1.2;
-  }
-  nav.navbar .brand .sub {
-    font-weight: 400;
-    font-size: 0.7rem;
-    opacity: 0.7;
-    display: block;
-  }
-  nav.navbar .nav-actions {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  nav.navbar .nav-sugerir {
-    background: var(--yellow);
-    color: var(--blue-dark);
-    padding: 0.4rem 0.9rem;
-    border-radius: 8px;
-    font-size: 0.78rem;
-    font-weight: 700;
-    border: none;
-    cursor: pointer;
-    transition: background 0.2s, transform 0.1s;
-  }
-  nav.navbar .nav-sugerir:hover {
-    background: #F5C200;
-    transform: translateY(-1px);
-  }
-  nav.navbar .nav-sugerir:active {
-    transform: translateY(0);
-  }
-  nav.navbar .nav-emergencia {
-    background: var(--red);
-    color: white;
-    padding: 0.4rem 0.9rem;
-    border-radius: 8px;
-    font-size: 0.78rem;
-    font-weight: 600;
-    text-decoration: none;
-    transition: background 0.2s;
-    white-space: nowrap;
-    border: 1px solid rgba(255,255,255,0.15);
-  }
-  nav.navbar .nav-emergencia:hover { background: var(--red-dark); }
-
-  /* --- Estilos del Modal Dialog --- */
-  dialog.modal-dialog {
-    border: none;
-    border-radius: var(--radius);
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-    padding: 0;
-    max-width: 550px;
-    width: 90%;
-    margin: auto;
-    outline: none;
-    background: white;
-    overflow: hidden;
-  }
-  dialog.modal-dialog::backdrop {
-    background: rgba(15, 23, 42, 0.65);
-    backdrop-filter: blur(4px);
-    animation: fadeIn 0.2s ease-out;
-  }
-  .modal-content {
-    padding: 1.5rem;
-    max-height: 90vh;
-    overflow-y: auto;
-  }
-  .modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 0.75rem;
-  }
-  .modal-header h2 {
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: var(--blue-dark);
-  }
-  .close-btn {
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    cursor: pointer;
-    color: var(--muted);
-    line-height: 1;
-    transition: color 0.15s;
-  }
-  .close-btn:hover {
-    color: var(--red);
-  }
-  .modal-form {
-    display: flex;
-    flex-direction: column;
-    gap: 0.85rem;
-  }
-  .form-help {
-    font-size: 0.78rem;
-    color: var(--muted);
-    margin-bottom: 0.25rem;
-  }
-  .form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-  }
-  .form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.75rem;
-  }
-  .form-group label {
-    font-size: 0.78rem;
-    font-weight: 600;
-    color: var(--text);
-  }
-  .form-group input,
-  .form-group select,
-  .form-group textarea {
-    padding: 0.55rem 0.75rem;
-    border: 1.5px solid var(--border);
-    border-radius: 8px;
-    font-family: inherit;
-    font-size: 0.85rem;
-    outline: none;
-    transition: border-color 0.2s;
-    background: white;
-  }
-  .form-group input:focus,
-  .form-group select:focus,
-  .form-group textarea:focus {
-    border-color: var(--blue);
-  }
-  .form-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 0.5rem;
-    margin-top: 1rem;
-    border-top: 1px solid var(--border);
-    padding-top: 1rem;
-  }
-  .btn {
-    padding: 0.55rem 1.25rem;
-    border-radius: 8px;
-    font-size: 0.85rem;
-    font-weight: 600;
-    cursor: pointer;
-    border: 1px solid transparent;
-    transition: all 0.15s;
-  }
-  .btn-secondary {
-    background: white;
-    border-color: var(--border);
-    color: var(--text);
-  }
-  .btn-secondary:hover {
-    background: #F1F5F9;
-    border-color: #CBD5E1;
-  }
-  .btn-primary {
-    background: var(--blue);
-    color: white;
-  }
-  .btn-primary:hover {
-    background: var(--blue-dark);
-  }
-  .form-success-msg {
-    text-align: center;
-    padding: 2rem 1rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.75rem;
-  }
-  .success-icon {
-    width: 48px;
-    height: 48px;
-    background: #DCFCE7;
-    color: #15803D;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
-    font-weight: bold;
-  }
-  .form-success-msg h3 {
-    font-size: 1.2rem;
-    color: #15803D;
-    font-weight: 700;
-  }
-  .form-success-msg p {
-    font-size: 0.86rem;
-    color: var(--muted);
-    line-height: 1.5;
-    margin-bottom: 1rem;
-  }
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-
-  @media (max-width: 640px) {
-    nav.navbar { padding: 0.5rem 0.85rem; }
-    nav.navbar .nav-sugerir {
-      padding: 0.4rem 0.65rem;
-      font-size: 0.72rem;
-    }
-    .form-row {
-      grid-template-columns: 1fr;
-      gap: 0.85rem;
-    }
-  }
-</style>
+<SugerirCentroModal />
+<SugerirEnlaceModal />
 
 <script>
   import { supabase } from "../lib/supabase";
 
-  // --- Lógica de Sugerir Centro de Acopio ---
+  // --- Sugerir Centro de Acopio ---
   const sugerirDialog = document.getElementById('sugerirDialog') as HTMLDialogElement;
   const navSugerirBtn = document.getElementById('navSugerirBtn') as HTMLButtonElement;
   const closeDialogBtn = document.getElementById('closeDialogBtn') as HTMLButtonElement;
@@ -434,22 +43,14 @@
     });
   }
 
-  const closeForm = () => {
-    sugerirDialog.close();
-  };
-
+  const closeForm = () => { sugerirDialog.close(); };
   if (closeDialogBtn) closeDialogBtn.addEventListener('click', closeForm);
   if (cancelFormBtn) cancelFormBtn.addEventListener('click', closeForm);
   if (successCloseBtn) successCloseBtn.addEventListener('click', closeForm);
 
   sugerirDialog.addEventListener('click', (e) => {
-    const dialogDimensions = sugerirDialog.getBoundingClientRect();
-    if (
-      e.clientX < dialogDimensions.left ||
-      e.clientX > dialogDimensions.right ||
-      e.clientY < dialogDimensions.top ||
-      e.clientY > dialogDimensions.bottom
-    ) {
+    const r = sugerirDialog.getBoundingClientRect();
+    if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) {
       sugerirDialog.close();
     }
   });
@@ -457,7 +58,6 @@
   if (sugerirForm) {
     sugerirForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-
       const submitBtn = document.getElementById('submitFormBtn') as HTMLButtonElement;
       const originalText = submitBtn.textContent || '';
       submitBtn.textContent = 'Enviando...';
@@ -469,13 +69,8 @@
       const direccion = (document.getElementById('formDireccion') as HTMLTextAreaElement).value.trim() || null;
       const contacto = (document.getElementById('formContacto') as HTMLInputElement).value.trim() || null;
       const hora = (document.getElementById('formHora') as HTMLInputElement).value.trim() || null;
-
-      const aceptaRaw = (document.getElementById('formAcepta') as HTMLInputElement).value.trim();
-      const acepta = aceptaRaw ? aceptaRaw.split(',').map(i => i.trim()).filter(Boolean) : [];
-
-      const necesitanRaw = (document.getElementById('formNecesitan') as HTMLInputElement).value.trim();
-      const necesitan = necesitanRaw ? necesitanRaw.split(',').map(i => i.trim()).filter(Boolean) : [];
-
+      const acepta = (document.getElementById('formAcepta') as HTMLInputElement).value.trim().split(',').map(i => i.trim()).filter(Boolean);
+      const necesitan = (document.getElementById('formNecesitan') as HTMLInputElement).value.trim().split(',').map(i => i.trim()).filter(Boolean);
       const pago_movil = (document.getElementById('formPagoMovil') as HTMLInputElement).value.trim() || null;
       const zelle = (document.getElementById('formZelle') as HTMLInputElement).value.trim() || null;
 
@@ -487,24 +82,11 @@
       }
 
       try {
-        const { error } = await supabase
-          .from('centros_acopio')
-          .insert({
-            estado,
-            ciudad,
-            nombre,
-            direccion,
-            contacto,
-            hora,
-            acepta,
-            necesitan,
-            pago_movil,
-            zelle,
-            verificado: false
-          });
-
+        const { error } = await supabase.from('centros_acopio').insert({
+          estado, ciudad, nombre, direccion, contacto, hora,
+          acepta, necesitan, pago_movil, zelle, verificado: false
+        });
         if (error) throw error;
-
         sugerirForm.style.display = 'none';
         formSuccessMessage.style.display = 'flex';
       } catch (err) {
@@ -517,7 +99,7 @@
     });
   }
 
-  // --- Lógica de Sugerir Enlaces de Ayuda ---
+  // --- Sugerir Enlaces de Ayuda ---
   const sugerirEnlaceDialog = document.getElementById('sugerirEnlaceDialog') as HTMLDialogElement;
   const closeEnlaceDialogBtn = document.getElementById('closeEnlaceDialogBtn') as HTMLButtonElement;
   const cancelEnlaceFormBtn = document.getElementById('cancelEnlaceFormBtn') as HTMLButtonElement;
@@ -535,22 +117,14 @@
     }
   });
 
-  const closeEnlaceForm = () => {
-    sugerirEnlaceDialog.close();
-  };
-
+  const closeEnlaceForm = () => { sugerirEnlaceDialog.close(); };
   if (closeEnlaceDialogBtn) closeEnlaceDialogBtn.addEventListener('click', closeEnlaceForm);
   if (cancelEnlaceFormBtn) cancelEnlaceFormBtn.addEventListener('click', closeEnlaceForm);
   if (enlaceSuccessCloseBtn) enlaceSuccessCloseBtn.addEventListener('click', closeEnlaceForm);
 
   sugerirEnlaceDialog.addEventListener('click', (e) => {
-    const dialogDimensions = sugerirEnlaceDialog.getBoundingClientRect();
-    if (
-      e.clientX < dialogDimensions.left ||
-      e.clientX > dialogDimensions.right ||
-      e.clientY < dialogDimensions.top ||
-      e.clientY > dialogDimensions.bottom
-    ) {
+    const r = sugerirEnlaceDialog.getBoundingClientRect();
+    if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) {
       sugerirEnlaceDialog.close();
     }
   });
@@ -558,7 +132,6 @@
   if (sugerirEnlaceForm) {
     sugerirEnlaceForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-
       const submitBtn = document.getElementById('submitEnlaceFormBtn') as HTMLButtonElement;
       const originalText = submitBtn.textContent || '';
       submitBtn.textContent = 'Enviando...';
@@ -568,10 +141,7 @@
       const categoria = (document.getElementById('formEnlaceCategoria') as HTMLSelectElement).value;
       const descripcion = (document.getElementById('formEnlaceDescripcion') as HTMLTextAreaElement).value.trim();
       let url = (document.getElementById('formEnlaceUrl') as HTMLInputElement).value.trim();
-
-      if (url && !/^https?:\/\//i.test(url)) {
-        url = 'https://' + url;
-      }
+      if (url && !/^https?:\/\//i.test(url)) url = 'https://' + url;
 
       if (!supabase) {
         alert('El sistema está operando en modo local/sin conexión. No se pueden procesar sugerencias de nuevos enlaces en este momento.');
@@ -581,18 +151,10 @@
       }
 
       try {
-        const { error } = await supabase
-          .from('enlaces_ayuda')
-          .insert({
-            titulo,
-            categoria,
-            descripcion,
-            url,
-            verificado: false
-          });
-
+        const { error } = await supabase.from('enlaces_ayuda').insert({
+          titulo, categoria, descripcion, url, verificado: false
+        });
         if (error) throw error;
-
         sugerirEnlaceForm.style.display = 'none';
         enlaceFormSuccessMessage.style.display = 'flex';
       } catch (err) {

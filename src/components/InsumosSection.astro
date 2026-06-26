@@ -1,0 +1,10 @@
+---
+import { insumos } from "../data/centros";
+---
+
+<div class="section-card" style="margin-top: 1.5rem;">
+  <h3 class="section-title">&#128230; Insumos que se están recibiendo</h3>
+  <div class="tags">
+    {insumos.map((i) => <span class="tag">{i}</span>)}
+  </div>
+</div>

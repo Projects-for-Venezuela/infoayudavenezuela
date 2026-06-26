@@ -1,0 +1,79 @@
+.flag-bar {
+  display: flex;
+  height: 6px;
+}
+.flag-bar span { flex: 1; }
+.flag-bar .y { background: var(--yellow); }
+.flag-bar .b { background: var(--blue); }
+.flag-bar .r { background: var(--red); }
+nav.navbar {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--blue);
+  color: white;
+  padding: 0.65rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+nav.navbar .brand-section {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+}
+nav.navbar .brand {
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+nav.navbar .brand .sub {
+  font-weight: 400;
+  font-size: 0.7rem;
+  opacity: 0.7;
+  display: block;
+}
+nav.navbar .nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+nav.navbar .nav-sugerir {
+  background: var(--yellow);
+  color: var(--blue-dark);
+  padding: 0.4rem 0.9rem;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+nav.navbar .nav-sugerir:hover {
+  background: #F5C200;
+  transform: translateY(-1px);
+}
+nav.navbar .nav-sugerir:active {
+  transform: translateY(0);
+}
+nav.navbar .nav-emergencia {
+  background: var(--red);
+  color: white;
+  padding: 0.4rem 0.9rem;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s;
+  white-space: nowrap;
+  border: 1px solid rgba(255,255,255,0.15);
+}
+nav.navbar .nav-emergencia:hover { background: var(--red-dark); }
+@media (max-width: 640px) {
+  nav.navbar { padding: 0.5rem 0.85rem; }
+  nav.navbar .nav-sugerir {
+    padding: 0.4rem 0.65rem;
+    font-size: 0.72rem;
+  }
+}
