@@ -145,6 +145,7 @@ const fallbackEnlaces = [
         </div>
       ))}
     </div>
+    <button id="btnVerMasEnlaces" class="btn-ver-mas" style="display: none;">Ver más &darr;</button>
   </div>
 
   <a href="/emergencia" class="cta-emergencia">
@@ -465,6 +466,7 @@ const fallbackEnlaces = [
 
   function renderEnlaces() {
     if (!enlacesGrid) return;
+    const total = enlaces.length;
     enlacesGrid.innerHTML = enlaces.map((e: any) => `
       <div class="enlace-card">
         <div class="enlace-header">
@@ -477,6 +479,44 @@ const fallbackEnlaces = [
         </a>
       </div>
     `).join("");
+
+    const btnVerMas = document.getElementById('btnVerMasEnlaces') as HTMLButtonElement;
+    if (total <= 4) {
+      btnVerMas.style.display = 'none';
+      return;
+    }
+
+    // Calcular cuántas tarjetas entran en 2 filas según el ancho real del grid
+    void enlacesGrid.offsetWidth;
+    const cols = getComputedStyle(enlacesGrid).gridTemplateColumns.split(' ').length;
+    const maxVisible = cols * 2;
+
+    const cards = enlacesGrid.querySelectorAll('.enlace-card');
+    cards.forEach((card, i) => {
+      if (i >= maxVisible) card.classList.add('hidden');
+    });
+
+    enlacesGrid.dataset.maxVisible = String(maxVisible);
+    btnVerMas.style.display = '';
+    btnVerMas.textContent = 'Ver más ↓';
+  }
+
+  const btnVerMas = document.getElementById('btnVerMasEnlaces') as HTMLButtonElement;
+  if (btnVerMas) {
+    btnVerMas.addEventListener('click', () => {
+      const hiddenCards = enlacesGrid.querySelectorAll('.enlace-card.hidden');
+      if (hiddenCards.length > 0) {
+        hiddenCards.forEach(c => c.classList.remove('hidden'));
+        btnVerMas.textContent = 'Ver menos ↑';
+      } else {
+        const maxVisible = parseInt(enlacesGrid.dataset.maxVisible || '4');
+        const cards = enlacesGrid.querySelectorAll('.enlace-card');
+        cards.forEach((card, i) => {
+          if (i >= maxVisible) card.classList.add('hidden');
+        });
+        btnVerMas.textContent = 'Ver más ↓';
+      }
+    });
   }
 
   searchInput.addEventListener('input', handleFilter);
@@ -895,6 +935,30 @@ const fallbackEnlaces = [
   .enlace-btn:hover {
     background: var(--blue);
     color: white;
+  }
+
+  .enlace-card.hidden {
+    display: none;
+  }
+  .btn-ver-mas {
+    display: block;
+    width: 100%;
+    margin-top: 0.75rem;
+    padding: 0.5rem;
+    background: white;
+    border: 1.5px dashed var(--border);
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--blue);
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+  .btn-ver-mas:hover {
+    background: #F8F9FB;
+    border-color: var(--blue);
+    color: var(--blue-dark);
   }
 
   /* --- Estilo del Botón de Sugerir Enlaces --- */
