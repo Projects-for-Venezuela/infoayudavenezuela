@@ -1,49 +1,9 @@
+---
+import "../styles/hero.css";
+---
+
 <header class="hero">
   <div class="stars">&#9733; &#9733; &#9733; &#9733; &#9733; &#9733; &#9733; &#9733;</div>
   <h1>Centros de <span>Acopio</span> Venezuela</h1>
   <p>Ayuda a los afectados por el sismo del <strong>24 de junio de 2026</strong></p>
 </header>
-
-<style is:global>
-  header.hero {
-    background: linear-gradient(135deg, var(--blue) 0%, var(--blue-dark) 60%, #001030 100%);
-    color: white;
-    padding: 2.5rem 1.5rem 3rem;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-  header.hero .stars {
-    position: absolute;
-    top: 1.5rem;
-    right: 1.5rem;
-    font-size: 0.65rem;
-    letter-spacing: 0.15em;
-    color: rgba(255,255,255,0.08);
-    user-select: none;
-  }
-  header.hero h1 {
-    position: relative;
-    font-size: 2rem;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    line-height: 1.15;
-    margin-bottom: 0.5rem;
-  }
-  header.hero h1 span { color: var(--yellow); }
-  header.hero p {
-    position: relative;
-    font-size: 0.92rem;
-    opacity: 0.75;
-    max-width: 460px;
-    margin: 0 auto;
-    line-height: 1.5;
-  }
-  header.hero p strong { opacity: 1; color: var(--yellow); font-weight: 600; }
-
-  @media (max-width: 640px) {
-    header.hero { padding: 1.5rem 1rem 2.25rem; }
-    header.hero h1 { font-size: 1.5rem; }
-    header.hero .stars { display: none; }
-  }
-</style>

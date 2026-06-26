@@ -1,0 +1,24 @@
+---
+export interface Props {
+  totalCentros: number;
+  totalEstados: number;
+  totalCiudades: number;
+}
+
+const { totalCentros, totalEstados, totalCiudades } = Astro.props;
+---
+
+<div class="stats-row">
+  <div class="stat">
+    <span class="stat-num" id="statCentros">{totalCentros}</span>
+    <span class="stat-lbl">Centros de Acopio</span>
+  </div>
+  <div class="stat">
+    <span class="stat-num" id="statEstados">{totalEstados}</span>
+    <span class="stat-lbl">Estados</span>
+  </div>
+  <div class="stat">
+    <span class="stat-num" id="statCiudades">{totalCiudades}</span>
+    <span class="stat-lbl">Ciudades</span>
+  </div>
+</div>

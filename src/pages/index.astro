@@ -1,9 +1,14 @@
 ---
+import "../styles/index.css";
 import Layout from "../layouts/Layout.astro";
 import EnlacesSection from "../components/EnlacesSection.astro";
-import { estados, insumos, flagUrl, ZONAS_AFECTADAS, sortEstados, resolveEstado } from "../data/centros";
+import AlertBox from "../components/AlertBox.astro";
+import StatsRow from "../components/StatsRow.astro";
+import SearchFilters from "../components/SearchFilters.astro";
+import InsumosSection from "../components/InsumosSection.astro";
+import EmergenciaCTA from "../components/EmergenciaCTA.astro";
+import { estados, flagUrl, ZONAS_AFECTADAS, sortEstados, resolveEstado } from "../data/centros";
 
-// Aplanar lista estática de centros para el fallback offline
 const fallbackCentros = estados.flatMap((e: any) => 
   e.ciudades.flatMap((c: any) => 
     c.centros.map((cnt: any) => ({
@@ -14,14 +19,16 @@ const fallbackCentros = estados.flatMap((e: any) =>
   )
 );
 
-// Ordenar estados inicialmente por zonas afectadas, excluyendo alias
 const estadosOrdenados = [...estados].filter(e => resolveEstado(e.estado) === e.estado).sort(sortEstados);
 
+<<<<<<< HEAD
 // Separar nacionales de internacional para la vista estática
 const estadosNacionales = estadosOrdenados.filter(e => e.estado !== 'Internacional');
 const estadoInternacional = estadosOrdenados.find(e => e.estado === 'Internacional');
 
 // Estadísticas estáticas iniciales
+=======
+>>>>>>> 59d8d9021d14581815182e3120aa11deb9f3a0b2
 const totalCentros = fallbackCentros.length;
 const totalEstados = estados.length;
 const totalCiudades = new Set(fallbackCentros.map((c: any) => c.ciudad)).size;
@@ -54,14 +61,9 @@ const fallbackEnlaces = [
        data-estados={JSON.stringify(estadosOrdenados)}
        style="display: none;"></div>
 
-  <div class="alert-box">
-    <div class="alert-icon">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
-    </div>
-    <span style="flex: 1;"><strong>Sismo 24 de junio de 2026</strong> &mdash; Todos los centros están operativos</span>
-    <span id="dbStatus" class="status-badge loading">Conectando...</span>
-  </div>
+  <AlertBox />
 
+<<<<<<< HEAD
   <div class="stats-row">
     <div class="stat">
       <span class="stat-num" id="statCentros">{totalCentros}</span>
@@ -88,6 +90,11 @@ const fallbackEnlaces = [
       </select>
     </div>
   </div>
+=======
+  <StatsRow {totalCentros} {totalEstados} {totalCiudades} />
+
+  <SearchFilters />
+>>>>>>> 59d8d9021d14581815182e3120aa11deb9f3a0b2
 
   <div class="section-header">
     <h2 id="gridTitle">Estados con centros de acopio</h2>
@@ -101,7 +108,8 @@ const fallbackEnlaces = [
       const isAfectado = ZONAS_AFECTADAS.includes(estado);
       const slugName = estado.replace(/ \/ /g, "--").replace(/ /g, "_");
       return (
-        <a href={`/estado/${slugName}`} class={`card state-card ${isAfectado ? 'card-prioritized' : ''}`}         data-name={estado.toLowerCase() + (estado === "La Guaira" ? " vargas" : "") + (estado === "Distrito Capital" ? " caracas" : "")}>
+        <a href={`/estado/${slugName}`} class={`card state-card ${isAfectado ? 'card-prioritized' : ''}`}
+           data-name={estado.toLowerCase() + (estado === "La Guaira" ? " vargas" : "") + (estado === "Distrito Capital" ? " caracas" : "")}>
           <div class="card-img">
             <img src={flagUrl(estado)} alt={`Bandera de ${estado}`} loading="lazy" onerror="this.style.display='none';" />
             {isAfectado && <span class="badge-prioritized">🔴 Zona Afectada</span>}
@@ -138,25 +146,11 @@ const fallbackEnlaces = [
     )}
   </div>
 
-  <div class="section-card" style="margin-top: 1.5rem;">
-    <h3 class="section-title">&#128230; Insumos que se están recibiendo</h3>
-    <div class="tags">
-      {insumos.map((i) => <span class="tag">{i}</span>)}
-    </div>
-  </div>
+  <InsumosSection />
 
   <EnlacesSection enlaces={fallbackEnlaces} />
 
-  <a href="/emergencia" class="cta-emergencia">
-    <span class="cta-icon">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
-    </span>
-    <div class="cta-body">
-      <strong>Números de emergencia</strong>
-      <small>Bomberos, Protección Civil, Rescate, Policía</small>
-    </div>
-    <span class="cta-arrow">&rarr;</span>
-  </a>
+  <EmergenciaCTA />
 </Layout>
 
 <script>
@@ -176,11 +170,11 @@ const fallbackEnlaces = [
   const gridTitle = document.getElementById('gridTitle') as HTMLElement;
   const resultsCount = document.getElementById('resultsCount') as HTMLElement;
   const dbStatus = document.getElementById('dbStatus') as HTMLElement;
-
   const statCentros = document.getElementById('statCentros') as HTMLElement;
   const statEstados = document.getElementById('statEstados') as HTMLElement;
   const statCiudades = document.getElementById('statCiudades') as HTMLElement;
 
+<<<<<<< HEAD
   // Utilidad para extraer código de país de la ciudad internacional
   function getCountryCode(locationStr: string) {
     const loc = locationStr.toLowerCase();
@@ -205,6 +199,11 @@ const fallbackEnlaces = [
     const citiesSet = new Set(centros.map((c: any) => c.ciudad));
     const uniqueCities = Array.from(citiesSet) as string[];
 
+=======
+  function initCitySelect() {
+    const citiesSet = new Set(centros.map((c: any) => c.ciudad));
+    const uniqueCities = Array.from(citiesSet);
+>>>>>>> 59d8d9021d14581815182e3120aa11deb9f3a0b2
     const affectedCities: string[] = [];
     const internationalCities: string[] = [];
     const otherCities: string[] = [];
@@ -265,7 +264,6 @@ const fallbackEnlaces = [
     }
   }
 
-  // Renderizar la grilla de estados (vista por defecto)
   function renderEstados() {
     gridTitle.textContent = "Estados con centros de acopio";
     resultsCount.style.display = "none";
@@ -273,19 +271,14 @@ const fallbackEnlaces = [
 
     const agrupado = centros.reduce((acc: any[], item: any) => {
       let e = acc.find((x: any) => x.estado === item.estado);
-      if (!e) {
-        e = { estado: item.estado, ciudades: [] };
-        acc.push(e);
-      }
+      if (!e) { e = { estado: item.estado, ciudades: [] }; acc.push(e); }
       let c = e.ciudades.find((x: any) => x.ciudad === item.ciudad);
-      if (!c) {
-        c = { ciudad: item.ciudad, centrosCount: 0 };
-        e.ciudades.push(c);
-      }
+      if (!c) { c = { ciudad: item.ciudad, centrosCount: 0 }; e.ciudades.push(c); }
       c.centrosCount++;
       return acc;
     }, []);
 
+<<<<<<< HEAD
     // Separar Internacional de Nacionales
     const nacionales = agrupado.filter((e: any) => e.estado !== 'Internacional');
     const internacional = agrupado.find((e: any) => e.estado === 'Internacional');
@@ -295,6 +288,11 @@ const fallbackEnlaces = [
       const bAfectado = ZONAS_AFECTADAS.includes(b.estado);
       if (aAfectado && !bAfectado) return -1;
       if (!aAfectado && bAfectado) return 1;
+=======
+    agrupado.sort((a: any, b: any) => {
+      const aA = ZONAS_AFECTADAS.includes(a.estado), bA = ZONAS_AFECTADAS.includes(b.estado);
+      if (aA && !bA) return -1; if (!aA && bA) return 1;
+>>>>>>> 59d8d9021d14581815182e3120aa11deb9f3a0b2
       return a.estado.localeCompare(b.estado);
     });
 
@@ -308,22 +306,16 @@ const fallbackEnlaces = [
       const citiesList = e.ciudades.map((c: any) => c.ciudad).join(", ");
       const slugName = e.estado.replace(/ \/ /g, "--").replace(/ /g, "_");
       const isAfectado = ZONAS_AFECTADAS.includes(e.estado);
-      
-      const flagMap: Record<string, string> = { "Distrito Capital": "Distrito_Capital" };
-      const sanitizedName = flagMap[e.estado] || e.estado.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ /g, "_");
-      const flagUrl = `/flags/${sanitizedName}.svg`;
+      const sanitizedName = ({ "Distrito Capital": "Distrito_Capital" } as Record<string, string>)[e.estado] || e.estado.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ /g, "_");
 
       return `
         <a href="/estado/${slugName}" class="card state-card ${isAfectado ? 'card-prioritized' : ''}">
           <div class="card-img">
-            <img src="${flagUrl}" alt="Bandera de ${e.estado}" loading="lazy" onerror="this.style.display='none';" />
+            <img src="/flags/${sanitizedName}.svg" alt="Bandera de ${e.estado}" loading="lazy" onerror="this.style.display='none';" />
             ${isAfectado ? '<span class="badge-prioritized">🔴 Zona Afectada</span>' : ''}
           </div>
           <div class="card-body">
-            <div class="card-top">
-              <h3>${e.estado}</h3>
-              <span class="card-badge">${count}</span>
-            </div>
+            <div class="card-top"><h3>${e.estado}</h3><span class="card-badge">${count}</span></div>
             <p class="card-cities">${citiesList}</p>
           </div>
         </a>
@@ -355,7 +347,6 @@ const fallbackEnlaces = [
     mainGrid.innerHTML = html;
   }
 
-  // Renderizar la grilla de centros individuales (vista de búsqueda/filtro)
   function renderCentros(filtered: any[]) {
     gridTitle.textContent = "Centros de acopio encontrados";
     resultsCount.textContent = `${filtered.length} resultado${filtered.length !== 1 ? 's' : ''}`;
@@ -369,6 +360,7 @@ const fallbackEnlaces = [
 
     mainGrid.innerHTML = filtered.map((c: any) => {
       const isAfectado = ZONAS_AFECTADAS.includes(c.estado);
+<<<<<<< HEAD
       const isInternacional = c.estado === 'Internacional';
       
       let aceptaHtml = '';
@@ -398,6 +390,14 @@ const fallbackEnlaces = [
           </div>
         `;
       }
+=======
+      const aceptaHtml = c.acepta?.length
+        ? `<div class="row"><span class="row-label">Aceptan</span><div class="row-value"><div class="tag-group">${c.acepta.map((a: string) => `<span class="tag tag-yellow">${a}</span>`).join("")}</div></div></div>`
+        : '';
+      const necesitanHtml = c.necesitan?.length
+        ? `<div class="row"><span class="row-label">Urgente</span><div class="row-value"><div class="tag-group">${c.necesitan.map((n: string) => `<span class="tag tag-red">${n}</span>`).join("")}</div></div></div>`
+        : '';
+>>>>>>> 59d8d9021d14581815182e3120aa11deb9f3a0b2
 
       // Inyección automática de la bandera internacional vía FlagCDN
       let flagHtml = '';
@@ -421,18 +421,21 @@ const fallbackEnlaces = [
                 }
               </svg>
             </div>
+<<<<<<< HEAD
             <div class="card-title-area">
               <h3>${c.nombre}</h3>
               <span class="card-loc-meta">${flagHtml}${isInternacional ? c.ciudad : `${c.ciudad}, ${c.estado}`}</span>
             </div>
+=======
+            <div class="card-title-area"><h3>${c.nombre}</h3><span class="card-loc-meta">${c.ciudad}, ${c.estado}</span></div>
+>>>>>>> 59d8d9021d14581815182e3120aa11deb9f3a0b2
             ${isAfectado ? '<span class="badge-prioritized-mini">🔴 Zona Afectada</span>' : ''}
           </div>
           <div class="card-body-centro">
             ${c.direccion ? `<div class="row"><span class="row-label">Dirección</span><div class="row-value">${c.direccion}</div></div>` : ''}
             ${c.contacto ? `<div class="row"><span class="row-label">Contacto</span><div class="row-value">${c.contacto}</div></div>` : ''}
             ${c.hora ? `<div class="row"><span class="row-label">Horario</span><div class="row-value">${c.hora}</div></div>` : ''}
-            ${aceptaHtml}
-            ${necesitanHtml}
+            ${aceptaHtml}${necesitanHtml}
             ${c.zelle ? `<div class="row"><span class="row-label">Zelle</span><div class="row-value">${c.zelle}</div></div>` : ''}
             ${c.pago_movil ? `<div class="row"><span class="row-label">Pago Móvil</span><div class="row-value">${c.pago_movil}</div></div>` : ''}
           </div>
@@ -441,29 +444,19 @@ const fallbackEnlaces = [
     }).join("");
   }
 
-  // Filtrar y actualizar vista
   function handleFilter() {
     const q = searchInput.value.toLowerCase().trim();
     const city = citySelect.value;
-
-    if (!q && !city) {
-      renderEstados();
-      return;
-    }
+    if (!q && !city) { renderEstados(); return; }
 
     let filtered = centros.filter((c: any) => {
       if (city && c.ciudad !== city) return false;
-
       if (q) {
-        const matchName = c.nombre.toLowerCase().includes(q);
-        const matchCity = c.ciudad.toLowerCase().includes(q);
-        const matchState = c.estado.toLowerCase().includes(q);
-        const matchDir = c.direccion ? c.direccion.toLowerCase().includes(q) : false;
-        const matchAcepta = c.acepta ? c.acepta.some((a: string) => a.toLowerCase().includes(q)) : false;
-        const matchNecesitan = c.necesitan ? c.necesitan.some((n: string) => n.toLowerCase().includes(q)) : false;
-        return matchName || matchCity || matchState || matchDir || matchAcepta || matchNecesitan;
+        return c.nombre.toLowerCase().includes(q) || c.ciudad.toLowerCase().includes(q)
+          || c.estado.toLowerCase().includes(q) || (c.direccion || '').toLowerCase().includes(q)
+          || (c.acepta || []).some((a: string) => a.toLowerCase().includes(q))
+          || (c.necesitan || []).some((n: string) => n.toLowerCase().includes(q));
       }
-
       return true;
     });
 
@@ -471,32 +464,19 @@ const fallbackEnlaces = [
     renderCentros(filtered);
   }
 
-  // Actualizar estadísticas globales
   function updateStats() {
     statCentros.textContent = centros.length.toString();
-    
-    const uniqueStates = new Set(centros.map((c: any) => c.estado)).size;
-    statEstados.textContent = uniqueStates.toString();
-
-    const uniqueCities = new Set(centros.map((c: any) => c.ciudad)).size;
-    statCiudades.textContent = uniqueCities.toString();
+    statEstados.textContent = new Set(centros.map((c: any) => c.estado)).size.toString();
+    statCiudades.textContent = new Set(centros.map((c: any) => c.ciudad)).size.toString();
   }
 
-  // Conectar a Supabase
   async function loadData() {
     try {
       dbStatus.textContent = "Conectando...";
       dbStatus.className = "status-badge loading";
-      
-      if (!supabase) {
-        throw new Error("Supabase client not initialized");
-      }
-      
-      const { data, error } = await supabase
-        .from('centros_acopio')
-        .select('*')
-        .eq('verificado', true);
+      if (!supabase) throw new Error("Supabase client not initialized");
 
+      const { data, error } = await supabase.from('centros_acopio').select('*').eq('verificado', true);
       if (error) throw error;
 
       if (data && data.length > 0) {
@@ -514,7 +494,6 @@ const fallbackEnlaces = [
       console.error("Supabase connection failed, using offline fallback:", err);
       dbStatus.textContent = "Offline (Local)";
       dbStatus.className = "status-badge offline";
-      
       initCitySelect();
       handleFilter();
     }
@@ -523,12 +502,11 @@ const fallbackEnlaces = [
   searchInput.addEventListener('input', handleFilter);
   citySelect.addEventListener('change', handleFilter);
 
-  // Inicializar UI inmediatamente con datos locales de fallback
   initCitySelect();
   handleFilter();
-
   loadData();
 </script>
+<<<<<<< HEAD
 
 <style is:global>
   /* --- Estilos Originales --- */
@@ -878,3 +856,5 @@ const fallbackEnlaces = [
     }
   }
 </style>
+=======
+>>>>>>> 59d8d9021d14581815182e3120aa11deb9f3a0b2
