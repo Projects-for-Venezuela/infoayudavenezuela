@@ -34,7 +34,12 @@ header.hero p {
 }
 header.hero p strong { opacity: 1; color: var(--yellow); font-weight: 600; }
 @media (max-width: 640px) {
-  header.hero { padding: 1.5rem 1rem 2.25rem; }
-  header.hero h1 { font-size: 1.5rem; }
-  header.hero .stars { display: none; }
+  header.hero { padding: 1.25rem 1rem 2rem; }
+  header.hero h1 { font-size: 1.35rem; }
+  header.hero p { font-size: 0.82rem; }
+  header.hero .stars {
+    top: 0.75rem;
+    right: 0.75rem;
+    font-size: 0.55rem;
+  }
 }
