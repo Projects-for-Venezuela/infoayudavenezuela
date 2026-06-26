@@ -7,6 +7,9 @@
     "build": "astro build",
     "preview": "astro preview"
   },
+  "pnpm": {
+    "onlyBuiltDependencies": ["esbuild", "sharp"]
+  },
   "dependencies": {
     "@astrojs/vercel": "^11.0.0",
     "@supabase/supabase-js": "^2.108.2",
