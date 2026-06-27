@@ -64,75 +64,53 @@
   list-style: none;
   padding: 0;
   margin: 0;
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
 }
 
 .agradecimiento-item {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  padding: 1rem 1.25rem;
   background: var(--card);
-  border-radius: 10px;
-  border: 1px solid var(--border);
-  box-shadow: 0 2px 8px rgba(0,36,125,0.03);
-  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
-  position: relative;
-  overflow: hidden;
+  border-radius: 9999px;
+  border: 1.5px solid var(--border);
+  transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
 }
 
-.agradecimiento-item::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 4px;
-  background: var(--blue);
-  opacity: 0;
-  transition: opacity 0.2s;
+.agradecimiento-link, .agradecimiento-text {
+  padding: 0.5rem 1.1rem;
+  font-weight: 600;
+  color: var(--text);
+  font-size: 0.95rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.agradecimiento-link svg {
+  color: var(--cat-color);
+  transition: transform 0.2s;
 }
 
 @media (hover: hover) and (pointer: fine) {
   .agradecimiento-item:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0,36,125,0.08);
-    border-color: #d1d5db;
+    border-color: var(--cat-color);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.06);
   }
-  .agradecimiento-item:hover::before {
-    opacity: 1;
+  
+  .agradecimiento-item:hover .agradecimiento-link,
+  .agradecimiento-item:hover .agradecimiento-text {
+    color: var(--cat-color);
   }
-}
 
-.agradecimiento-link {
-  color: var(--blue);
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  font-weight: 600;
-  font-size: 1.05rem;
-  width: 100%;
-}
-
-.agradecimiento-link svg {
-  margin-left: auto;
-  opacity: 0.5;
-  transition: transform 0.2s, opacity 0.2s;
-}
-
-.agradecimiento-link:hover svg {
-  opacity: 1;
-  transform: translateX(2px) translateY(-2px);
-}
-
-.agradecimiento-text {
-  font-weight: 600;
-  color: var(--text);
-  font-size: 1.05rem;
-  display: flex;
-  align-items: center;
-  width: 100%;
+  .agradecimiento-item:hover .agradecimiento-link svg {
+    transform: translateX(2px) translateY(-2px);
+  }
 }
 
 @media (max-width: 640px) {
