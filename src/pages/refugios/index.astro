@@ -150,11 +150,16 @@ const estadosNacionales = estadosOrdenados.filter(e => e.estado !== 'Internacion
       return acc;
     }, []);
 
+    let estadosAyudaMap = new Map<string, string>(); // estado -> nivel_ayuda
+    (window as any).estadosAyudaMap = estadosAyudaMap; // Store globally for access across functions
+
     const nacionales = agrupado.filter((e: any) => e.estado !== 'Internacional');
 
     nacionales.sort((a: any, b: any) => {
-      const aAfectado = ZONAS_AFECTADAS.includes(a.estado);
-      const bAfectado = ZONAS_AFECTADAS.includes(b.estado);
+      const dbStatusA = (window as any).estadosAyudaMap?.get(a.estado);
+      const dbStatusB = (window as any).estadosAyudaMap?.get(b.estado);
+      const aAfectado = dbStatusA === 'critico' || (!dbStatusA && ZONAS_AFECTADAS.includes(a.estado));
+      const bAfectado = dbStatusB === 'critico' || (!dbStatusB && ZONAS_AFECTADAS.includes(b.estado));
       if (aAfectado && !bAfectado) return -1;
       if (!aAfectado && bAfectado) return 1;
       return a.estado.localeCompare(b.estado);
@@ -168,14 +173,20 @@ const estadosNacionales = estadosOrdenados.filter(e => e.estado !== 'Internacion
     let html = nacionales.map((e: any) => {
       const count = e.ciudades.reduce((sum: number, c: any) => sum + c.refugiosCount, 0);
       const citiesList = e.ciudades.map((c: any) => c.ciudad).join(", ");
-      const isAfectado = ZONAS_AFECTADAS.includes(e.estado);
+      
+      const dbStatus = (window as any).estadosAyudaMap?.get(e.estado);
+      const isAfectadoLegacy = ZONAS_AFECTADAS.includes(e.estado);
+      const status = dbStatus || (isAfectadoLegacy ? 'critico' : null);
+      const isAfectado = status === 'critico';
+      
       const sanitizedName = ({ "Distrito Capital": "Distrito_Capital" } as Record<string, string>)[e.estado] || e.estado.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ /g, "_");
 
       return `
         <div class="card state-card ${isAfectado ? 'card-prioritized' : ''}" style="cursor: default;">
           <div class="card-img">
             <img src="/flags/${sanitizedName}.svg" alt="Bandera de ${e.estado}" loading="lazy" onerror="this.style.display='none';" />
-            ${isAfectado ? '<span class="badge-prioritized">🔴 Zona Afectada</span>' : ''}
+            ${status === 'critico' ? '<span class="badge-prioritized" style="background: var(--red); color: white;">🚨 Zona Crítica</span>' : ''}
+            ${status === 'en_camino' ? '<span class="badge-prioritized" style="background: var(--yellow); color: var(--blue-dark);">🚚 Ayuda en camino</span>' : ''}
           </div>
           <div class="card-body">
             <div class="card-top"><h3>${e.estado}</h3><span class="card-badge">${count}</span></div>
@@ -200,7 +211,9 @@ const estadosNacionales = estadosOrdenados.filter(e => e.estado !== 'Internacion
     }
 
     mainGrid.innerHTML = filtered.map((c: any) => {
-      const isAfectado = ZONAS_AFECTADAS.includes(c.estado);
+      const dbStatus = (window as any).estadosAyudaMap?.get(c.estado);
+      const status = dbStatus || (ZONAS_AFECTADAS.includes(c.estado) ? 'critico' : null);
+      const isAfectado = status === 'critico';
       
       const aceptaHtml = c.acepta?.length
         ? `<div class="row"><span class="row-label">Aceptan</span><div class="row-value"><div class="tag-group">${c.acepta.map((a: string) => `<span class="tag tag-yellow">${a}</span>`).join("")}</div></div></div>`
@@ -222,7 +235,8 @@ const estadosNacionales = estadosOrdenados.filter(e => e.estado !== 'Internacion
               <span class="card-loc-meta">${c.ciudad}, ${c.estado}</span>
             </div>
             <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
-              ${isAfectado ? '<span class="badge-prioritized-mini">🔴 Zona Afectada</span>' : ''}
+              ${status === 'critico' ? '<span class="badge-prioritized-mini" style="background: var(--red); color: white;">🚨 Crítico</span>' : ''}
+              ${status === 'en_camino' ? '<span class="badge-prioritized-mini" style="background: var(--yellow); color: var(--blue-dark);">🚚 En camino</span>' : ''}
               ${c.tipo === 'privado' ? '<span class="badge-prioritized-mini" style="background-color: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe;">🏠 Casa Particular</span>' : ''}
             </div>
           </div>
@@ -279,9 +293,23 @@ const estadosNacionales = estadosOrdenados.filter(e => e.estado !== 'Internacion
       if (error) throw error;
 
       if (data) {
+        const { data: statusData, error: statusError } = await supabase
+          .from('estados_ayuda')
+          .select('*');
+          
+        if (!statusError && statusData) {
+          const map = new Map<string, string>();
+          statusData.forEach(s => map.set(s.estado, s.nivel_ayuda));
+          (window as any).estadosAyudaMap = map;
+        } else {
+          (window as any).estadosAyudaMap = new Map();
+        }
+
         refugios = data.sort((a, b) => {
-          const aAfectado = ZONAS_AFECTADAS.includes(a.estado);
-          const bAfectado = ZONAS_AFECTADAS.includes(b.estado);
+          const dbStatusA = (window as any).estadosAyudaMap?.get(a.estado);
+          const dbStatusB = (window as any).estadosAyudaMap?.get(b.estado);
+          const aAfectado = dbStatusA === 'critico' || (!dbStatusA && ZONAS_AFECTADAS.includes(a.estado));
+          const bAfectado = dbStatusB === 'critico' || (!dbStatusB && ZONAS_AFECTADAS.includes(b.estado));
           if (aAfectado && !bAfectado) return -1;
           if (!aAfectado && bAfectado) return 1;
           return a.estado.localeCompare(b.estado);
