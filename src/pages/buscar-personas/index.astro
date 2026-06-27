@@ -27,9 +27,9 @@ import EmergenciaCTA from "../../components/EmergenciaCTA.astro";
   </div>
 
   <div class="grid" id="mainGrid">
-    <div class="no-results" style="grid-column: 1 / -1; padding: 3rem 1rem; text-align: center; color: var(--muted);">
+    <div class="no-results" style="grid-column: 1 / -1; padding: 3rem 1rem; text-align: center; color: var(--muted); display: flex; flex-direction: column; align-items: center; justify-content: center;">
       <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto 1rem; color: #cbd5e1;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-      Escribe un nombre o cédula en el buscador de arriba para comenzar.
+      <span>Escribe un nombre o cédula en el buscador de arriba para comenzar.</span>
     </div>
   </div>
 
@@ -93,9 +93,9 @@ import EmergenciaCTA from "../../components/EmergenciaCTA.astro";
     const q = searchPersonInput.value.trim();
     if (!q || q.length < 3) {
       mainGrid.innerHTML = `
-        <div class="no-results" style="grid-column: 1 / -1; padding: 3rem 1rem; text-align: center; color: var(--muted);">
+        <div class="no-results" style="grid-column: 1 / -1; padding: 3rem 1rem; text-align: center; color: var(--muted); display: flex; flex-direction: column; align-items: center; justify-content: center;">
           <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto 1rem; color: #cbd5e1;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-          Ingresa al menos 3 caracteres para buscar.
+          <span>Ingresa al menos 3 caracteres para buscar.</span>
         </div>
       `;
       gridTitle.textContent = "Resultados de la búsqueda";
