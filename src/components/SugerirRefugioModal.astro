@@ -53,6 +53,14 @@
       </div>
 
       <div class="form-group">
+        <label for="formRefugioTipo">Tipo de Ayuda / Refugio *</label>
+        <select id="formRefugioTipo" required>
+          <option value="oficial">Refugio Masivo / Centro Oficial</option>
+          <option value="privado">Casa Particular / Privada</option>
+        </select>
+      </div>
+
+      <div class="form-group">
         <label for="formRefugioCiudad">Ciudad *</label>
         <input type="text" id="formRefugioCiudad" placeholder="Ej. Barquisimeto, Altamira" required maxlength="60" />
       </div>
@@ -161,6 +169,7 @@
       submitBtn.disabled = true;
 
       const estado = (document.getElementById('formRefugioEstado') as HTMLSelectElement).value;
+      const tipo = (document.getElementById('formRefugioTipo') as HTMLSelectElement).value;
       let ciudad = (document.getElementById('formRefugioCiudad') as HTMLInputElement).value.trim();
       const pais = (document.getElementById('formRefugioPais') as HTMLInputElement).value.trim();
       if (estado === 'Internacional' && pais) {
@@ -185,7 +194,7 @@
 
       try {
         const { error } = await supabase.from('refugios').insert({
-          estado, ciudad, nombre, direccion, contacto, capacidad, acepta, necesitan, verificado: false
+          estado, tipo, ciudad, nombre, direccion, contacto, capacidad, acepta, necesitan, verificado: false
         });
         if (error) throw error;
         sugerirRefugioForm.style.display = 'none';

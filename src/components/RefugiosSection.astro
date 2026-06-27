@@ -45,6 +45,7 @@ import SugerirRefugioModal from "./SugerirRefugioModal.astro";
           <div class="enlace-card">
             <div class="enlace-header">
               <span class="enlace-cat">${escapeHtml(r.estado)} - ${escapeHtml(r.ciudad)}</span>
+              ${r.tipo === 'privado' ? '<span class="badge" style="background-color: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; font-weight: 600;">🏠 Casa Particular</span>' : ''}
             </div>
             <h4>${escapeHtml(r.nombre)}</h4>
             <p style="font-size: 0.85rem; color: var(--muted);">${escapeHtml(r.direccion || 'Sin dirección específica')}</p>
