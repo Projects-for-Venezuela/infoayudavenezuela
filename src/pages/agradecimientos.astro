@@ -1,0 +1,156 @@
+---
+import Layout from "../layouts/Layout.astro";
+import EmergenciaCTA from "../components/EmergenciaCTA.astro";
+import "../styles/agradecimientos.css";
+---
+
+<Layout title="Agradecimientos" description="Listado de personas y organizaciones que han aportado y colaborado con InfoAyuda Venezuela.">
+  <div class="agradecimientos-container">
+    <header class="agradecimientos-header">
+      <h1>Agradecimientos</h1>
+      <p>
+        Esta plataforma es posible gracias al esfuerzo, colaboración y compromiso de muchas personas. A continuación, reconocemos a quienes han aportado de forma significativa.
+      </p>
+    </header>
+
+    <div id="agradecimientosStatus" class="status-badge loading" style="text-align: center; margin-bottom: 2rem; display: block;">
+      Cargando agradecimientos...
+    </div>
+
+    <div id="agradecimientosContainer" class="agradecimientos-list">
+      <!-- Categorías se renderizarán aquí -->
+    </div>
+
+    <div style="margin-top: 4rem;">
+      <EmergenciaCTA />
+    </div>
+  </div>
+</Layout>
+
+<script>
+  import { supabase } from "../lib/supabase";
+  import { escapeHtml } from "../lib/escape";
+
+  const container = document.getElementById('agradecimientosContainer') as HTMLElement;
+  const statusEl = document.getElementById('agradecimientosStatus') as HTMLElement;
+
+  async function loadData() {
+    try {
+      if (!supabase) throw new Error("Supabase client not initialized");
+
+      const { data, error } = await supabase
+        .from('agradecimientos')
+        .select('*')
+        .order('created_at', { ascending: true });
+
+      if (error) throw error;
+
+      if (data && data.length > 0) {
+        statusEl.style.display = 'none';
+        renderAgradecimientos(data);
+      } else {
+        statusEl.textContent = "Aún no hay agradecimientos registrados.";
+        statusEl.className = "status-badge offline";
+      }
+    } catch (err) {
+      console.error("Error cargando agradecimientos:", err);
+      statusEl.textContent = "Error al cargar la información.";
+      statusEl.className = "status-badge offline";
+    }
+  }
+
+  function renderAgradecimientos(list: any[]) {
+    const grupos = new Map<string, any[]>();
+    
+    const ordenCategorias = [
+      "Desarrollo",
+      "Soporte Técnico",
+      "Difusión y Comunicación",
+      "Recopilación de Datos",
+      "Ideas y Mejoras"
+    ];
+
+    list.forEach(a => {
+      const cat = a.categoria || 'Otros';
+      if (!grupos.has(cat)) {
+        grupos.set(cat, []);
+      }
+      grupos.get(cat)?.push(a);
+    });
+
+    let html = '';
+
+    ordenCategorias.forEach(cat => {
+      if (grupos.has(cat) && grupos.get(cat)!.length > 0) {
+        html += renderCategoria(cat, grupos.get(cat)!);
+        grupos.delete(cat);
+      }
+    });
+
+    grupos.forEach((items, cat) => {
+      if (items.length > 0) {
+        html += renderCategoria(cat, items);
+      }
+    });
+
+    container.innerHTML = html;
+  }
+
+  function getCategoryIcon(cat: string) {
+    if (cat === 'Desarrollo') return '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>';
+    if (cat === 'Soporte Técnico') return '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>';
+    if (cat === 'Difusión y Comunicación') return '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>';
+    if (cat === 'Recopilación de Datos') return '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>';
+    if (cat === 'Ideas y Mejoras') return '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>';
+    return '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>';
+  }
+
+  function getCategoryColor(cat: string) {
+    if (cat === 'Desarrollo') return '#9333ea';
+    if (cat === 'Soporte Técnico') return '#2563eb';
+    if (cat === 'Difusión y Comunicación') return '#db2777';
+    if (cat === 'Recopilación de Datos') return '#16a34a';
+    if (cat === 'Ideas y Mejoras') return '#ca8a04';
+    return 'var(--blue)';
+  }
+
+  function renderCategoria(nombreCategoria: string, items: any[]) {
+    const icon = getCategoryIcon(nombreCategoria);
+    const color = getCategoryColor(nombreCategoria);
+    
+    let html = `
+      <section class="agradecimiento-category" style="--cat-color: ${color};">
+        <div class="category-header">
+          <div class="category-icon" style="color: ${color}; background: ${color}15;">
+            ${icon}
+          </div>
+          <h2 class="category-title">${escapeHtml(nombreCategoria)}</h2>
+        </div>
+        <ul class="agradecimientos-grid">
+    `;
+
+    items.forEach(a => {
+      const enlaceHtml = a.enlace 
+        ? `<a href="${escapeHtml(a.enlace)}" target="_blank" rel="noopener noreferrer" class="agradecimiento-link">
+             ${escapeHtml(a.nombre)}
+             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+           </a>`
+        : `<span class="agradecimiento-text">${escapeHtml(a.nombre)}</span>`;
+      
+      html += `
+        <li class="agradecimiento-item">
+          ${enlaceHtml}
+        </li>
+      `;
+    });
+
+    html += `
+        </ul>
+      </section>
+    `;
+
+    return html;
+  }
+
+  loadData();
+</script>
