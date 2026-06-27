@@ -78,9 +78,10 @@ const fullTitle = title === "Inicio"
     })} />
   </head>
   <body>
+    <a href="#main-content" class="skip-link">Saltar al contenido</a>
     <Navbar />
     {showHero && <Hero />}
-    <main>
+    <main id="main-content">
       <slot />
     </main>
     <Footer />

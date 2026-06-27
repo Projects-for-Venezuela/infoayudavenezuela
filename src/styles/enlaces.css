@@ -48,11 +48,12 @@
   font-size: 0.76rem;
   font-weight: 600;
   text-decoration: none;
-  padding: 0.4rem 0.75rem;
+  padding: 0.5rem 0.75rem;
   border-radius: 6px;
-  transition: all 0.15s;
+  transition: background 0.15s, color 0.15s;
   text-align: center;
   margin-top: 0.5rem;
+  min-height: 44px;
 }
 .enlace-btn:hover {
   background: var(--blue);
@@ -65,7 +66,7 @@
   display: block;
   width: 100%;
   margin-top: 0.75rem;
-  padding: 0.5rem;
+  padding: 0.65rem;
   background: white;
   border: 1.5px dashed var(--border);
   border-radius: 8px;
@@ -73,8 +74,9 @@
   font-weight: 600;
   color: var(--blue);
   cursor: pointer;
-  transition: all 0.15s;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
   font-family: inherit;
+  min-height: 44px;
 }
 .btn-ver-mas:hover {
   background: #F8F9FB;
@@ -85,12 +87,13 @@
   background: var(--yellow);
   color: var(--blue-dark);
   border: none;
-  padding: 0.35rem 0.8rem;
+  padding: 0.5rem 0.8rem;
   border-radius: 6px;
   font-size: 0.76rem;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.15s;
+  transition: background 0.15s, transform 0.1s;
+  min-height: 44px;
 }
 .btn-sugerir-enlace:hover {
   background: #F5C200;

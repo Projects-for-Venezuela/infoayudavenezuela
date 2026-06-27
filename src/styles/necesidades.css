@@ -182,7 +182,7 @@
   border-radius: 12px;
   border: 1px solid var(--border);
   overflow: hidden;
-  transition: all .2s ease;
+  transition: box-shadow .2s ease, border-color .2s ease, transform .2s ease;
   display: flex;
   flex-direction: column;
   position: relative;
@@ -426,12 +426,13 @@
   color: var(--red);
   border: 1.5px solid #FECACA;
   border-radius: var(--radius);
-  padding: 0.6rem 1rem;
+  padding: 0.65rem 1rem;
   font-size: 0.82rem;
   font-weight: 600;
   text-decoration: none;
-  transition: all .15s;
+  transition: background .15s, border-color .15s;
   margin-top: 0.25rem;
+  min-height: 44px;
 }
 .necesidad-cta:hover {
   background: #FEF2F2;

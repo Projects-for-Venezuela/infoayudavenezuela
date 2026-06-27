@@ -11,8 +11,8 @@ const { enlaces } = Astro.props;
 
 <div class="section-card" style="margin-top: 1.5rem;">
   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
-    <h3 class="section-title" style="margin-bottom: 0;">🔗 Sitios Web y Enlaces de Ayuda</h3>
-    <button id="btnSugerirEnlace" class="btn-sugerir-enlace" aria-label="Sugerir nuevo enlace de ayuda">+ Sugerir Sitio Web</button>
+    <h3 class="section-title" style="margin-bottom: 0;"><span aria-hidden="true">🔗</span> Sitios Web y Enlaces de Ayuda</h3>
+    <button id="btnSugerirEnlace" class="btn-sugerir-enlace" type="button" aria-label="Sugerir nuevo enlace de ayuda">+ Sugerir Sitio Web</button>
   </div>
   <div class="enlaces-grid" id="enlacesGrid">
     {enlaces.map((enlace) => (
