@@ -5,3 +5,6 @@ dist/
 .env.local
 *.log
 .vercel
+skills-lock.json
+.agents
+.astro
