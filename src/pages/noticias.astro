@@ -1,27 +1,6 @@
 ---
 import "../styles/noticias.css";
 import Layout from "../layouts/Layout.astro";
-import { supabase } from "../lib/supabase";
-
-let noticias: any[] = [];
-if (supabase) {
-  const { data } = await supabase
-    .from("noticias")
-    .select("*")
-    .in("estado", ["verificado", "falso"])
-    .order("created_at", { ascending: false });
-  if (data) {
-    noticias = data;
-  }
-}
-
-const formatDate = (dateString: string) => {
-  const d = new Date(dateString);
-  return d.toLocaleDateString('es-VE', { 
-    year: 'numeric', month: 'short', day: 'numeric',
-    hour: '2-digit', minute: '2-digit'
-  });
-};
 ---
 
 <Layout title="Centro de Noticias Verificadas"
@@ -47,44 +26,105 @@ const formatDate = (dateString: string) => {
   </div>
 
   <div class="container" style="max-width: 800px; margin: 0 auto; padding: 0 1.25rem;">
-    {noticias.length === 0 ? (
-      <div class="no-results">
-        No hay noticias verificadas o desmentidas en este momento.
+    <div id="noticiasFeedContainer">
+      <div class="py-12 text-center text-gray-500 flex flex-col items-center justify-center">
+        <svg class="animate-spin mb-4 h-8 w-8 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <span>Cargando noticias verificadas...</span>
       </div>
-    ) : (
-      <div class="noticias-feed">
-        {noticias.map((n) => (
-          <article class="noticia-card">
-            <div class="noticia-header">
-              <h2 class="noticia-title">{n.titulo}</h2>
-              {n.estado === 'verificado' && (
-                <span class="noticia-status verificado">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
-                  Verificado
-                </span>
-              )}
-              {n.estado === 'falso' && (
-                <span class="noticia-status falso">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                  Falso
-                </span>
-              )}
-            </div>
-            
-            <p class="noticia-desc">{n.descripcion}</p>
-            
-            <div class="noticia-footer">
-              <span class="noticia-date">Actualizado: {formatDate(n.created_at)}</span>
-              {n.fuente && (
-                <a href={n.fuente} target="_blank" rel="noopener noreferrer" class="noticia-link">
-                  Ver fuente
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
-                </a>
-              )}
-            </div>
-          </article>
-        ))}
-      </div>
-    )}
+    </div>
   </div>
 </Layout>
+
+<script>
+  import { supabase } from "../lib/supabase";
+
+  const feedContainer = document.getElementById('noticiasFeedContainer');
+
+  const formatDate = (dateString: string) => {
+    const d = new Date(dateString);
+    return d.toLocaleDateString('es-VE', { 
+      year: 'numeric', month: 'short', day: 'numeric',
+      hour: '2-digit', minute: '2-digit'
+    });
+  };
+
+  async function loadNoticias() {
+    if (!supabase || !feedContainer) return;
+    
+    try {
+      const { data, error } = await supabase
+        .from("noticias")
+        .select("*")
+        .in("estado", ["verificado", "falso"])
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+
+      if (!data || data.length === 0) {
+        feedContainer.innerHTML = `
+          <div class="no-results">
+            No hay noticias verificadas o desmentidas en este momento.
+          </div>
+        `;
+        return;
+      }
+
+      feedContainer.innerHTML = `
+        <div class="noticias-feed">
+          ${data.map(n => `
+            <article class="noticia-card">
+              <div class="noticia-header">
+                <h2 class="noticia-title">${n.titulo}</h2>
+                ${n.estado === 'verificado' ? `
+                  <span class="noticia-status verificado">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+                    Verificado
+                  </span>
+                ` : `
+                  <span class="noticia-status falso">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    Falso
+                  </span>
+                `}
+              </div>
+              
+              <p class="noticia-desc">${n.descripcion}</p>
+              
+              <div class="noticia-footer">
+                <span class="noticia-date">Actualizado: ${formatDate(n.created_at)}</span>
+                ${n.fuente ? `
+                  <a href="${n.fuente}" target="_blank" rel="noopener noreferrer" class="noticia-link">
+                    Ver fuente
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+                  </a>
+                ` : ''}
+              </div>
+            </article>
+          `).join('')}
+        </div>
+      `;
+    } catch (error) {
+      console.error('Error fetching noticias:', error);
+      feedContainer.innerHTML = `
+        <div class="no-results text-red-500">
+          Hubo un error al cargar las noticias. Por favor, intenta de nuevo más tarde.
+        </div>
+      `;
+    }
+  }
+
+  loadNoticias();
+  
+  // Realtime updates (opcional)
+  if (supabase) {
+    supabase
+      .channel('noticias_changes_public')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'noticias' }, () => {
+        loadNoticias();
+      })
+      .subscribe();
+  }
+</script>
