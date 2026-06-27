@@ -118,7 +118,7 @@ import ReportarNecesidadModal from "./ReportarNecesidadModal.astro";
       const formPaisGroup = document.getElementById('formPaisGroup') as HTMLElement;
       const formPais = document.getElementById('formPais') as HTMLInputElement;
       if (formEstado.value === 'Internacional') {
-        formPaisGroup.style.display = 'block';
+        formPaisGroup.style.display = 'flex';
         formPais.required = true;
       } else {
         formPaisGroup.style.display = 'none';
@@ -341,7 +341,7 @@ import ReportarNecesidadModal from "./ReportarNecesidadModal.astro";
       const formPaisGroup = document.getElementById('necFormPaisGroup') as HTMLElement;
       const formPais = document.getElementById('necFormPais') as HTMLInputElement;
       if (necFormEstado.value === 'Internacional') {
-        formPaisGroup.style.display = 'block';
+        formPaisGroup.style.display = 'flex';
         formPais.required = true;
       } else {
         formPaisGroup.style.display = 'none';
