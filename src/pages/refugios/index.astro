@@ -83,6 +83,7 @@ const estadosNacionales = estadosOrdenados.filter(e => e.estado !== 'Internacion
 
   const searchInput = document.getElementById('searchInput') as HTMLInputElement;
   const citySelect = document.getElementById('citySelect') as HTMLSelectElement;
+  const typeSelect = document.getElementById('typeSelect') as HTMLSelectElement;
   const mainGrid = document.getElementById('mainGrid') as HTMLElement;
   const gridTitle = document.getElementById('gridTitle') as HTMLElement;
   const resultsCount = document.getElementById('resultsCount') as HTMLElement;
@@ -239,7 +240,8 @@ const estadosNacionales = estadosOrdenados.filter(e => e.estado !== 'Internacion
   function handleFilter() {
     const q = searchInput.value.toLowerCase().trim();
     const city = citySelect.value;
-    if (!q && !city) { 
+    const type = typeSelect ? typeSelect.value : "";
+    if (!q && !city && !type) { 
         // Si no hay filtro, mostramos todos los refugios listados o agrupados por estado
         // Pero el diseño pide mostrar todos los refugios como tarjetas directamente es mejor para los refugios.
         renderRefugios(refugios);
@@ -248,6 +250,8 @@ const estadosNacionales = estadosOrdenados.filter(e => e.estado !== 'Internacion
 
     let filtered = refugios.filter((c: any) => {
       if (city && c.ciudad !== city) return false;
+      const cType = c.tipo === 'privado' ? 'privado' : 'oficial';
+      if (type && cType !== type) return false;
       if (q) {
         return c.nombre.toLowerCase().includes(q) || c.ciudad.toLowerCase().includes(q)
           || c.estado.toLowerCase().includes(q) || (c.direccion || '').toLowerCase().includes(q)
@@ -298,6 +302,7 @@ const estadosNacionales = estadosOrdenados.filter(e => e.estado !== 'Internacion
 
   searchInput.addEventListener('input', handleFilter);
   citySelect.addEventListener('change', handleFilter);
+  if (typeSelect) typeSelect.addEventListener('change', handleFilter);
 
   loadData();
   setInterval(loadData, 300000);
