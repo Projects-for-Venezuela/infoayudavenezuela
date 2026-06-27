@@ -71,29 +71,68 @@
 
 .agradecimiento-item {
   display: flex;
-  flex-direction: column;
-  padding: 0.75rem;
-  background: var(--bg);
-  border-radius: 0.5rem;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  background: var(--card);
+  border-radius: 10px;
   border: 1px solid var(--border);
+  box-shadow: 0 2px 8px rgba(0,36,125,0.03);
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.agradecimiento-item::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--blue);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .agradecimiento-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,36,125,0.08);
+    border-color: #d1d5db;
+  }
+  .agradecimiento-item:hover::before {
+    opacity: 1;
+  }
 }
 
 .agradecimiento-link {
   color: var(--blue);
   text-decoration: none;
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 0.25rem;
   font-weight: 600;
+  font-size: 1.05rem;
+  width: 100%;
 }
 
-.agradecimiento-link:hover {
-  text-decoration: underline;
+.agradecimiento-link svg {
+  margin-left: auto;
+  opacity: 0.5;
+  transition: transform 0.2s, opacity 0.2s;
+}
+
+.agradecimiento-link:hover svg {
+  opacity: 1;
+  transform: translateX(2px) translateY(-2px);
 }
 
 .agradecimiento-text {
   font-weight: 600;
   color: var(--text);
+  font-size: 1.05rem;
+  display: flex;
+  align-items: center;
+  width: 100%;
 }
 
 @media (max-width: 640px) {
