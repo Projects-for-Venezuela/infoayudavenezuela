@@ -133,6 +133,11 @@ dialog.modal-dialog::backdrop {
   color: var(--muted);
   line-height: 1;
   transition: color 0.15s;
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .close-btn:hover {
   color: var(--red);
@@ -194,7 +199,7 @@ dialog.modal-dialog::backdrop {
   font-weight: 600;
   cursor: pointer;
   border: 1px solid transparent;
-  transition: all 0.15s;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
 }
 .btn-secondary {
   background: white;

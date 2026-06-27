@@ -87,7 +87,7 @@
   color: inherit;
   border: 1px solid var(--border);
   overflow: hidden;
-  transition: all .2s ease;
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
   display: flex;
   flex-direction: column;
 }
@@ -95,6 +95,11 @@
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(0,0,0,0.06);
   border-color: #C7CDD8;
+}
+
+/* Hover de escala solo en dispositivos con puntero fino */
+@media (hover: hover) and (pointer: fine) {
+  .card:hover .card-img img { transform: scale(1.04); }
 }
 .card-img {
   height: 80px;
@@ -107,7 +112,6 @@
   object-fit: cover;
   transition: transform .3s;
 }
-.card:hover .card-img img { transform: scale(1.04); }
 .card-body { padding: 0.8rem 1rem 0.85rem; }
 .card-top {
   display: flex;
@@ -275,7 +279,7 @@
   border-radius: var(--radius);
   border: 1px solid var(--border);
   overflow: hidden;
-  transition: all .15s;
+  transition: box-shadow .15s, border-color .15s;
   display: flex;
   flex-direction: column;
 }

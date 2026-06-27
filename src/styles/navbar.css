@@ -75,8 +75,8 @@ nav.navbar {
   gap: 0.5rem;
 }
 .nav-refresh-btn {
-  width: 38px;
-  height: 38px;
+  width: 44px;
+  height: 44px;
   border-radius: 8px;
   border: 1px solid rgba(255,255,255,0.2);
   background: transparent;
@@ -217,8 +217,8 @@ nav.navbar {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  width: 44px;
+  height: 44px;
   border: none;
   border-radius: 50%;
   background: #F3F4F6;
