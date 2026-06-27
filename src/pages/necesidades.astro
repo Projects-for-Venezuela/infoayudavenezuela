@@ -25,7 +25,7 @@ import { ZONAS_AFECTADAS } from "../data/centros";
     <div class="nec-filter">
       <select id="necEstadoFilter">
         <option value="">Todos los estados</option>
-        <optgroup label="🔴 Zonas Afectadas">
+        <optgroup label="Zonas Afectadas">
           <option value="Distrito Capital">Distrito Capital</option>
           <option value="Miranda">Miranda</option>
           <option value="La Guaira">La Guaira</option>
@@ -72,7 +72,7 @@ import { ZONAS_AFECTADAS } from "../data/centros";
 
   function renderNecesidades(list: any[]) {
     if (list.length === 0) {
-      container.innerHTML = '<div class="no-results">No hay necesidades urgentes reportadas aún. Si conoces un lugar que necesita ayuda, usa el botón "🆘 Necesidad" en el menú para reportarlo.</div>';
+      container.innerHTML = '<div class="no-results">No hay necesidades urgentes reportadas aún. Si conoces un lugar que necesita ayuda, usa el bot\u00F3n "Reportar" en el men\u00FA para reportarlo.</div>';
       return;
     }
 
@@ -81,16 +81,23 @@ import { ZONAS_AFECTADAS } from "../data/centros";
       return `
         <div class="necesidad-card ${isAfectado ? 'card-prioritized' : ''}">
           <div class="necesidad-head">
-            <div class="necesidad-icon">⚠️</div>
+            <div class="necesidad-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
             <div class="necesidad-title-area">
               <h3>${n.lugar}</h3>
-              <span class="necesidad-meta">📍 ${n.ciudad}, ${n.estado}</span>
+              <span class="necesidad-meta">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: sub; margin-right: 2px;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                ${n.ciudad}, ${n.estado}
+              </span>
             </div>
             <span class="necesidad-badge-urgente">URGENTE</span>
           </div>
           <div class="necesidad-body">
             <div class="row">
-              <span class="row-label">🆘 Necesitan</span>
+              <span class="row-label">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: sub; margin-right: 2px;"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                Necesitan</span>
               <div class="row-value need-text">${n.que_necesitan}</div>
             </div>
             ${n.direccion ? `<div class="row"><span class="row-label">Dirección</span><div class="row-value">${n.direccion}</div></div>` : ''}

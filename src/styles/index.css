@@ -338,3 +338,37 @@
     padding: 0.75rem 0.5rem;
   }
 }
+
+.btn-sugerir-home {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  background: var(--yellow);
+  color: var(--blue-dark);
+  border: 2px solid var(--gold);
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .15s, transform .1s, box-shadow .2s;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  min-height: 48px;
+}
+.btn-sugerir-home:hover {
+  background: #F5C200;
+  border-color: #C4A000;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(255,204,0,0.3);
+}
+.btn-sugerir-home:active {
+  transform: scale(0.98);
+}
+.btn-sugerir-home svg {
+  flex-shrink: 0;
+}

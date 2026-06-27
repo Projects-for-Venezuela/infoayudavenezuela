@@ -8,16 +8,52 @@ import ReportarNecesidadModal from "./ReportarNecesidadModal.astro";
 
 <div class="flag-bar"><span class="y"></span><span class="b"></span><span class="r"></span></div>
 <nav class="navbar">
-  <div class="nav-actions">
-    <button id="navRefreshBtn" class="nav-refresh nav-btn" title="Actualizar Datos">
-      <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-      <span>Actualizar</span>
-    </button>
-    <button id="navSugerirBtn" class="nav-sugerir nav-btn">+ Sugerir Centro</button>
-    <button id="navNecesidadBtn" class="nav-necesidad nav-btn">🆘 Necesidad</button>
-    <a href="/emergencia" class="nav-emergencia nav-btn">&#128222; Emergencia</a>
+  <div class="nav-inner">
+    <a href="/" class="nav-brand">Info Ayuda Venezuela</a>
+    <div class="nav-top-right">
+      <button id="navRefreshBtn" class="nav-refresh-btn" title="Actualizar">
+        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+      </button>
+    </div>
+  </div>
+  <div class="nav-desktop">
+    <a href="/insumos" class="nav-link">
+      <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 002 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+      Insumos
+    </a>
+    <a href="/necesidades" class="nav-link">
+      <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      Necesidades
+    </a>
+    <a href="/emergencia" class="nav-link nav-link-emergencia">
+      <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
+      Emergencia
+    </a>
   </div>
 </nav>
+
+<div class="nav-bottom" id="navBottom">
+  <a href="/" class="nav-bottom-link">
+    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+    <span>Inicio</span>
+  </a>
+  <a href="/insumos" class="nav-bottom-link">
+    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 002 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+    <span>Insumos</span>
+  </a>
+  <a href="/necesidades" class="nav-bottom-link">
+    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    <span>Necesidades</span>
+  </a>
+  <a href="/emergencia" class="nav-bottom-link">
+    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
+    <span>Emergencia</span>
+  </a>
+  <button id="navNecesidadBtn" class="nav-bottom-link nav-bottom-btn">
+    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+    <span>Reportar</span>
+  </button>
+</div>
 
 <SugerirCentroModal />
 <SugerirEnlaceModal />
@@ -36,22 +72,24 @@ import ReportarNecesidadModal from "./ReportarNecesidadModal.astro";
     });
   }
 
-  // --- Sugerir Centro de Acopio ---
+  // --- Sugerir Centro de Acopio (triggered desde homepage) ---
   const sugerirDialog = document.getElementById('sugerirDialog') as HTMLDialogElement;
-  const navSugerirBtn = document.getElementById('navSugerirBtn') as HTMLButtonElement;
   const closeDialogBtn = document.getElementById('closeDialogBtn') as HTMLButtonElement;
   const cancelFormBtn = document.getElementById('cancelFormBtn') as HTMLButtonElement;
   const sugerirForm = document.getElementById('sugerirForm') as HTMLFormElement;
   const formSuccessMessage = document.getElementById('formSuccessMessage') as HTMLElement;
   const successCloseBtn = document.getElementById('successCloseBtn') as HTMLButtonElement;
 
-  if (navSugerirBtn) {
-    navSugerirBtn.addEventListener('click', () => {
-      sugerirForm.style.display = 'flex';
-      formSuccessMessage.style.display = 'none';
-      sugerirForm.reset();
-      sugerirDialog.showModal();
-    });
+  function openSugerirForm() {
+    sugerirForm.style.display = 'flex';
+    formSuccessMessage.style.display = 'none';
+    sugerirForm.reset();
+    sugerirDialog.showModal();
+  }
+
+  const homeSugerirBtn = document.getElementById('homeSugerirBtn') as HTMLButtonElement | null;
+  if (homeSugerirBtn) {
+    homeSugerirBtn.addEventListener('click', openSugerirForm);
   }
 
   const closeForm = () => { sugerirDialog.close(); };
@@ -85,11 +123,10 @@ import ReportarNecesidadModal from "./ReportarNecesidadModal.astro";
       const pago_movil = (document.getElementById('formPagoMovil') as HTMLInputElement).value.trim() || null;
       const zelle = (document.getElementById('formZelle') as HTMLInputElement).value.trim() || null;
 
-      // Validación cliente: rechazar contenido HTML en cualquier campo
       const htmlPattern = /<[^>]*>/;
       const campos = [ciudad, nombre, direccion, contacto, hora, pago_movil, zelle, ...acepta, ...necesitan];
       if (campos.some((v) => v && htmlPattern.test(v))) {
-        alert('No se permite HTML en los campos del formulario. Por favor, elimina las etiquetas < > e intenta de nuevo.');
+        alert('No se permite HTML en los campos del formulario.');
         submitBtn.textContent = originalText;
         submitBtn.disabled = false;
         return;
@@ -108,7 +145,7 @@ import ReportarNecesidadModal from "./ReportarNecesidadModal.astro";
       }
 
       if (!supabase) {
-        alert('El sistema está operando en modo local/sin conexión. No se pueden procesar sugerencias de nuevos centros en este momento.');
+        alert('El sistema est\u00E1 operando en modo local/sin conexi\u00F3n.');
         submitBtn.textContent = originalText;
         submitBtn.disabled = false;
         return;
@@ -124,7 +161,7 @@ import ReportarNecesidadModal from "./ReportarNecesidadModal.astro";
         formSuccessMessage.style.display = 'flex';
       } catch (err) {
         console.error('Error insertando en Supabase:', err);
-        alert('Hubo un error al enviar tu sugerencia. Por favor verifica tu conexión e intenta de nuevo.');
+        alert('Hubo un error al enviar tu sugerencia.');
       } finally {
         submitBtn.textContent = originalText;
         submitBtn.disabled = false;
@@ -176,23 +213,22 @@ import ReportarNecesidadModal from "./ReportarNecesidadModal.astro";
       let url = (document.getElementById('formEnlaceUrl') as HTMLInputElement).value.trim();
       if (url && !/^https?:\/\//i.test(url)) url = 'https://' + url;
 
-      // Validación cliente: rechazar HTML en los campos y validar esquema URL
       const htmlPattern = /<[^>]*>/;
       const campos = [titulo, descripcion, categoria];
       if (campos.some((v) => v && htmlPattern.test(v))) {
-        alert('No se permite HTML en los campos del formulario. Por favor, elimina las etiquetas < > e intenta de nuevo.');
+        alert('No se permite HTML en los campos del formulario.');
         submitBtn.textContent = originalText;
         submitBtn.disabled = false;
         return;
       }
       if (titulo.length < 2 || titulo.length > 120) {
-        alert('El título debe tener entre 2 y 120 caracteres.');
+        alert('El t\u00EDtulo debe tener entre 2 y 120 caracteres.');
         submitBtn.textContent = originalText;
         submitBtn.disabled = false;
         return;
       }
       if (descripcion.length < 2 || descripcion.length > 300) {
-        alert('La descripción debe tener entre 2 y 300 caracteres.');
+        alert('La descripci\u00F3n debe tener entre 2 y 300 caracteres.');
         submitBtn.textContent = originalText;
         submitBtn.disabled = false;
         return;
@@ -204,14 +240,14 @@ import ReportarNecesidadModal from "./ReportarNecesidadModal.astro";
         return;
       }
       if (url.length > 300) {
-        alert('La URL es demasiado larga (máximo 300 caracteres).');
+        alert('La URL es demasiado larga (m\u00E1ximo 300 caracteres).');
         submitBtn.textContent = originalText;
         submitBtn.disabled = false;
         return;
       }
 
       if (!supabase) {
-        alert('El sistema está operando en modo local/sin conexión. No se pueden procesar sugerencias de nuevos enlaces en este momento.');
+        alert('El sistema est\u00E1 operando en modo local/sin conexi\u00F3n.');
         submitBtn.textContent = originalText;
         submitBtn.disabled = false;
         return;
@@ -226,7 +262,7 @@ import ReportarNecesidadModal from "./ReportarNecesidadModal.astro";
         enlaceFormSuccessMessage.style.display = 'flex';
       } catch (err) {
         console.error('Error insertando enlace en Supabase:', err);
-        alert('Hubo un error al enviar tu sugerencia. Por favor verifica tu conexión e intenta de nuevo.');
+        alert('Hubo un error al enviar tu sugerencia.');
       } finally {
         submitBtn.textContent = originalText;
         submitBtn.disabled = false;
@@ -280,7 +316,7 @@ import ReportarNecesidadModal from "./ReportarNecesidadModal.astro";
       const contacto = (document.getElementById('necFormContacto') as HTMLInputElement).value.trim() || null;
 
       if (!supabase) {
-        alert('El sistema está operando en modo local/sin conexión. No se pueden procesar reportes de necesidad en este momento.');
+        alert('El sistema est\u00E1 operando en modo local/sin conexi\u00F3n.');
         submitBtn.textContent = originalText;
         submitBtn.disabled = false;
         return;
@@ -295,7 +331,7 @@ import ReportarNecesidadModal from "./ReportarNecesidadModal.astro";
         necFormSuccessMessage.style.display = 'flex';
       } catch (err) {
         console.error('Error insertando necesidad urgente en Supabase:', err);
-        alert('Hubo un error al enviar tu reporte. Por favor verifica tu conexión e intenta de nuevo.');
+        alert('Hubo un error al enviar tu reporte.');
       } finally {
         submitBtn.textContent = originalText;
         submitBtn.disabled = false;
