@@ -23,19 +23,11 @@ import { ZONAS_AFECTADAS } from "../data/centros";
     </div>
     <div class="nec-filter">
       <select id="necEstadoFilter">
-        <option value="">Todos los estados</option>
-        <optgroup label="Zonas Afectadas">
-          <option value="Distrito Capital">Distrito Capital</option>
-          <option value="Miranda">Miranda</option>
-          <option value="La Guaira">La Guaira</option>
-          <option value="Aragua">Aragua</option>
-          <option value="Carabobo">Carabobo</option>
-        </optgroup>
-        <optgroup label="Otros estados">
-          {TODOS_ESTADOS.filter(e => !ZONAS_AFECTADAS.includes(e)).map(e => (
-            <option value={e}>{e}</option>
-          ))}
-        </optgroup>
+        <option value="">Todos</option>
+        <option value="Distrito Capital">Distrito Capital (Caracas)</option>
+        <option value="La Guaira">La Guaira</option>
+        <option value="Miranda">Miranda (El Junquito)</option>
+        <option value="Falcón">Falcón (Tucacas)</option>
       </select>
     </div>
     <button id="necRefreshBtn" class="nec-btn-refresh">
