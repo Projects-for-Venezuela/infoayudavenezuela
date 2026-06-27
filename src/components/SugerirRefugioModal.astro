@@ -88,3 +88,79 @@
     </div>
   </div>
 </dialog>
+<script>
+  import { supabase } from "../lib/supabase";
+
+  const sugerirRefugioDialog = document.getElementById('sugerirRefugioDialog') as HTMLDialogElement;
+  const btnSugerirRefugio = document.getElementById('btnSugerirRefugio') as HTMLButtonElement;
+  const closeRefugioDialogBtn = document.getElementById('closeRefugioDialogBtn') as HTMLButtonElement;
+  const cancelRefugioFormBtn = document.getElementById('cancelRefugioFormBtn') as HTMLButtonElement;
+  const sugerirRefugioForm = document.getElementById('sugerirRefugioForm') as HTMLFormElement;
+  const formRefugioSuccessMessage = document.getElementById('formRefugioSuccessMessage') as HTMLElement;
+  const successRefugioCloseBtn = document.getElementById('successRefugioCloseBtn') as HTMLButtonElement;
+
+  if (btnSugerirRefugio) {
+    btnSugerirRefugio.addEventListener('click', () => {
+      sugerirRefugioForm.style.display = 'flex';
+      formRefugioSuccessMessage.style.display = 'none';
+      sugerirRefugioForm.reset();
+      sugerirRefugioDialog.showModal();
+    });
+  }
+
+  const closeRefugioForm = () => { sugerirRefugioDialog.close(); };
+  if (closeRefugioDialogBtn) closeRefugioDialogBtn.addEventListener('click', closeRefugioForm);
+  if (cancelRefugioFormBtn) cancelRefugioFormBtn.addEventListener('click', closeRefugioForm);
+  if (successRefugioCloseBtn) successRefugioCloseBtn.addEventListener('click', closeRefugioForm);
+
+  sugerirRefugioDialog.addEventListener('click', (e) => {
+    const r = sugerirRefugioDialog.getBoundingClientRect();
+    if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) {
+      sugerirRefugioDialog.close();
+    }
+  });
+
+  if (sugerirRefugioForm) {
+    sugerirRefugioForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const submitBtn = document.getElementById('submitRefugioFormBtn') as HTMLButtonElement;
+      const originalText = submitBtn.textContent || '';
+      submitBtn.textContent = 'Enviando...';
+      submitBtn.disabled = true;
+
+      const estado = (document.getElementById('formRefugioEstado') as HTMLSelectElement).value;
+      const ciudad = (document.getElementById('formRefugioCiudad') as HTMLInputElement).value.trim();
+      const nombre = (document.getElementById('formRefugioNombre') as HTMLInputElement).value.trim();
+      const direccion = (document.getElementById('formRefugioDireccion') as HTMLTextAreaElement).value.trim() || null;
+      const contacto = (document.getElementById('formRefugioContacto') as HTMLInputElement).value.trim() || null;
+      const capacidad = (document.getElementById('formRefugioCapacidad') as HTMLInputElement).value.trim() || null;
+      const acepta_raw = (document.getElementById('formRefugioAcepta') as HTMLInputElement).value.trim();
+      const necesitan_raw = (document.getElementById('formRefugioNecesitan') as HTMLInputElement).value.trim();
+
+      const acepta = acepta_raw ? acepta_raw.split(',').map(s => s.trim()).filter(Boolean) : [];
+      const necesitan = necesitan_raw ? necesitan_raw.split(',').map(s => s.trim()).filter(Boolean) : [];
+
+      if (!supabase) {
+        alert('El sistema est\u00E1 operando en modo local/sin conexi\u00F3n.');
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+        return;
+      }
+
+      try {
+        const { error } = await supabase.from('refugios').insert({
+          estado, ciudad, nombre, direccion, contacto, capacidad, acepta, necesitan, verificado: false
+        });
+        if (error) throw error;
+        sugerirRefugioForm.style.display = 'none';
+        formRefugioSuccessMessage.style.display = 'flex';
+      } catch (err) {
+        console.error('Error insertando refugio en Supabase:', err);
+        alert('Hubo un error al enviar tu sugerencia.');
+      } finally {
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+      }
+    });
+  }
+</script>
