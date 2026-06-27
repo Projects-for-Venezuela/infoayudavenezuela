@@ -1,0 +1,272 @@
+---
+import "../../styles/index.css";
+import Layout from "../../layouts/Layout.astro";
+import AlertBox from "../../components/AlertBox.astro";
+import SearchFilters from "../../components/SearchFilters.astro";
+import EmergenciaCTA from "../../components/EmergenciaCTA.astro";
+import { estados, flagUrl, ZONAS_AFECTADAS, sortEstados, resolveEstado } from "../../data/centros";
+
+// Para refugios, podemos usar los mismos estados base, aunque inicialmente no tengan refugios cargados en datos estáticos
+const estadosOrdenados = [...estados].filter(e => resolveEstado(e.estado) === e.estado).sort(sortEstados);
+const estadosNacionales = estadosOrdenados.filter(e => e.estado !== 'Internacional');
+
+---
+
+<Layout title="Refugios">
+  <AlertBox />
+
+  <div class="stats-row" style="grid-template-columns: repeat(2, 1fr);">
+    <div class="stat">
+      <span class="stat-num" id="statRefugios">0</span>
+      <span class="stat-lbl">Refugios Activos</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num" id="statCiudades">0</span>
+      <span class="stat-lbl">Ciudades con Refugios</span>
+    </div>
+  </div>
+
+  <div class="section-header" style="margin-bottom: 1rem; align-items: flex-start; flex-direction: column; gap: 0.5rem;">
+    <h1 style="font-size: 1.5rem; font-weight: 700; color: var(--blue);">Refugios Verificados</h1>
+    <p style="font-size: 0.9rem; color: var(--muted);">Encuentra refugios y espacios seguros habilitados para las personas afectadas. Si conoces un refugio, por favor <button id="btnSugerirRefugio" class="nav-sugerir" style="background: transparent; color: var(--blue); padding: 0; text-decoration: underline; display: inline; cursor: pointer; border: none; font-size: inherit;">sugiere agregarlo aquí</button>.</p>
+  </div>
+
+  <SearchFilters />
+
+  <div class="section-header">
+    <h2 id="gridTitle">Estados con refugios</h2>
+    <span id="resultsCount" class="results-count" style="display: none;"></span>
+    <span id="dbStatus" class="status-badge loading" style="margin-left: auto;">Cargando...</span>
+  </div>
+
+  <div class="grid" id="mainGrid">
+    <div class="no-results">Cargando refugios desde la base de datos...</div>
+  </div>
+
+  <EmergenciaCTA />
+</Layout>
+
+<script>
+  import { supabase } from "../../lib/supabase";
+  import { ZONAS_AFECTADAS } from "../../data/centros";
+
+  let refugios: any[] = [];
+
+  const searchInput = document.getElementById('searchInput') as HTMLInputElement;
+  const citySelect = document.getElementById('citySelect') as HTMLSelectElement;
+  const mainGrid = document.getElementById('mainGrid') as HTMLElement;
+  const gridTitle = document.getElementById('gridTitle') as HTMLElement;
+  const resultsCount = document.getElementById('resultsCount') as HTMLElement;
+  const dbStatus = document.getElementById('dbStatus') as HTMLElement;
+  const statRefugios = document.getElementById('statRefugios') as HTMLElement;
+  const statCiudades = document.getElementById('statCiudades') as HTMLElement;
+
+  function initCitySelect() {
+    const citiesSet = new Set(refugios.map((c: any) => c.ciudad));
+    const uniqueCities = Array.from(citiesSet) as string[];
+    const affectedCities: string[] = [];
+    const otherCities: string[] = [];
+
+    uniqueCities.forEach((city: string) => {
+      const sample = refugios.find((c: any) => c.ciudad === city);
+      if (sample && ZONAS_AFECTADAS.includes(sample.estado)) {
+        affectedCities.push(city);
+      } else {
+        otherCities.push(city);
+      }
+    });
+
+    affectedCities.sort();
+    otherCities.sort();
+
+    citySelect.innerHTML = '<option value="">Todas las ciudades</option>';
+
+    if (affectedCities.length > 0) {
+      const optGroupAffected = document.createElement('optgroup');
+      optGroupAffected.label = '🔴 Zonas Afectadas';
+      affectedCities.forEach((city: string) => {
+        const opt = document.createElement('option');
+        opt.value = city;
+        opt.textContent = `🔴 ${city}`;
+        optGroupAffected.appendChild(opt);
+      });
+      citySelect.appendChild(optGroupAffected);
+    }
+
+    if (otherCities.length > 0) {
+      const optGroupOther = document.createElement('optgroup');
+      optGroupOther.label = 'Otras ciudades';
+      otherCities.forEach((city: string) => {
+        const opt = document.createElement('option');
+        opt.value = city;
+        opt.textContent = city;
+        optGroupOther.appendChild(opt);
+      });
+      citySelect.appendChild(optGroupOther);
+    }
+  }
+
+  function renderEstados() {
+    gridTitle.textContent = "Estados con refugios";
+    resultsCount.style.display = "none";
+    mainGrid.className = "grid";
+
+    const agrupado = refugios.reduce((acc: any[], item: any) => {
+      let e = acc.find((x: any) => x.estado === item.estado);
+      if (!e) { e = { estado: item.estado, ciudades: [] }; acc.push(e); }
+      let c = e.ciudades.find((x: any) => x.ciudad === item.ciudad);
+      if (!c) { c = { ciudad: item.ciudad, refugiosCount: 0 }; e.ciudades.push(c); }
+      c.refugiosCount++;
+      return acc;
+    }, []);
+
+    const nacionales = agrupado.filter((e: any) => e.estado !== 'Internacional');
+
+    nacionales.sort((a: any, b: any) => {
+      const aAfectado = ZONAS_AFECTADAS.includes(a.estado);
+      const bAfectado = ZONAS_AFECTADAS.includes(b.estado);
+      if (aAfectado && !bAfectado) return -1;
+      if (!aAfectado && bAfectado) return 1;
+      return a.estado.localeCompare(b.estado);
+    });
+
+    if (agrupado.length === 0) {
+      mainGrid.innerHTML = '<div class="no-results">No se encontraron refugios activos en este momento.</div>';
+      return;
+    }
+
+    let html = nacionales.map((e: any) => {
+      const count = e.ciudades.reduce((sum: number, c: any) => sum + c.refugiosCount, 0);
+      const citiesList = e.ciudades.map((c: any) => c.ciudad).join(", ");
+      const isAfectado = ZONAS_AFECTADAS.includes(e.estado);
+      const sanitizedName = ({ "Distrito Capital": "Distrito_Capital" } as Record<string, string>)[e.estado] || e.estado.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ /g, "_");
+
+      return `
+        <div class="card state-card ${isAfectado ? 'card-prioritized' : ''}" style="cursor: default;">
+          <div class="card-img">
+            <img src="/flags/${sanitizedName}.svg" alt="Bandera de ${e.estado}" loading="lazy" onerror="this.style.display='none';" />
+            ${isAfectado ? '<span class="badge-prioritized">🔴 Zona Afectada</span>' : ''}
+          </div>
+          <div class="card-body">
+            <div class="card-top"><h3>${e.estado}</h3><span class="card-badge">${count}</span></div>
+            <p class="card-cities">${citiesList}</p>
+          </div>
+        </div>
+      `;
+    }).join("");
+
+    mainGrid.innerHTML = html;
+  }
+
+  function renderRefugios(filtered: any[]) {
+    gridTitle.textContent = "Refugios encontrados";
+    resultsCount.textContent = `${filtered.length} resultado${filtered.length !== 1 ? 's' : ''}`;
+    resultsCount.style.display = "inline-block";
+    mainGrid.className = "grid-centros"; // Usamos la misma clase css
+
+    if (filtered.length === 0) {
+      mainGrid.innerHTML = '<div class="no-results">No se encontraron refugios que coincidan con los criterios.</div>';
+      return;
+    }
+
+    mainGrid.innerHTML = filtered.map((c: any) => {
+      const isAfectado = ZONAS_AFECTADAS.includes(c.estado);
+      
+      const aceptaHtml = c.acepta?.length
+        ? `<div class="row"><span class="row-label">Aceptan</span><div class="row-value"><div class="tag-group">${c.acepta.map((a: string) => `<span class="tag tag-yellow">${a}</span>`).join("")}</div></div></div>`
+        : '';
+      const necesitanHtml = c.necesitan?.length
+        ? `<div class="row"><span class="row-label">Urgente</span><div class="row-value"><div class="tag-group">${c.necesitan.map((n: string) => `<span class="tag tag-red">${n}</span>`).join("")}</div></div></div>`
+        : '';
+
+      return `
+        <div class="card centro-card ${isAfectado ? 'card-prioritized' : ''}">
+          <div class="card-head-centro">
+            <div class="card-icon" style="background: ${isAfectado ? 'var(--red)' : 'var(--blue)'};">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline>
+              </svg>
+            </div>
+            <div class="card-title-area">
+              <h3>${c.nombre}</h3>
+              <span class="card-loc-meta">${c.ciudad}, ${c.estado}</span>
+            </div>
+            ${isAfectado ? '<span class="badge-prioritized-mini">🔴 Zona Afectada</span>' : ''}
+          </div>
+          <div class="card-body-centro">
+            ${c.direccion ? `<div class="row"><span class="row-label">Dirección</span><div class="row-value">${c.direccion}</div></div>` : ''}
+            ${c.contacto ? `<div class="row"><span class="row-label">Contacto</span><div class="row-value">${c.contacto}</div></div>` : ''}
+            ${c.capacidad ? `<div class="row"><span class="row-label">Capacidad</span><div class="row-value">${c.capacidad}</div></div>` : ''}
+            ${aceptaHtml}${necesitanHtml}
+          </div>
+        </div>
+      `;
+    }).join("");
+  }
+
+  function handleFilter() {
+    const q = searchInput.value.toLowerCase().trim();
+    const city = citySelect.value;
+    if (!q && !city) { 
+        // Si no hay filtro, mostramos todos los refugios listados o agrupados por estado
+        // Pero el diseño pide mostrar todos los refugios como tarjetas directamente es mejor para los refugios.
+        renderRefugios(refugios);
+        return; 
+    }
+
+    let filtered = refugios.filter((c: any) => {
+      if (city && c.ciudad !== city) return false;
+      if (q) {
+        return c.nombre.toLowerCase().includes(q) || c.ciudad.toLowerCase().includes(q)
+          || c.estado.toLowerCase().includes(q) || (c.direccion || '').toLowerCase().includes(q)
+          || (c.acepta || []).some((a: string) => a.toLowerCase().includes(q))
+          || (c.necesitan || []).some((n: string) => n.toLowerCase().includes(q));
+      }
+      return true;
+    });
+
+    renderRefugios(filtered);
+  }
+
+  function updateStats() {
+    statRefugios.textContent = refugios.length.toString();
+    statCiudades.textContent = new Set(refugios.map((c: any) => c.ciudad)).size.toString();
+  }
+
+  async function loadData() {
+    try {
+      dbStatus.textContent = "Conectando...";
+      dbStatus.className = "status-badge loading";
+      if (!supabase) throw new Error("Supabase client not initialized");
+
+      const { data, error } = await supabase.from('refugios').select('*').eq('verificado', true);
+      if (error) throw error;
+
+      if (data) {
+        refugios = data.sort((a, b) => {
+          const aAfectado = ZONAS_AFECTADAS.includes(a.estado);
+          const bAfectado = ZONAS_AFECTADAS.includes(b.estado);
+          if (aAfectado && !bAfectado) return -1;
+          if (!aAfectado && bAfectado) return 1;
+          return a.estado.localeCompare(b.estado);
+        });
+        updateStats();
+        initCitySelect();
+        handleFilter();
+        dbStatus.textContent = "En Vivo";
+        dbStatus.className = "status-badge live";
+      }
+    } catch (err) {
+      console.error("Supabase connection failed:", err);
+      dbStatus.textContent = "Error";
+      dbStatus.className = "status-badge offline";
+      mainGrid.innerHTML = '<div class="no-results">Hubo un error cargando los refugios.</div>';
+    }
+  }
+
+  searchInput.addEventListener('input', handleFilter);
+  citySelect.addEventListener('change', handleFilter);
+
+  loadData();
+  setInterval(loadData, 300000);
+</script>

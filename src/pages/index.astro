@@ -7,6 +7,7 @@ import AlertBox from "../components/AlertBox.astro";
 import StatsRow from "../components/StatsRow.astro";
 import SearchFilters from "../components/SearchFilters.astro";
 import InsumosSection from "../components/InsumosSection.astro";
+import RefugiosSection from "../components/RefugiosSection.astro";
 import EmergenciaCTA from "../components/EmergenciaCTA.astro";
 import { estados, flagUrl, ZONAS_AFECTADAS, sortEstados, resolveEstado } from "../data/centros";
 
@@ -138,6 +139,8 @@ const fallbackEnlaces = [
   </div>
 
   <InsumosSection />
+
+  <RefugiosSection />
 
   <EnlacesSection enlaces={fallbackEnlaces} />
 
@@ -531,5 +534,4 @@ const fallbackEnlaces = [
   setInterval(loadData, 300000);
   setInterval(loadNecesidadesPreview, 300000);
 </script>
-
 
