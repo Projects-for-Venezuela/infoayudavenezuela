@@ -146,6 +146,94 @@
 }
 .section-title { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.7rem; }
 .tags { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.zones-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.zone-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.5rem 0.85rem;
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  border-radius: 10px;
+  border: 2px solid var(--border);
+  background: white;
+  color: var(--text);
+  cursor: pointer;
+  transition: background .15s, border-color .15s, color .15s;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  flex: 0 1 auto;
+}
+.zone-btn:active {
+  transform: scale(0.97);
+}
+.zone-btn svg {
+  flex-shrink: 0;
+  width: 15px;
+  height: 15px;
+}
+
+.zone-btn[data-filter="all"] {
+  border-color: var(--blue);
+  color: var(--blue);
+  background: #EFF6FF;
+}
+.zone-btn[data-filter="all"]:hover {
+  background: #DBEAFE;
+}
+.zone-btn[data-filter="all"].active {
+  background: var(--blue);
+  color: white;
+}
+.zone-btn[data-filter="all"].active:hover {
+  background: var(--blue-dark);
+  border-color: var(--blue-dark);
+}
+
+.zone-btn--critico {
+  border-color: #FECACA;
+  color: #991B1B;
+}
+.zone-btn--critico:hover {
+  background: #FEF2F2;
+}
+.zone-btn--critico.active {
+  background: var(--red);
+  border-color: var(--red);
+  color: white;
+}
+
+.zone-btn--camino {
+  border-color: #FDE68A;
+  color: #854D0E;
+}
+.zone-btn--camino:hover {
+  background: #FFFBEB;
+}
+.zone-btn--camino.active {
+  background: var(--yellow);
+  border-color: var(--gold);
+  color: var(--blue-dark);
+}
+
+.zone-btn--cubierto {
+  border-color: #86EFAC;
+  color: #166534;
+}
+.zone-btn--cubierto:hover {
+  background: #F0FDF4;
+}
+.zone-btn--cubierto.active {
+  background: #22C55E;
+  border-color: #16A34A;
+  color: white;
+}
+
 .tag {
   background: #FFFBEB;
   color: #92400E;
@@ -387,4 +475,21 @@
   background: #FEE2E2;
   border-color: #FCA5A5;
   box-shadow: 0 4px 12px rgba(220,38,38,0.2);
+}
+
+@media (max-width: 640px) {
+  .zones-filter {
+    gap: 0.4rem;
+  }
+  .zone-btn {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.7rem;
+    border-radius: 8px;
+    gap: 0.25rem;
+    border-width: 1.5px;
+  }
+  .zone-btn svg {
+    width: 13px;
+    height: 13px;
+  }
 }
