@@ -31,6 +31,10 @@ import ReportarNecesidadModal from "./ReportarNecesidadModal.astro";
         <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M4 21V5a2 2 0 012-2h12a2 2 0 012 2v16"/><path d="M9 21v-4h6v4"/><path d="M9 9h1"/><path d="M14 9h1"/><path d="M9 13h1"/><path d="M14 13h1"/></svg>
         Refugios
       </a>
+      <a href="/noticias" class="nav-link">
+        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+        Noticias
+      </a>
       <a href="/emergencia" class="nav-link nav-link-emergencia">
         <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
         Emergencia
@@ -49,25 +53,17 @@ import ReportarNecesidadModal from "./ReportarNecesidadModal.astro";
     <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
     <span>Inicio</span>
   </a>
-  <a href="/insumos" class="nav-bottom-link">
-    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 002 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-    <span>Insumos</span>
-  </a>
   <a href="/necesidades" class="nav-bottom-link">
     <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
     <span>Necesidades</span>
-  </a>
-  <a href="/buscar-personas" class="nav-bottom-link">
-    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-    <span>Personas</span>
   </a>
   <a href="/emergencia" class="nav-bottom-link">
     <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
     <span>Emergencia</span>
   </a>
-    <a href="/refugios" class="nav-bottom-link">
-    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M4 21V5a2 2 0 012-2h12a2 2 0 012 2v16"/><path d="M9 21v-4h6v4"/><path d="M9 9h1"/><path d="M14 9h1"/><path d="M9 13h1"/><path d="M14 13h1"/></svg>
-    <span>Refugios</span>
+  <a href="/noticias" class="nav-bottom-link">
+    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+    <span>Noticias</span>
   </a>
   <button id="navNecesidadBtn" class="nav-bottom-link nav-bottom-btn">
     <span class="nav-bottom-btn-icon-wrap">
@@ -76,6 +72,42 @@ import ReportarNecesidadModal from "./ReportarNecesidadModal.astro";
     </span>
     <span>Alerta</span>
   </button>
+  <button id="navMoreBtn" class="nav-bottom-link nav-bottom-more-btn">
+    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+    <span>Más</span>
+  </button>
+</div>
+
+<div id="navMoreOverlay" class="nav-more-overlay"></div>
+<div id="navMoreSheet" class="nav-more-sheet">
+  <div class="nav-more-handle"></div>
+  <div class="nav-more-sheet-header">
+    <div class="nav-more-sheet-title">Más opciones</div>
+    <button id="navMoreCloseBtn" class="nav-more-close-btn" aria-label="Cerrar">
+      <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <a href="/insumos" class="nav-more-item">
+    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 002 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+    <div class="nav-more-item-text">
+      <span class="nav-more-item-title">Insumos</span>
+      <span class="nav-more-item-desc">Guía de donaciones y suministros</span>
+    </div>
+  </a>
+  <a href="/buscar-personas" class="nav-more-item">
+    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <div class="nav-more-item-text">
+      <span class="nav-more-item-title">Buscar Personas</span>
+      <span class="nav-more-item-desc">Localiza familiares en refugios</span>
+    </div>
+  </a>
+  <a href="/refugios" class="nav-more-item">
+    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M4 21V5a2 2 0 012-2h12a2 2 0 012 2v16"/><path d="M9 21v-4h6v4"/><path d="M9 9h1"/><path d="M14 9h1"/><path d="M9 13h1"/><path d="M14 13h1"/></svg>
+    <div class="nav-more-item-text">
+      <span class="nav-more-item-title">Refugios</span>
+      <span class="nav-more-item-desc">Directorios de refugios habilitados</span>
+    </div>
+  </a>
 </div>
 
 <SugerirCentroModal />
@@ -404,5 +436,35 @@ import ReportarNecesidadModal from "./ReportarNecesidadModal.astro";
         submitBtn.disabled = false;
       }
     });
+  }
+
+  // --- Toggle "Más" bottom sheet ---
+  const navMoreOverlay = document.getElementById('navMoreOverlay') as HTMLElement;
+  const navMoreSheet = document.getElementById('navMoreSheet') as HTMLElement;
+  const navMoreBtn = document.getElementById('navMoreBtn') as HTMLButtonElement;
+
+  function openMoreSheet() {
+    navMoreOverlay.classList.add('open');
+    navMoreSheet.classList.add('open');
+  }
+  function closeMoreSheet() {
+    navMoreOverlay.classList.remove('open');
+    navMoreSheet.classList.remove('open');
+  }
+
+  const navMoreCloseBtn = document.getElementById('navMoreCloseBtn') as HTMLButtonElement;
+
+  if (navMoreBtn && navMoreOverlay && navMoreSheet) {
+    navMoreBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      openMoreSheet();
+    });
+    navMoreOverlay.addEventListener('click', closeMoreSheet);
+    navMoreSheet.querySelectorAll('.nav-more-item').forEach(el => {
+      el.addEventListener('click', closeMoreSheet);
+    });
+    if (navMoreCloseBtn) {
+      navMoreCloseBtn.addEventListener('click', closeMoreSheet);
+    }
   }
 </script>

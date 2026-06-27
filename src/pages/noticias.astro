@@ -1,0 +1,145 @@
+---
+import "../styles/noticias.css";
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout title="Centro de Noticias Verificadas"
+  description="Centralización y certificación de noticias sobre la situación en Venezuela. Desmintiendo rumores y validando información."
+  canonical="https://infoayudavenezuela.vercel.app/noticias"
+  showHero={false}
+>
+  <header class="noti-hero">
+    <div class="noti-hero-bg">
+      <div class="noti-hero-content">
+        <span class="noti-hero-badge">VERIFICADO</span>
+        <h1>Centro de <span>Noticias</span></h1>
+        <span class="noti-hero-badge">Centro de Noticias</span>
+        <h1>Noticias Verificadas</h1>
+        <p>Mantente informado con información certificada y contrastada para evitar la propagación de noticias falsas.</p>
+      </div>
+    </div>
+  </header>
+
+  <div class="noticias-banner">
+    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    <div class="noticias-banner-text">
+      <strong>¿Tienes información para verificar?</strong> Envía capturas, enlaces o audios por nuestras redes y nuestro equipo las verificará antes de publicarlas.
+    </div>
+  </div>
+
+  <div class="container" style="max-width: 800px; margin: 0 auto; padding: 0 1.25rem;">
+    <div id="noticiasFeedContainer">
+      <div class="noticias-feed">
+        {[1, 2, 3].map(() => (
+          <article class="noticia-card animate-pulse">
+            <div class="noticia-header" style="display:flex; justify-content:space-between; margin-bottom:1rem;">
+              <div class="skeleton-h6 skeleton-bg skeleton-rounded skeleton-w-3-4"></div>
+              <div class="skeleton-h6 skeleton-bg skeleton-rounded-full skeleton-w-24"></div>
+            </div>
+            <div class="noticia-desc" style="margin-bottom:1.5rem;">
+              <div class="skeleton-h4 skeleton-bg skeleton-rounded skeleton-w-full skeleton-mb-2"></div>
+              <div class="skeleton-h4 skeleton-bg skeleton-rounded skeleton-w-5-6 skeleton-mb-2"></div>
+              <div class="skeleton-h4 skeleton-bg skeleton-rounded skeleton-w-4-6"></div>
+            </div>
+            <div class="noticia-footer" style="display:flex; justify-content:space-between;">
+              <div class="skeleton-h4 skeleton-bg skeleton-rounded skeleton-w-32"></div>
+              <div class="skeleton-h4 skeleton-bg skeleton-rounded skeleton-w-24"></div>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<script>
+  import { supabase } from "../lib/supabase";
+
+  const feedContainer = document.getElementById('noticiasFeedContainer');
+
+  const formatDate = (dateString: string) => {
+    const d = new Date(dateString);
+    return d.toLocaleDateString('es-VE', { 
+      year: 'numeric', month: 'short', day: 'numeric',
+      hour: '2-digit', minute: '2-digit',
+      timeZone: 'America/Caracas'
+    });
+  };
+
+  async function loadNoticias() {
+    if (!supabase || !feedContainer) return;
+    
+    try {
+      const { data, error } = await supabase
+        .from("noticias")
+        .select("*")
+        .in("estado", ["verificado", "falso"])
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+
+      if (!data || data.length === 0) {
+        feedContainer.innerHTML = `
+          <div class="no-results">
+            No hay noticias verificadas o desmentidas en este momento.
+          </div>
+        `;
+        return;
+      }
+
+      feedContainer.innerHTML = `
+        <div class="noticias-feed">
+          ${data.map(n => `
+            <article class="noticia-card">
+              <div class="noticia-header">
+                <h2 class="noticia-title">${n.titulo}</h2>
+                ${n.estado === 'verificado' ? `
+                  <span class="noticia-status verificado">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+                    Verificado
+                  </span>
+                ` : `
+                  <span class="noticia-status falso">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    Falso
+                  </span>
+                `}
+              </div>
+              
+              <p class="noticia-desc">${n.descripcion}</p>
+              
+              <div class="noticia-footer">
+                <span class="noticia-date">Actualizado: ${formatDate(n.created_at)}</span>
+                ${n.fuente ? `
+                  <a href="${n.fuente}" target="_blank" rel="noopener noreferrer" class="noticia-link">
+                    Ver fuente
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+                  </a>
+                ` : ''}
+              </div>
+            </article>
+          `).join('')}
+        </div>
+      `;
+    } catch (error) {
+      console.error('Error fetching noticias:', error);
+      feedContainer.innerHTML = `
+        <div class="no-results text-red-500">
+          Hubo un error al cargar las noticias. Por favor, intenta de nuevo más tarde.
+        </div>
+      `;
+    }
+  }
+
+  loadNoticias();
+  
+  // Realtime updates (opcional)
+  if (supabase) {
+    supabase
+      .channel('noticias_changes_public')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'noticias' }, () => {
+        loadNoticias();
+      })
+      .subscribe();
+  }
+</script>
