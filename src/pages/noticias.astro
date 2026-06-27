@@ -29,11 +29,22 @@ const formatDate = (dateString: string) => {
   canonical="https://infoayudavenezuela.vercel.app/noticias"
   showHero={false}
 >
-  <header class="noticias-hero">
-    <div class="noticias-hero-badge">CENTRO DE NOTICIAS</div>
-    <h1>Información <span>Verificada</span></h1>
-    <p>Centralizamos y certificamos noticias para evitar la desinformación. Aquí encontrarás información validada y rumores desmentidos.</p>
+  <header class="noti-hero">
+    <div class="noti-hero-bg">
+      <div class="noti-hero-content">
+        <span class="noti-hero-badge">VERIFICADO</span>
+        <h1>Centro de <span>Noticias</span></h1>
+        <p>Centralizamos y certificamos información para evitar la desinformación — <strong>noticias validadas y rumores desmentidos</strong></p>
+      </div>
+    </div>
   </header>
+
+  <div class="noticias-banner">
+    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    <div class="noticias-banner-text">
+      <strong>¿Tienes información para verificar?</strong> Envía capturas, enlaces o audios por nuestras redes y nuestro equipo las verificará antes de publicarlas.
+    </div>
+  </div>
 
   <div class="container" style="max-width: 800px; margin: 0 auto; padding: 0 1.25rem;">
     {noticias.length === 0 ? (
