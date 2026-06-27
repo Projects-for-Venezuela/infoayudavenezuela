@@ -6,6 +6,7 @@ import AlertBox from "../../components/AlertBox.astro";
 import SearchFilters from "../../components/SearchFilters.astro";
 import EmergenciaCTA from "../../components/EmergenciaCTA.astro";
 import SugerirRefugioModal from "../../components/SugerirRefugioModal.astro";
+import ReportarRefugiadoModal from "../../components/ReportarRefugiadoModal.astro";
 import { estados, flagUrl, ZONAS_AFECTADAS, sortEstados, resolveEstado } from "../../data/centros";
 
 const estadosOrdenados = [...estados].filter(e => resolveEstado(e.estado) === e.estado).sort(sortEstados);
@@ -41,6 +42,17 @@ const estadosNacionales = estadosOrdenados.filter(e => e.estado !== 'Internacion
     </div>
   </div>
 
+  <div class="section-header" style="margin-bottom: 1rem; align-items: flex-start; flex-direction: column; gap: 0.5rem;">
+    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.5rem;">
+      <a href="/buscar-personas" class="btn btn-secondary" style="font-size: 0.9rem; padding: 0.4rem 0.8rem; height: auto;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: text-bottom; margin-right: 4px;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg> Buscar Personas
+      </a>
+      <button id="btnReportarRefugiado" class="btn btn-primary" style="font-size: 0.9rem; padding: 0.4rem 0.8rem; height: auto;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: text-bottom; margin-right: 4px;"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg> Registrar Persona en Refugio
+      </button>
+    </div>
+  </div>
+
   <SearchFilters />
 
   <div class="ref-section-header">
@@ -58,6 +70,9 @@ const estadosNacionales = estadosOrdenados.filter(e => e.estado !== 'Internacion
   <div class="ref-footer">
     <a href="/">&larr; Volver al inicio</a>
   </div>
+
+  <SugerirRefugioModal />
+  <ReportarRefugiadoModal />
 </Layout>
 
 <script>

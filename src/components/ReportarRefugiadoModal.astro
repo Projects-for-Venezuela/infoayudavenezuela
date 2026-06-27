@@ -1,0 +1,145 @@
+<dialog id="reportarRefugiadoDialog" class="modal-dialog" aria-labelledby="reportarRefugiadoDialogTitle">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="reportarRefugiadoDialogTitle">Registrar Persona en Refugio</h2>
+      <button id="closeRefugiadoDialogBtn" class="close-btn" aria-label="Cerrar modal">&times;</button>
+    </div>
+    <form id="reportarRefugiadoForm" class="modal-form">
+      <p class="form-help">Registra a una persona que se encuentra en un refugio para que sus familiares puedan saber que está a salvo. El registro será verificado antes de publicarse.</p>
+
+      <div class="form-group">
+        <label for="formRefugiadoNombre">Nombre Completo *</label>
+        <input type="text" id="formRefugiadoNombre" placeholder="Ej. Juan Pérez" required />
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="formRefugiadoCedula">Cédula de Identidad</label>
+          <input type="text" id="formRefugiadoCedula" placeholder="Ej. 12345678" />
+        </div>
+        <div class="form-group">
+          <label for="formRefugiadoTelefono">Número de Teléfono</label>
+          <input type="text" id="formRefugiadoTelefono" placeholder="Ej. 0424-1234567" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="formRefugiadoRefugio">Refugio en el que se encuentra *</label>
+        <select id="formRefugiadoRefugio" required>
+          <option value="">Cargando refugios...</option>
+        </select>
+        <p style="font-size: 0.8rem; color: var(--muted); margin-top: 0.25rem;">Si el refugio no está en la lista, asegúrate de <a href="/refugios" style="color: var(--blue); text-decoration: underline;">sugerirlo primero</a>.</p>
+      </div>
+
+      <div class="form-group">
+        <label for="formRefugiadoSalud">Estado de Salud</label>
+        <input type="text" id="formRefugiadoSalud" placeholder="Ej. Ileso, Estable, Herido Leve" />
+      </div>
+
+      <div class="form-actions">
+        <button type="button" id="cancelRefugiadoFormBtn" class="btn btn-secondary">Cancelar</button>
+        <button type="submit" id="submitRefugiadoFormBtn" class="btn btn-primary">Registrar Persona</button>
+      </div>
+    </form>
+
+    <div id="formRefugiadoSuccessMessage" class="form-success-msg" style="display: none;">
+      <div class="success-icon">✓</div>
+      <h3>¡Registro Enviado!</h3>
+      <p>Muchas gracias. Los datos de la persona han sido registrados y, tras ser verificados por un moderador, sus familiares podrán encontrarla en nuestro buscador.</p>
+      <button id="successRefugiadoCloseBtn" class="btn btn-primary">Entendido</button>
+    </div>
+  </div>
+</dialog>
+
+<script>
+  import { supabase } from "../lib/supabase";
+
+  const reportarRefugiadoDialog = document.getElementById('reportarRefugiadoDialog') as HTMLDialogElement;
+  const btnReportarRefugiado = document.getElementById('btnReportarRefugiado') as HTMLButtonElement;
+  const closeRefugiadoDialogBtn = document.getElementById('closeRefugiadoDialogBtn') as HTMLButtonElement;
+  const cancelRefugiadoFormBtn = document.getElementById('cancelRefugiadoFormBtn') as HTMLButtonElement;
+  const reportarRefugiadoForm = document.getElementById('reportarRefugiadoForm') as HTMLFormElement;
+  const formRefugiadoSuccessMessage = document.getElementById('formRefugiadoSuccessMessage') as HTMLElement;
+  const successRefugiadoCloseBtn = document.getElementById('successRefugiadoCloseBtn') as HTMLButtonElement;
+  const formRefugiadoRefugioSelect = document.getElementById('formRefugiadoRefugio') as HTMLSelectElement;
+
+  async function loadRefugiosForSelect() {
+    if (!supabase) return;
+    const { data, error } = await supabase.from('refugios').select('id, nombre, ciudad, estado').eq('verificado', true).order('nombre');
+    
+    if (!error && data) {
+      if (data.length === 0) {
+          formRefugiadoRefugioSelect.innerHTML = '<option value="">No hay refugios verificados aún</option>';
+          return;
+      }
+      let optionsHtml = '<option value="">Selecciona un refugio...</option>';
+      data.forEach((refugio: any) => {
+        optionsHtml += `<option value="${refugio.id}">${refugio.nombre} (${refugio.ciudad}, ${refugio.estado})</option>`;
+      });
+      formRefugiadoRefugioSelect.innerHTML = optionsHtml;
+    } else {
+      formRefugiadoRefugioSelect.innerHTML = '<option value="">Error cargando refugios</option>';
+    }
+  }
+
+  // Load refugios when dialog opens to ensure fresh data
+  if (btnReportarRefugiado) {
+    btnReportarRefugiado.addEventListener('click', () => {
+      reportarRefugiadoForm.style.display = 'flex';
+      formRefugiadoSuccessMessage.style.display = 'none';
+      reportarRefugiadoForm.reset();
+      loadRefugiosForSelect();
+      reportarRefugiadoDialog.showModal();
+    });
+  }
+
+  const closeRefugiadoForm = () => { reportarRefugiadoDialog.close(); };
+  if (closeRefugiadoDialogBtn) closeRefugiadoDialogBtn.addEventListener('click', closeRefugiadoForm);
+  if (cancelRefugiadoFormBtn) cancelRefugiadoFormBtn.addEventListener('click', closeRefugiadoForm);
+  if (successRefugiadoCloseBtn) successRefugiadoCloseBtn.addEventListener('click', closeRefugiadoForm);
+
+  reportarRefugiadoDialog.addEventListener('click', (e) => {
+    const r = reportarRefugiadoDialog.getBoundingClientRect();
+    if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) {
+      reportarRefugiadoDialog.close();
+    }
+  });
+
+  if (reportarRefugiadoForm) {
+    reportarRefugiadoForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const submitBtn = document.getElementById('submitRefugiadoFormBtn') as HTMLButtonElement;
+      const originalText = submitBtn.textContent || '';
+      submitBtn.textContent = 'Enviando...';
+      submitBtn.disabled = true;
+
+      const nombre_completo = (document.getElementById('formRefugiadoNombre') as HTMLInputElement).value.trim();
+      const cedula = (document.getElementById('formRefugiadoCedula') as HTMLInputElement).value.trim() || null;
+      const telefono = (document.getElementById('formRefugiadoTelefono') as HTMLInputElement).value.trim() || null;
+      const refugio_id = formRefugiadoRefugioSelect.value;
+      const estado_salud = (document.getElementById('formRefugiadoSalud') as HTMLInputElement).value.trim() || null;
+
+      if (!supabase) {
+        alert('El sistema está operando en modo local/sin conexión.');
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+        return;
+      }
+
+      try {
+        const { error } = await supabase.from('refugiados').insert({
+          nombre_completo, cedula, telefono, refugio_id, estado_salud, verificado: false
+        });
+        if (error) throw error;
+        reportarRefugiadoForm.style.display = 'none';
+        formRefugiadoSuccessMessage.style.display = 'flex';
+      } catch (err) {
+        console.error('Error insertando refugiado en Supabase:', err);
+        alert('Hubo un error al enviar el registro.');
+      } finally {
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+      }
+    });
+  }
+</script>
