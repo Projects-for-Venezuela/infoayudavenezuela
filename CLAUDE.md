@@ -224,7 +224,7 @@ src/
 ├── layouts/          # Layout.astro — estructura base con Navbar + Hero + main + Footer
 ├── lib/              # Utilidades (supabase.js, escape.ts)
 ├── pages/            # Rutas: index, emergencia, estado/[estado], insumos, necesidades, noticias, refugios, sobre-nosotros
-├── scripts/          # Seed de Supabase
+├── scripts/          # Seeds de Supabase (seed-supabase.js, seed-numeros-emergencia.js)
 └── styles/           # CSS modular por UI (un archivo por dominio visual)
 public/
 └── flags/*.webp      # Banderas de estados venezolanos
@@ -241,6 +241,28 @@ public/
 - **Conciso.** Respuestas cortas en CLI. No explicar lo obvio. Mostrar el cambio y el porqué, no un ensayo.
 - **No preachy.** No decir "esto podría llevar a X problemas" — ofrecer la solución directamente.
 - **Honesto sobre limitaciones.** Si el agente no pudo verificar algo visualmente, lo dice. Si un cambio es arriesgado, lo marca.
+
+---
+
+## 12. Modelo de datos en Supabase
+
+Tablas existentes (Postgres + RLS):
+
+| Tabla | Lectura pública | Escritura | Notas |
+|-------|-----------------|-----------|-------|
+| `centros_acopio` | sí | insert público `verificado:false` | sembrada por `seed-supabase.js` (hace delete-all + reinsert) |
+| `enlaces_ayuda` | sí | insert público `verificado:false` | |
+| `refugios` / `refugiados` | sí | insert público `verificado:false` | personas en refugios |
+| `necesidades_urgentes` | sí | insert público `verificado:false` | |
+| `noticias` | sí | — | |
+| `numeros_emergencia` | sí | **solo service_role** (no insert público) | modelo relacional plano; ver abajo |
+
+**`numeros_emergencia`** aplana `src/data/numerosemergencia.json` a filas:
+`categoria` (`nacional` \| `caracas`), `subcategoria` (`bomberos`/`proteccion_civil`/`rescate`/`policia`/`radio_informacion`, null para nacionales), `nombre`, `numero` (null en radio), `orden` (preserva la secuencia del JSON). Se reconstruye la estructura original sin pérdida. Carga: `SUPABASE_SERVICE_ROLE_KEY='...' node src/scripts/seed-numeros-emergencia.js` (la anon key no puede escribir por RLS; crear la tabla requiere el SQL del script en el SQL Editor del dashboard).
+
+**Patrón de cutover a Supabase (fetch en build + fallback):** una página SSG puede leer de Supabase en build time y caer al data file local si la BD falla o viene vacía, sin cambiar el template ni romper el modo offline. Implementado en `emergencia.astro` (importa el JSON como `fallback*`, consulta en el frontmatter dentro de `try/catch`). Es el patrón a seguir para futuras migraciones de data files a Supabase.
+
+**Service role key:** secreta. SOLO por variable de entorno al correr seeds; nunca en `.env` commiteado, código, ni historial compartido. Si se expone, rotarla en Supabase → Settings → API.
 
 ---
 
