@@ -94,6 +94,15 @@ const fallbackEnlaces = [
     <span id="resultsCount" class="results-count" style="display: none;"></span>
   </div>
 
+  <div class="zones-filter-container" style="margin-bottom: 1.5rem;">
+    <div id="zonesFilter" style="display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.5rem; scrollbar-width: none;">
+      <button class="tag zone-btn active" data-filter="all" style="background: var(--blue); color: white; border-color: var(--blue); padding: 0.5rem 1rem; font-weight: 600;">Todas las zonas</button>
+      <button class="tag zone-btn" data-filter="critico" style="padding: 0.5rem 1rem; font-weight: 600; border-color: #fca5a5; background: #fff; color: var(--red-dark);">🚨 Requiere ayuda urgente</button>
+      <button class="tag zone-btn" data-filter="en_camino" style="padding: 0.5rem 1rem; font-weight: 600; border-color: #fde047; background: #fff; color: #854d0e;">🚚 Ayuda en camino</button>
+      <button class="tag zone-btn" data-filter="cubierto" style="padding: 0.5rem 1rem; font-weight: 600; border-color: #86efac; background: #fff; color: #166534;">✅ Cubierto</button>
+    </div>
+  </div>
+
   <div class="grid" id="mainGrid">
     {estadosNacionales.map(({ estado, ciudades }) => {
       const count = ciudades.reduce((s: number, c: any) => s + c.centros.length, 0);
@@ -163,6 +172,8 @@ const fallbackEnlaces = [
 
   let centros: any[] = [...fallbackCentros];
   let estados: any[] = [...fallbackEstados];
+  let estadosAyudaMap = new Map<string, string>(); // estado -> nivel_ayuda
+  let currentZoneFilter = 'all';
 
   const searchInput = document.getElementById('searchInput') as HTMLInputElement;
   const citySelect = document.getElementById('citySelect') as HTMLSelectElement;
@@ -300,16 +311,37 @@ const fallbackEnlaces = [
       const count = e.ciudades.reduce((sum: number, c: any) => sum + c.centrosCount, 0);
       const citiesList = escapeHtml(e.ciudades.map((c: any) => c.ciudad).join(", "));
       const slugName = e.estado.replace(/ \/ /g, "--").replace(/ /g, "_");
-      const isAfectado = ZONAS_AFECTADAS.includes(e.estado);
+      
+      const isAfectadoLegacy = ZONAS_AFECTADAS.includes(e.estado);
+      const dbStatus = estadosAyudaMap.get(e.estado);
+      const status = dbStatus || (isAfectadoLegacy ? 'critico' : null);
+      const isAfectado = status !== null;
+      
+      // Filter logic
+      if (currentZoneFilter !== 'all' && status !== currentZoneFilter) {
+        return '';
+      }
+
       const sanitizedName = ({ "Distrito Capital": "Distrito_Capital" } as Record<string, string>)[e.estado] || e.estado.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ /g, "_");
       const safeEstado = escapeHtml(e.estado);
       const safeAlt = escapeHtml(`Bandera de ${e.estado}`);
+      
+      let badgeHtml = '';
+      let priorityClass = '';
+      if (status === 'critico') {
+        priorityClass = 'card-prioritized';
+        badgeHtml = '<span class="badge-prioritized" style="background: var(--red); color: white;"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" stroke="none" style="vertical-align:sub;margin-right:2px"><circle cx="12" cy="12" r="10"/></svg> Requiere ayuda urgente</span>';
+      } else if (status === 'en_camino') {
+        badgeHtml = '<span class="badge-prioritized" style="background: var(--yellow); color: var(--blue-dark);"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" stroke="none" style="vertical-align:sub;margin-right:2px"><path d="M1 3h15v13H1zM16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="16.5" cy="18.5" r="2.5"/></svg> Ayuda en camino</span>';
+      } else if (status === 'cubierto') {
+        badgeHtml = '<span class="badge-prioritized" style="background: #22c55e; color: white;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:sub;margin-right:2px"><polyline points="20 6 9 17 4 12"></polyline></svg> Cubierto</span>';
+      }
 
       return `
-        <a href="/estado/${slugName}" class="card state-card ${isAfectado ? 'card-prioritized' : ''}">
+        <a href="/estado/${slugName}" class="card state-card ${priorityClass}">
           <div class="card-img">
             <img src="/flags/${sanitizedName}.webp" alt="${safeAlt}" loading="lazy" onerror="this.style.display='none';" />
-            ${isAfectado ? '<span class="badge-prioritized"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" stroke="none" style="vertical-align:sub;margin-right:2px" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/></svg> Zona Afectada</span>' : ''}
+            ${badgeHtml}
           </div>
           <div class="card-body">
             <div class="card-top"><h3>${safeEstado}</h3><span class="card-badge">${count}</span></div>
@@ -356,7 +388,8 @@ const fallbackEnlaces = [
     }
 
     mainGrid.innerHTML = filtered.map((c: any) => {
-      const isAfectado = ZONAS_AFECTADAS.includes(c.estado);
+      const dbStatus = estadosAyudaMap.get(c.estado);
+      const isAfectado = dbStatus === 'critico' || (!dbStatus && ZONAS_AFECTADAS.includes(c.estado));
       const isInternacional = c.estado === 'Internacional';
 
       const safeNombre = escapeHtml(c.nombre);
@@ -455,6 +488,15 @@ const fallbackEnlaces = [
         .select('id,nombre,ciudad,estado,direccion,contacto,hora,acepta,necesitan,zelle,pago_movil,verificado')
         .eq('verificado', true);
       if (error) throw error;
+      
+      const { data: statusData, error: statusError } = await supabase
+        .from('estados_ayuda')
+        .select('*');
+        
+      if (!statusError && statusData) {
+        estadosAyudaMap.clear();
+        statusData.forEach(s => estadosAyudaMap.set(s.estado, s.nivel_ayuda));
+      }
 
       if (data && data.length > 0) {
         centros = data;
@@ -527,6 +569,38 @@ const fallbackEnlaces = [
     };
   }
   const debouncedFilter = debounce(handleFilter, 250);
+
+  // Listeners for Zone Filters
+  document.querySelectorAll('.zone-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const target = e.currentTarget as HTMLButtonElement;
+      document.querySelectorAll('.zone-btn').forEach(b => {
+        b.classList.remove('active');
+        (b as HTMLElement).style.background = '#fff';
+        if (b.getAttribute('data-filter') === 'all') (b as HTMLElement).style.color = '#374151';
+      });
+      target.classList.add('active');
+      const filter = target.getAttribute('data-filter') || 'all';
+      currentZoneFilter = filter;
+      
+      // Update active styles
+      if (filter === 'all') {
+        target.style.background = 'var(--blue)';
+        target.style.color = 'white';
+      } else if (filter === 'critico') {
+        target.style.background = 'var(--red)';
+        target.style.color = 'white';
+      } else if (filter === 'en_camino') {
+        target.style.background = 'var(--yellow)';
+        target.style.color = 'var(--blue-dark)';
+      } else if (filter === 'cubierto') {
+        target.style.background = '#22c55e';
+        target.style.color = 'white';
+      }
+      
+      handleFilter();
+    });
+  });
 
   searchInput.addEventListener('input', debouncedFilter);
   citySelect.addEventListener('change', handleFilter);

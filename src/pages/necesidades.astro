@@ -74,6 +74,7 @@ import { ZONAS_AFECTADAS } from "../data/centros";
   const refreshBtn = document.getElementById('necRefreshBtn') as HTMLButtonElement;
 
   let necesidades: any[] = [];
+  let estadosAyudaMap = new Map<string, string>(); // estado -> nivel_ayuda
 
   function renderNecesidades(list: any[]) {
     if (list.length === 0) {
@@ -82,7 +83,8 @@ import { ZONAS_AFECTADAS } from "../data/centros";
     }
 
     container.innerHTML = list.map((n: any) => {
-      const isAfectado = ZONAS_AFECTADAS.includes(n.estado);
+      const dbStatus = estadosAyudaMap.get(n.estado);
+      const isAfectado = dbStatus === 'critico' || (!dbStatus && ZONAS_AFECTADAS.includes(n.estado));
       return `
         <div class="necesidad-card ${isAfectado ? 'card-prioritized' : ''}">
           <div class="necesidad-head">
@@ -129,8 +131,10 @@ import { ZONAS_AFECTADAS } from "../data/centros";
     });
 
     filtered.sort((a: any, b: any) => {
-      const aAfectado = ZONAS_AFECTADAS.includes(a.estado);
-      const bAfectado = ZONAS_AFECTADAS.includes(b.estado);
+      const dbStatusA = estadosAyudaMap.get(a.estado);
+      const dbStatusB = estadosAyudaMap.get(b.estado);
+      const aAfectado = dbStatusA === 'critico' || (!dbStatusA && ZONAS_AFECTADAS.includes(a.estado));
+      const bAfectado = dbStatusB === 'critico' || (!dbStatusB && ZONAS_AFECTADAS.includes(b.estado));
       if (aAfectado && !bAfectado) return -1;
       if (!aAfectado && bAfectado) return 1;
       return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
@@ -152,6 +156,15 @@ import { ZONAS_AFECTADAS } from "../data/centros";
         .order('created_at', { ascending: false });
 
       if (error) throw error;
+      
+      const { data: statusData, error: statusError } = await supabase
+        .from('estados_ayuda')
+        .select('*');
+        
+      if (!statusError && statusData) {
+        estadosAyudaMap.clear();
+        statusData.forEach(s => estadosAyudaMap.set(s.estado, s.nivel_ayuda));
+      }
 
       if (data && data.length > 0) {
         necesidades = data;
