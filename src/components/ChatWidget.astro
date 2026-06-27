@@ -137,8 +137,11 @@
   .chat-group.ai .chat-bubble-msg p { margin: 0 0 6px; }
   .chat-group.ai .chat-bubble-msg p:last-child { margin-bottom: 0; }
   .chat-group.ai .chat-bubble-msg strong { color: #00247D; }
-  .chat-group.ai .chat-bubble-msg ul, .chat-group.ai .chat-bubble-msg ol { margin: 6px 0; padding-left: 20px; }
-  .chat-group.ai .chat-bubble-msg li { margin-bottom: 3px; }
+  .chat-group.ai .chat-bubble-msg em { color: #1D4ED8; font-style: italic; }
+  .chat-group.ai .chat-bubble-msg ul, .chat-group.ai .chat-bubble-msg ol { margin: 6px 0 6px 4px; padding-left: 20px; }
+  .chat-group.ai .chat-bubble-msg li { margin-bottom: 4px; line-height: 1.45; }
+  .chat-group.ai .chat-bubble-msg ul ul, .chat-group.ai .chat-bubble-msg ol ol { margin: 2px 0; }
+  .chat-group.ai .chat-bubble-msg p:first-child { margin-top: 0; }
   .chat-group.ai .chat-bubble-msg a { color: #1D4ED8; font-weight: 600; text-decoration: underline; word-break: break-all; }
 
   .chat-typing {
@@ -351,7 +354,7 @@
   const input = $('chatInput');
   const send = $('chatSend');
   const close = $('chatClose');
-  const welcome = $('chatWelcome');
+  let welcome = $('chatWelcome');
   const iconOpen = $('chatIconOpen');
   const iconClose = $('chatIconClose');
   const badge = $('chatBadge');
@@ -384,7 +387,34 @@
   }
 
   function formatAI(text) {
-    return text.replace(/\n/g, '<br>');
+    const escape = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    const inline = s => escape(s)
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.+?)\*/g, '<em>$1</em>');
+    const lines = text.split('\n');
+    const paragraphs = [];
+    let i = 0;
+    while (i < lines.length) {
+      const line = lines[i];
+      if (line === '') { i++; continue; }
+      const listItems = [];
+      while (i < lines.length && /^(\s*[-*]\s|\s*\d+[.)]\s)/.test(lines[i])) {
+        const li = lines[i].replace(/^(\s*[-*]\s|\s*\d+[.)]\s)/, '');
+        listItems.push(`<li>${inline(li)}</li>`);
+        i++;
+      }
+      if (listItems.length) {
+        paragraphs.push(`<ul>${listItems.join('')}</ul>`);
+        continue;
+      }
+      const para = [];
+      while (i < lines.length && lines[i] !== '' && !/^(\s*[-*]\s|\s*\d+[.)]\s)/.test(lines[i])) {
+        para.push(inline(lines[i]));
+        i++;
+      }
+      paragraphs.push(`<p>${para.join('<br>')}</p>`);
+    }
+    return paragraphs.join('');
   }
 
   function getTime() {
@@ -401,9 +431,9 @@
     const name = role === 'user' ? 'Tú' : 'Asistente';
     label.innerHTML = `${name} <span class="chat-label-time">${getTime()}</span>`;
     group.appendChild(label);
-    const container = welcome ? messages : messages;
-    if (welcome) {
-      messages.insertBefore(group, welcome);
+    const refNode = welcome?.parentNode === messages ? welcome : null;
+    if (refNode) {
+      messages.insertBefore(group, refNode);
     } else {
       messages.appendChild(group);
     }
@@ -456,8 +486,7 @@
   async function sendMessage(text) {
     if (!text || loading) return;
     input.value = ''; input.style.height = '42px';
-    const wasWelcome = !!welcome;
-    welcome?.remove();
+    if (welcome) { welcome.remove(); welcome = null; }
     addMessage(text, 'user');
     history.push({ role: 'user', content: text });
     setLoad(true);
@@ -504,9 +533,11 @@
     unread = 0;
     saveHistory();
     messages.querySelectorAll('.chat-group').forEach(el => el.remove());
-    const newWelcome = welcome.cloneNode(true);
-    welcome.replaceWith(newWelcome);
-    window.location.reload();
+    if (welcome) welcome.remove();
+    const template = document.querySelector('#chatWelcome');
+    const newWelcome = template.cloneNode(true);
+    messages.insertBefore(newWelcome, messages.firstChild);
+    welcome = newWelcome;
   }
 
   function toggleChat(open) {
