@@ -11,53 +11,17 @@
     <form id="reportarNecesidadForm" class="modal-form">
       <p class="form-help">Reporta un lugar, refugio o comunidad que necesite ayuda urgente. Los datos se publicarán tras ser verificados por un moderador.</p>
 
-      <div class="alert-box alert-box--info">
-        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
-        <span>Para reportar fuera de Venezuela, selecciona <strong>"Internacional"</strong> como estado.</span>
-      </div>
-
       <div class="form-row">
         <div class="form-group">
           <label for="necFormEstado">Estado *</label>
           <select id="necFormEstado" required>
             <option value="">Selecciona</option>
-            <option value="Internacional">🌎 Internacional</option>
-            <optgroup label="Venezuela">
-              <option value="Distrito Capital">Distrito Capital</option>
-              <option value="Amazonas">Amazonas</option>
-              <option value="Anzoátegui">Anzoátegui</option>
-              <option value="Apure">Apure</option>
-              <option value="Aragua">Aragua</option>
-              <option value="Barinas">Barinas</option>
-              <option value="Bolívar">Bolívar</option>
-              <option value="Carabobo">Carabobo</option>
-              <option value="Cojedes">Cojedes</option>
-              <option value="Delta Amacuro">Delta Amacuro</option>
-              <option value="Falcón">Falcón</option>
-              <option value="Guárico">Guárico</option>
-              <option value="La Guaira">La Guaira</option>
-              <option value="Lara">Lara</option>
-              <option value="Mérida">Mérida</option>
-              <option value="Miranda">Miranda</option>
-              <option value="Monagas">Monagas</option>
-              <option value="Nueva Esparta">Nueva Esparta</option>
-              <option value="Portuguesa">Portuguesa</option>
-              <option value="Sucre">Sucre</option>
-              <option value="Táchira">Táchira</option>
-              <option value="Trujillo">Trujillo</option>
-              <option value="Yaracuy">Yaracuy</option>
-              <option value="Zulia">Zulia</option>
-            </optgroup>
+            <option value="Distrito Capital">Distrito Capital (Caracas)</option>
+            <option value="La Guaira">La Guaira</option>
+            <option value="Miranda">Miranda (El Junquito)</option>
+            <option value="Falcón">Falcón (Tucacas)</option>
           </select>
           <span class="form-error" id="necErrorEstado"></span>
-        </div>
-        <div class="form-group" id="necFormPaisGroup" style="display: none;">
-          <label for="necFormPais">País *</label>
-          <input type="text" id="necFormPais" list="paises-list" placeholder="Ej. Colombia, Perú..." maxlength="60" autocomplete="off" />
-          <datalist id="paises-list">
-            <option value="Argentina"></option><option value="Brasil"></option><option value="Chile"></option><option value="Colombia"></option><option value="Ecuador"></option><option value="México"></option><option value="Panamá"></option><option value="Perú"></option><option value="República Dominicana"></option><option value="Estados Unidos"></option><option value="España"></option><option value="Otro"></option>
-          </datalist>
-          <span class="form-error" id="necErrorPais"></span>
         </div>
       </div>
 

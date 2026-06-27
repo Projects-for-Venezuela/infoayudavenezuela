@@ -176,8 +176,6 @@ import ReportarNecesidadModal from "./ReportarNecesidadModal.astro";
         successMsg.style.display = 'none';
         form.reset();
         if (typeof clearNecErrors === 'function') clearNecErrors();
-        document.getElementById('necFormPaisGroup')!.style.display = 'none';
-        (document.getElementById('necFormPais') as HTMLInputElement).required = false;
         dialog.showModal();
       }
     });
@@ -390,25 +388,7 @@ import ReportarNecesidadModal from "./ReportarNecesidadModal.astro";
       necFormSuccessMessage.style.display = 'none';
       reportarNecesidadForm.reset();
       clearNecErrors();
-      document.getElementById('necFormPaisGroup')!.style.display = 'none';
-      (document.getElementById('necFormPais') as HTMLInputElement).required = false;
       reportarNecesidadDialog.showModal();
-    });
-  }
-
-  const necFormEstado = document.getElementById('necFormEstado') as HTMLSelectElement;
-  if (necFormEstado) {
-    necFormEstado.addEventListener('change', () => {
-      const formPaisGroup = document.getElementById('necFormPaisGroup') as HTMLElement;
-      const formPais = document.getElementById('necFormPais') as HTMLInputElement;
-      if (necFormEstado.value === 'Internacional') {
-        formPaisGroup.style.display = 'flex';
-        formPais.required = true;
-      } else {
-        formPaisGroup.style.display = 'none';
-        formPais.required = false;
-        formPais.value = '';
-      }
     });
   }
 
@@ -430,7 +410,6 @@ import ReportarNecesidadModal from "./ReportarNecesidadModal.astro";
       clearNecErrors();
 
       const estado = (document.getElementById('necFormEstado') as HTMLSelectElement).value;
-      const pais = (document.getElementById('necFormPais') as HTMLInputElement).value.trim();
       let ciudad = (document.getElementById('necFormCiudad') as HTMLInputElement).value.trim();
       const lugar = (document.getElementById('necFormLugar') as HTMLInputElement).value.trim();
       const direccion = (document.getElementById('necFormDireccion') as HTMLTextAreaElement).value.trim() || null;
@@ -443,24 +422,19 @@ import ReportarNecesidadModal from "./ReportarNecesidadModal.astro";
       let hasError = false;
 
       if (!estado) { showNecError('necErrorEstado', 'Selecciona un estado'); hasError = true; }
-      if (estado === 'Internacional' && !pais) { showNecError('necErrorPais', 'Escribe el país'); hasError = true; }
       if (ciudad.length < 2) { showNecError('necErrorCiudad', 'Mínimo 2 caracteres'); hasError = true; }
       if (lugar.length < 2) { showNecError('necErrorLugar', 'Mínimo 2 caracteres'); hasError = true; }
       if (categorias.length === 0) { showNecError('necErrorCategoria', 'Selecciona al menos una categoría'); hasError = true; }
       if (que_necesitan.length < 5) { showNecError('necErrorNecesitan', 'Describe qué necesitan (mín. 5 caracteres)'); hasError = true; }
 
       const htmlPattern = /<[^>]*>/;
-      const campos = [ciudad, lugar, direccion, que_necesitan, contacto, pais];
+      const campos = [ciudad, lugar, direccion, que_necesitan, contacto];
       if (campos.some((v) => v && htmlPattern.test(v))) {
         showNecError('necErrorNecesitan', 'No se permite HTML');
         hasError = true;
       }
 
       if (hasError) return;
-
-      if (estado === 'Internacional' && pais) {
-        ciudad = ciudad + ', ' + pais;
-      }
 
       if (!supabase) {
         showNecError('necErrorNecesitan', 'El sistema está en modo local/sin conexión.');
