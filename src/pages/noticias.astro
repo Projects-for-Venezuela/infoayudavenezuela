@@ -13,7 +13,9 @@ import Layout from "../layouts/Layout.astro";
       <div class="noti-hero-content">
         <span class="noti-hero-badge">VERIFICADO</span>
         <h1>Centro de <span>Noticias</span></h1>
-        <p>Centralizamos y certificamos información para evitar la desinformación — <strong>noticias validadas y rumores desmentidos</strong></p>
+        <span class="noti-hero-badge">Centro de Noticias</span>
+        <h1>Noticias Verificadas</h1>
+        <p>Mantente informado con información certificada y contrastada para evitar la propagación de noticias falsas.</p>
       </div>
     </div>
   </header>
@@ -27,12 +29,24 @@ import Layout from "../layouts/Layout.astro";
 
   <div class="container" style="max-width: 800px; margin: 0 auto; padding: 0 1.25rem;">
     <div id="noticiasFeedContainer">
-      <div class="py-12 text-center text-gray-500 flex flex-col items-center justify-center">
-        <svg class="animate-spin mb-4 h-8 w-8 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-        </svg>
-        <span>Cargando noticias verificadas...</span>
+      <div class="noticias-feed">
+        {[1, 2, 3].map(() => (
+          <article class="noticia-card animate-pulse">
+            <div class="noticia-header" style="display:flex; justify-content:space-between; margin-bottom:1rem;">
+              <div class="skeleton-h6 skeleton-bg skeleton-rounded skeleton-w-3-4"></div>
+              <div class="skeleton-h6 skeleton-bg skeleton-rounded-full skeleton-w-24"></div>
+            </div>
+            <div class="noticia-desc" style="margin-bottom:1.5rem;">
+              <div class="skeleton-h4 skeleton-bg skeleton-rounded skeleton-w-full skeleton-mb-2"></div>
+              <div class="skeleton-h4 skeleton-bg skeleton-rounded skeleton-w-5-6 skeleton-mb-2"></div>
+              <div class="skeleton-h4 skeleton-bg skeleton-rounded skeleton-w-4-6"></div>
+            </div>
+            <div class="noticia-footer" style="display:flex; justify-content:space-between;">
+              <div class="skeleton-h4 skeleton-bg skeleton-rounded skeleton-w-32"></div>
+              <div class="skeleton-h4 skeleton-bg skeleton-rounded skeleton-w-24"></div>
+            </div>
+          </article>
+        ))}
       </div>
     </div>
   </div>

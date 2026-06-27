@@ -1,0 +1,19 @@
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .5; }
+}
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+.skeleton-bg { background-color: #e5e7eb; }
+.skeleton-rounded { border-radius: 0.25rem; }
+.skeleton-rounded-full { border-radius: 9999px; }
+.skeleton-h6 { height: 1.5rem; }
+.skeleton-h4 { height: 1rem; }
+.skeleton-w-full { width: 100%; }
+.skeleton-w-3-4 { width: 75%; }
+.skeleton-w-5-6 { width: 83.333333%; }
+.skeleton-w-4-6 { width: 66.666667%; }
+.skeleton-w-32 { width: 8rem; }
+.skeleton-w-24 { width: 6rem; }
+.skeleton-mb-2 { margin-bottom: 0.5rem; }
