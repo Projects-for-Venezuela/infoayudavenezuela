@@ -3,6 +3,7 @@ import "../styles/global.css";
 import Navbar from "../components/Navbar.astro";
 import Hero from "../components/Hero.astro";
 import Footer from "../components/Footer.astro";
+import ChatWidget from "../components/ChatWidget.astro";
 
 export interface Props {
   title: string;
@@ -82,6 +83,8 @@ const fullTitle = title === "Inicio"
       <slot />
     </main>
     <Footer />
+
+    <ChatWidget />
 
     <script>
       import { inject } from '@vercel/analytics';
