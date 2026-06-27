@@ -95,11 +95,20 @@ const fallbackEnlaces = [
   </div>
 
   <div class="zones-filter-container" style="margin-bottom: 1.5rem;">
-    <div id="zonesFilter" style="display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 0.5rem; scrollbar-width: none;">
-      <button class="tag zone-btn active" data-filter="all" style="background: var(--blue); color: white; border-color: var(--blue); padding: 0.5rem 1rem; font-weight: 600;">Todas las zonas</button>
-      <button class="tag zone-btn" data-filter="critico" style="padding: 0.5rem 1rem; font-weight: 600; border-color: #fca5a5; background: #fff; color: var(--red-dark);">🚨 Requiere ayuda urgente</button>
-      <button class="tag zone-btn" data-filter="en_camino" style="padding: 0.5rem 1rem; font-weight: 600; border-color: #fde047; background: #fff; color: #854d0e;">🚚 Ayuda en camino</button>
-      <button class="tag zone-btn" data-filter="cubierto" style="padding: 0.5rem 1rem; font-weight: 600; border-color: #86efac; background: #fff; color: #166534;">✅ Cubierto</button>
+    <div id="zonesFilter" class="zones-filter">
+      <button class="zone-btn active" data-filter="all">Todas las zonas</button>
+      <button class="zone-btn zone-btn--critico" data-filter="critico">
+        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        Requiere ayuda urgente
+      </button>
+      <button class="zone-btn zone-btn--camino" data-filter="en_camino">
+        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17H4a2 2 0 01-2-2V5a2 2 0 012-2h16a2 2 0 012 2v10a2 2 0 01-2 2h-1"/><polygon points="12 15 17 21 7 21 12 15"/><path d="M12 9V1"/><path d="M12 1l3 3-3 3-3-3 3-3z"/></svg>
+        Ayuda en camino
+      </button>
+      <button class="zone-btn zone-btn--cubierto" data-filter="cubierto">
+        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+        Cubierto
+      </button>
     </div>
   </div>
 
@@ -573,31 +582,9 @@ const fallbackEnlaces = [
   // Listeners for Zone Filters
   document.querySelectorAll('.zone-btn').forEach(btn => {
     btn.addEventListener('click', (e) => {
-      const target = e.currentTarget as HTMLButtonElement;
-      document.querySelectorAll('.zone-btn').forEach(b => {
-        b.classList.remove('active');
-        (b as HTMLElement).style.background = '#fff';
-        if (b.getAttribute('data-filter') === 'all') (b as HTMLElement).style.color = '#374151';
-      });
-      target.classList.add('active');
-      const filter = target.getAttribute('data-filter') || 'all';
-      currentZoneFilter = filter;
-      
-      // Update active styles
-      if (filter === 'all') {
-        target.style.background = 'var(--blue)';
-        target.style.color = 'white';
-      } else if (filter === 'critico') {
-        target.style.background = 'var(--red)';
-        target.style.color = 'white';
-      } else if (filter === 'en_camino') {
-        target.style.background = 'var(--yellow)';
-        target.style.color = 'var(--blue-dark)';
-      } else if (filter === 'cubierto') {
-        target.style.background = '#22c55e';
-        target.style.color = 'white';
-      }
-      
+      document.querySelectorAll('.zone-btn').forEach(b => b.classList.remove('active'));
+      (e.currentTarget as HTMLButtonElement).classList.add('active');
+      currentZoneFilter = (e.currentTarget as HTMLButtonElement).getAttribute('data-filter') || 'all';
       handleFilter();
     });
   });
