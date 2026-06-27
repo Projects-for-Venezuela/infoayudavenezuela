@@ -1,3 +1,95 @@
+/* ─── Modal header with icon ─── */
+.modal-header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+.modal-header-left svg {
+  color: var(--red);
+  flex-shrink: 0;
+}
+.modal-dialog--alerta .modal-header {
+  border-bottom-color: #FECACA;
+}
+.modal-dialog--alerta .modal-header h2 {
+  color: #991B1B;
+}
+
+/* ─── Inline error ─── */
+.form-error {
+  font-size: 0.73rem;
+  color: #DC2626;
+  min-height: 0;
+  line-height: 1.3;
+  display: none;
+}
+.form-error.visible {
+  display: block;
+}
+
+/* ─── Categorías checkboxes ─── */
+.nec-categorias {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.45rem;
+}
+.nec-cat-item {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 0.6rem;
+  border-radius: 8px;
+  border: 1.5px solid var(--border);
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text);
+  transition: border-color .15s, background .15s;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+.nec-cat-item:has(input:checked) {
+  border-color: #991B1B;
+  background: #FEF2F2;
+}
+.nec-cat-item svg {
+  flex-shrink: 0;
+  color: var(--muted);
+  transition: color .15s;
+}
+.nec-cat-item:has(input:checked) svg {
+  color: #991B1B;
+}
+.nec-cat-item input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* ─── Danger button ─── */
+.btn-danger {
+  background: #DC2626;
+  color: white;
+}
+.btn-danger:hover {
+  background: #991B1B;
+}
+
+/* ─── Alert box variants ─── */
+.alert-box--info {
+  background: #EFF6FF;
+  border-color: #BFDBFE;
+  color: #1E40AF;
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 480px) {
+  .nec-categorias {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
 dialog.modal-dialog {
   border: none;
   border-radius: var(--radius);

@@ -372,3 +372,15 @@
 .btn-sugerir-home svg {
   flex-shrink: 0;
 }
+
+.btn-reportar-home {
+  background: #FEF2F2;
+  color: #991B1B;
+  border-color: #FECACA;
+  margin-bottom: 0.5rem;
+}
+.btn-reportar-home:hover {
+  background: #FEE2E2;
+  border-color: #FCA5A5;
+  box-shadow: 0 4px 12px rgba(220,38,38,0.2);
+}

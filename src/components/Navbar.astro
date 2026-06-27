@@ -165,6 +165,24 @@ import ReportarNecesidadModal from "./ReportarNecesidadModal.astro";
     homeSugerirBtn.addEventListener('click', openSugerirForm);
   }
 
+  const homeReportarBtn = document.getElementById('homeReportarBtn') as HTMLButtonElement | null;
+  if (homeReportarBtn) {
+    homeReportarBtn.addEventListener('click', () => {
+      const dialog = document.getElementById('reportarNecesidadDialog') as HTMLDialogElement;
+      const form = document.getElementById('reportarNecesidadForm') as HTMLFormElement;
+      const successMsg = document.getElementById('necFormSuccessMessage') as HTMLElement;
+      if (dialog && form) {
+        form.style.display = 'flex';
+        successMsg.style.display = 'none';
+        form.reset();
+        if (typeof clearNecErrors === 'function') clearNecErrors();
+        document.getElementById('necFormPaisGroup')!.style.display = 'none';
+        (document.getElementById('necFormPais') as HTMLInputElement).required = false;
+        dialog.showModal();
+      }
+    });
+  }
+
   const closeForm = () => { sugerirDialog.close(); };
   if (closeDialogBtn) closeDialogBtn.addEventListener('click', closeForm);
   if (cancelFormBtn) cancelFormBtn.addEventListener('click', closeForm);
@@ -356,11 +374,22 @@ import ReportarNecesidadModal from "./ReportarNecesidadModal.astro";
   const necFormSuccessMessage = document.getElementById('necFormSuccessMessage') as HTMLElement;
   const necSuccessCloseBtn = document.getElementById('necSuccessCloseBtn') as HTMLButtonElement;
 
+  function showNecError(id: string, msg: string) {
+    const el = document.getElementById(id) as HTMLElement;
+    if (el) { el.textContent = msg; el.classList.add('visible'); }
+  }
+  function clearNecErrors() {
+    document.querySelectorAll('#reportarNecesidadForm .form-error').forEach(el => {
+      el.textContent = ''; el.classList.remove('visible');
+    });
+  }
+
   if (navNecesidadBtn) {
     navNecesidadBtn.addEventListener('click', () => {
       reportarNecesidadForm.style.display = 'flex';
       necFormSuccessMessage.style.display = 'none';
       reportarNecesidadForm.reset();
+      clearNecErrors();
       document.getElementById('necFormPaisGroup')!.style.display = 'none';
       (document.getElementById('necFormPais') as HTMLInputElement).required = false;
       reportarNecesidadDialog.showModal();
@@ -398,39 +427,61 @@ import ReportarNecesidadModal from "./ReportarNecesidadModal.astro";
   if (reportarNecesidadForm) {
     reportarNecesidadForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const submitBtn = document.getElementById('submitNecFormBtn') as HTMLButtonElement;
-      const originalText = submitBtn.textContent || '';
-      submitBtn.textContent = 'Enviando...';
-      submitBtn.disabled = true;
+      clearNecErrors();
 
       const estado = (document.getElementById('necFormEstado') as HTMLSelectElement).value;
-      let ciudad = (document.getElementById('necFormCiudad') as HTMLInputElement).value.trim();
       const pais = (document.getElementById('necFormPais') as HTMLInputElement).value.trim();
-      if (estado === 'Internacional' && pais) {
-        ciudad = ciudad + ', ' + pais;
-      }
+      let ciudad = (document.getElementById('necFormCiudad') as HTMLInputElement).value.trim();
       const lugar = (document.getElementById('necFormLugar') as HTMLInputElement).value.trim();
       const direccion = (document.getElementById('necFormDireccion') as HTMLTextAreaElement).value.trim() || null;
       const que_necesitan = (document.getElementById('necFormNecesitan') as HTMLTextAreaElement).value.trim();
       const contacto = (document.getElementById('necFormContacto') as HTMLInputElement).value.trim() || null;
 
+      const catChecked = document.querySelectorAll('#necCategorias input:checked');
+      const categorias = Array.from(catChecked).map(el => (el as HTMLInputElement).value);
+
+      let hasError = false;
+
+      if (!estado) { showNecError('necErrorEstado', 'Selecciona un estado'); hasError = true; }
+      if (estado === 'Internacional' && !pais) { showNecError('necErrorPais', 'Escribe el país'); hasError = true; }
+      if (ciudad.length < 2) { showNecError('necErrorCiudad', 'Mínimo 2 caracteres'); hasError = true; }
+      if (lugar.length < 2) { showNecError('necErrorLugar', 'Mínimo 2 caracteres'); hasError = true; }
+      if (categorias.length === 0) { showNecError('necErrorCategoria', 'Selecciona al menos una categoría'); hasError = true; }
+      if (que_necesitan.length < 5) { showNecError('necErrorNecesitan', 'Describe qué necesitan (mín. 5 caracteres)'); hasError = true; }
+
+      const htmlPattern = /<[^>]*>/;
+      const campos = [ciudad, lugar, direccion, que_necesitan, contacto, pais];
+      if (campos.some((v) => v && htmlPattern.test(v))) {
+        showNecError('necErrorNecesitan', 'No se permite HTML');
+        hasError = true;
+      }
+
+      if (hasError) return;
+
+      if (estado === 'Internacional' && pais) {
+        ciudad = ciudad + ', ' + pais;
+      }
+
       if (!supabase) {
-        alert('El sistema est\u00E1 operando en modo local/sin conexi\u00F3n.');
-        submitBtn.textContent = originalText;
-        submitBtn.disabled = false;
+        showNecError('necErrorNecesitan', 'El sistema está en modo local/sin conexión.');
         return;
       }
 
+      const submitBtn = document.getElementById('submitNecFormBtn') as HTMLButtonElement;
+      const originalText = submitBtn.textContent || '';
+      submitBtn.textContent = 'Enviando...';
+      submitBtn.disabled = true;
+
       try {
         const { error } = await supabase.from('necesidades_urgentes').insert({
-          estado, ciudad, lugar, direccion, que_necesitan, contacto, verificado: false
+          estado, ciudad, lugar, direccion, que_necesitan, contacto, categorias, verificado: false
         });
         if (error) throw error;
         reportarNecesidadForm.style.display = 'none';
         necFormSuccessMessage.style.display = 'flex';
       } catch (err) {
         console.error('Error insertando necesidad urgente en Supabase:', err);
-        alert('Hubo un error al enviar tu reporte.');
+        showNecError('necErrorNecesitan', 'Hubo un error al enviar tu reporte.');
       } finally {
         submitBtn.textContent = originalText;
         submitBtn.disabled = false;

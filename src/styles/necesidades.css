@@ -462,3 +462,38 @@
 .cta-body small { font-size: 0.75rem; opacity: .85; }
 .cta-arrow { font-size: 1.2rem; font-weight: 700; transition: transform .2s; }
 .cta-emergencia:hover .cta-arrow { transform: translateX(3px); }
+
+/* ─── Reportar button en necesidades ─── */
+.nec-reportar-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  background: #FEF2F2;
+  color: #991B1B;
+  border: 2px solid #FECACA;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .15s, transform .1s, box-shadow .2s;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  min-height: 48px;
+}
+.nec-reportar-btn:hover {
+  background: #FEE2E2;
+  border-color: #FCA5A5;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(220,38,38,0.2);
+}
+.nec-reportar-btn:active {
+  transform: scale(0.98);
+}
+.nec-reportar-btn svg {
+  flex-shrink: 0;
+}
