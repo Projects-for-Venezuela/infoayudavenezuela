@@ -11,6 +11,7 @@
         <label for="necFormEstado">Estado *</label>
         <select id="necFormEstado" required>
           <option value="">Selecciona un estado</option>
+          <option value="Internacional">Internacional</option>
           <option value="Distrito Capital">Distrito Capital</option>
           <option value="Miranda">Miranda</option>
           <option value="La Guaira">La Guaira</option>
@@ -39,10 +40,15 @@
       </div>
 
       <div class="form-row">
-        <div class="form-group">
-          <label for="necFormCiudad">Ciudad *</label>
-          <input type="text" id="necFormCiudad" placeholder="Ej. Barquisimeto, Macuto" required />
-        </div>
+        <div class="form-group" id="necFormPaisGroup" style="display: none;">
+        <label for="necFormPais">País *</label>
+        <input type="text" id="necFormPais" placeholder="Ej. Colombia, España" maxlength="60" />
+      </div>
+
+      <div class="form-group">
+        <label for="necFormCiudad">Ciudad *</label>
+        <input type="text" id="necFormCiudad" placeholder="Ej. Barquisimeto, Macuto" required />
+      </div>
         <div class="form-group">
           <label for="necFormLugar">Lugar / Nombre *</label>
           <input type="text" id="necFormLugar" placeholder="Ej. Refugio La Paz, Centro Comunitario" required />

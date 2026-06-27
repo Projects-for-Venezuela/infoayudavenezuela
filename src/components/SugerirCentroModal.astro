@@ -11,6 +11,7 @@
         <label for="formEstado">Estado *</label>
         <select id="formEstado" required>
           <option value="">Selecciona un estado</option>
+          <option value="Internacional">Internacional</option>
           <option value="Distrito Capital">Distrito Capital</option>
           <option value="Miranda">Miranda</option>
           <option value="La Guaira">La Guaira</option>
@@ -36,6 +37,11 @@
           <option value="Delta Amacuro">Delta Amacuro</option>
           <option value="Amazonas">Amazonas</option>
         </select>
+      </div>
+
+      <div class="form-group" id="formPaisGroup" style="display: none;">
+        <label for="formPais">País *</label>
+        <input type="text" id="formPais" placeholder="Ej. Colombia, España" maxlength="60" />
       </div>
 
       <div class="form-group">

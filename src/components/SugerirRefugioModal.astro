@@ -11,6 +11,7 @@
         <label for="formRefugioEstado">Estado *</label>
         <select id="formRefugioEstado" required>
           <option value="">Selecciona un estado</option>
+          <option value="Internacional">Internacional</option>
           <option value="Distrito Capital">Distrito Capital</option>
           <option value="Miranda">Miranda</option>
           <option value="La Guaira">La Guaira</option>
@@ -38,9 +39,14 @@
         </select>
       </div>
 
+      <div class="form-group" id="formRefugioPaisGroup" style="display: none;">
+        <label for="formRefugioPais">País *</label>
+        <input type="text" id="formRefugioPais" placeholder="Ej. Colombia, España" maxlength="60" />
+      </div>
+
       <div class="form-group">
         <label for="formRefugioCiudad">Ciudad *</label>
-        <input type="text" id="formRefugioCiudad" placeholder="Ej. Barquisimeto, Altamira" required />
+        <input type="text" id="formRefugioCiudad" placeholder="Ej. Barquisimeto, Altamira" required maxlength="60" />
       </div>
 
       <div class="form-group">
@@ -104,7 +110,25 @@
       sugerirRefugioForm.style.display = 'flex';
       formRefugioSuccessMessage.style.display = 'none';
       sugerirRefugioForm.reset();
+      document.getElementById('formRefugioPaisGroup')!.style.display = 'none';
+      (document.getElementById('formRefugioPais') as HTMLInputElement).required = false;
       sugerirRefugioDialog.showModal();
+    });
+  }
+
+  const formRefugioEstado = document.getElementById('formRefugioEstado') as HTMLSelectElement;
+  if (formRefugioEstado) {
+    formRefugioEstado.addEventListener('change', () => {
+      const formPaisGroup = document.getElementById('formRefugioPaisGroup') as HTMLElement;
+      const formPais = document.getElementById('formRefugioPais') as HTMLInputElement;
+      if (formRefugioEstado.value === 'Internacional') {
+        formPaisGroup.style.display = 'flex';
+        formPais.required = true;
+      } else {
+        formPaisGroup.style.display = 'none';
+        formPais.required = false;
+        formPais.value = '';
+      }
     });
   }
 
@@ -129,7 +153,11 @@
       submitBtn.disabled = true;
 
       const estado = (document.getElementById('formRefugioEstado') as HTMLSelectElement).value;
-      const ciudad = (document.getElementById('formRefugioCiudad') as HTMLInputElement).value.trim();
+      let ciudad = (document.getElementById('formRefugioCiudad') as HTMLInputElement).value.trim();
+      const pais = (document.getElementById('formRefugioPais') as HTMLInputElement).value.trim();
+      if (estado === 'Internacional' && pais) {
+        ciudad = ciudad + ', ' + pais;
+      }
       const nombre = (document.getElementById('formRefugioNombre') as HTMLInputElement).value.trim();
       const direccion = (document.getElementById('formRefugioDireccion') as HTMLTextAreaElement).value.trim() || null;
       const contacto = (document.getElementById('formRefugioContacto') as HTMLInputElement).value.trim() || null;

@@ -1,21 +1,13 @@
 {
-<<<<<<< HEAD
-	"pid": 12076,
-=======
-	"pid": 13384,
->>>>>>> 4c02d40 (Changes in the navbar)
-	"port": 4321,
-	"url": "http://localhost:4321",
+	"pid": 142904,
+	"port": 4323,
+	"url": "http://localhost:4323",
 	"urls": {
 		"local": [
-			"http://localhost:4321/"
+			"http://localhost:4323/"
 		],
 		"network": []
 	},
 	"background": false,
-<<<<<<< HEAD
-	"startedAt": "2026-06-27T00:34:52.462Z"
-=======
-	"startedAt": "2026-06-26T23:32:37.010Z"
->>>>>>> 4c02d40 (Changes in the navbar)
+	"startedAt": "2026-06-27T01:53:25.486Z"
 }
