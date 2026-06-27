@@ -1,0 +1,146 @@
+---
+import "../../styles/index.css";
+import Layout from "../../layouts/Layout.astro";
+import AlertBox from "../../components/AlertBox.astro";
+import EmergenciaCTA from "../../components/EmergenciaCTA.astro";
+---
+
+<Layout title="Buscar Personas en Refugios">
+  <AlertBox />
+
+  <div class="section-header" style="margin-bottom: 1rem; align-items: flex-start; flex-direction: column; gap: 0.5rem;">
+    <h1 style="font-size: 1.5rem; font-weight: 700; color: var(--blue);">Buscar Personas en Refugios</h1>
+    <p style="font-size: 0.9rem; color: var(--muted);">Utiliza el buscador para localizar a familiares o conocidos que se encuentren en refugios registrados. Todos los datos aquí mostrados han sido verificados.</p>
+  </div>
+
+  <div class="search-filters">
+    <div class="search-box" style="flex: 1;">
+      <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <input type="text" id="searchPersonInput" placeholder="Buscar por nombre, apellido o cédula de identidad..." />
+    </div>
+  </div>
+
+  <div class="section-header">
+    <h2 id="gridTitle">Resultados de la búsqueda</h2>
+    <span id="resultsCount" class="results-count" style="display: none;"></span>
+    <span id="dbStatus" class="status-badge live" style="margin-left: auto; display: none;"></span>
+  </div>
+
+  <div class="grid" id="mainGrid">
+    <div class="no-results" style="grid-column: 1 / -1; padding: 3rem 1rem; text-align: center; color: var(--muted);">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto 1rem; color: #cbd5e1;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      Escribe un nombre o cédula en el buscador de arriba para comenzar.
+    </div>
+  </div>
+
+  <EmergenciaCTA />
+</Layout>
+
+<script>
+  import { supabase } from "../../lib/supabase";
+
+  const searchPersonInput = document.getElementById('searchPersonInput') as HTMLInputElement;
+  const mainGrid = document.getElementById('mainGrid') as HTMLElement;
+  const gridTitle = document.getElementById('gridTitle') as HTMLElement;
+  const resultsCount = document.getElementById('resultsCount') as HTMLElement;
+  const dbStatus = document.getElementById('dbStatus') as HTMLElement;
+
+  function renderPersonas(personas: any[]) {
+    gridTitle.textContent = "Resultados encontrados";
+    resultsCount.textContent = `${personas.length} persona${personas.length !== 1 ? 's' : ''}`;
+    resultsCount.style.display = "inline-block";
+    mainGrid.className = "grid-centros"; // Reuse centro cards layout
+
+    if (personas.length === 0) {
+      mainGrid.innerHTML = '<div class="no-results">No se encontraron personas con ese nombre o cédula.</div>';
+      return;
+    }
+
+    mainGrid.innerHTML = personas.map((p: any) => {
+      const refugio = p.refugios || {};
+      return `
+        <div class="card centro-card">
+          <div class="card-head-centro">
+            <div class="card-icon" style="background: var(--blue);">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle>
+              </svg>
+            </div>
+            <div class="card-title-area">
+              <h3>${p.nombre_completo}</h3>
+              ${p.cedula ? `<span class="card-loc-meta" style="font-weight: 500;">V-${p.cedula}</span>` : ''}
+            </div>
+          </div>
+          <div class="card-body-centro">
+            <div class="row">
+              <span class="row-label">Refugio</span>
+              <div class="row-value font-medium" style="color: var(--blue); font-weight: 600;">${refugio.nombre || 'Desconocido'}</div>
+            </div>
+            ${refugio.ciudad || refugio.estado ? `
+            <div class="row">
+              <span class="row-label">Ubicación</span>
+              <div class="row-value">${refugio.ciudad ? refugio.ciudad + ', ' : ''}${refugio.estado || ''}</div>
+            </div>` : ''}
+            ${p.telefono ? `<div class="row"><span class="row-label">Teléfono</span><div class="row-value">${p.telefono}</div></div>` : ''}
+            ${p.estado_salud ? `<div class="row"><span class="row-label">Salud</span><div class="row-value">${p.estado_salud}</div></div>` : ''}
+          </div>
+        </div>
+      `;
+    }).join("");
+  }
+
+  async function performSearch() {
+    const q = searchPersonInput.value.trim();
+    if (!q || q.length < 3) {
+      mainGrid.innerHTML = `
+        <div class="no-results" style="grid-column: 1 / -1; padding: 3rem 1rem; text-align: center; color: var(--muted);">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto 1rem; color: #cbd5e1;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          Ingresa al menos 3 caracteres para buscar.
+        </div>
+      `;
+      gridTitle.textContent = "Resultados de la búsqueda";
+      resultsCount.style.display = "none";
+      return;
+    }
+
+    try {
+      dbStatus.textContent = "Buscando...";
+      dbStatus.className = "status-badge loading";
+      dbStatus.style.display = "inline-block";
+
+      if (!supabase) throw new Error("Supabase no disponible");
+
+      const { data, error } = await supabase
+        .from('refugiados')
+        .select('*, refugios(nombre, ciudad, estado)')
+        .eq('verificado', true)
+        .or(`nombre_completo.ilike.%${q}%,cedula.ilike.%${q}%`)
+        .limit(50);
+
+      if (error) throw error;
+
+      dbStatus.style.display = "none";
+      renderPersonas(data || []);
+
+    } catch (err) {
+      console.error(err);
+      dbStatus.textContent = "Error";
+      dbStatus.className = "status-badge offline";
+      mainGrid.innerHTML = '<div class="no-results">Hubo un error al buscar personas.</div>';
+    }
+  }
+
+  // Debounce function
+  function debounce<T extends (...args: any[]) => void>(fn: T, ms: number): (...args: Parameters<T>) => void {
+    let t: ReturnType<typeof setTimeout> | null = null;
+    return (...args: Parameters<T>) => {
+      if (t) clearTimeout(t);
+      t = setTimeout(() => fn(...args), ms);
+    };
+  }
+
+  const debouncedSearch = debounce(performSearch, 400);
+
+  searchPersonInput.addEventListener('input', debouncedSearch);
+
+</script>
