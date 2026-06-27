@@ -4,6 +4,7 @@ import Layout from "../../layouts/Layout.astro";
 import AlertBox from "../../components/AlertBox.astro";
 import SearchFilters from "../../components/SearchFilters.astro";
 import EmergenciaCTA from "../../components/EmergenciaCTA.astro";
+import SugerirRefugioModal from "../../components/SugerirRefugioModal.astro";
 import { estados, flagUrl, ZONAS_AFECTADAS, sortEstados, resolveEstado } from "../../data/centros";
 
 // Para refugios, podemos usar los mismos estados base, aunque inicialmente no tengan refugios cargados en datos estáticos
@@ -44,6 +45,8 @@ const estadosNacionales = estadosOrdenados.filter(e => e.estado !== 'Internacion
   </div>
 
   <EmergenciaCTA />
+
+  <SugerirRefugioModal />
 </Layout>
 
 <script>
