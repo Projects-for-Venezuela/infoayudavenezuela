@@ -18,11 +18,11 @@ nav.navbar {
 .nav-inner {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   padding: 0 1.25rem;
   height: 52px;
 }
 .nav-brand {
+  flex: 1;
   font-weight: 800;
   font-size: 0.95rem;
   color: white;
@@ -30,9 +30,48 @@ nav.navbar {
   letter-spacing: -0.01em;
 }
 .nav-brand:hover { opacity: .85; }
+
+/* ─── Desktop Nav Links (centered) ─── */
+.nav-desktop-links {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 0.15rem;
+  flex: 0 0 auto;
+}
+.nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.9);
+  text-decoration: none;
+  transition: background .15s, color .15s;
+  white-space: nowrap;
+}
+.nav-link svg { display: block; }
+.nav-link:hover {
+  background: rgba(255,255,255,0.12);
+  color: white;
+}
+.nav-link-emergencia {
+  background: var(--red);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.15);
+}
+.nav-link-emergencia:hover {
+  background: var(--red-dark);
+  border-color: rgba(255,255,255,0.3);
+}
+
 .nav-top-right {
+  flex: 1;
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 0.5rem;
 }
 .nav-refresh-btn {
@@ -51,41 +90,6 @@ nav.navbar {
 .nav-refresh-btn:hover {
   background: rgba(255,255,255,0.12);
   border-color: rgba(255,255,255,0.35);
-}
-
-/* ─── Desktop Nav ─── */
-.nav-desktop {
-  display: none;
-  align-items: center;
-  justify-content: center;
-  gap: 0.35rem;
-  padding: 0 1.25rem 0.5rem;
-}
-.nav-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.4rem 0.85rem;
-  border-radius: 8px;
-  font-size: 0.78rem;
-  font-weight: 700;
-  color: rgba(255,255,255,0.9);
-  text-decoration: none;
-  transition: background .15s, color .15s;
-  white-space: nowrap;
-}
-.nav-link:hover {
-  background: rgba(255,255,255,0.12);
-  color: white;
-}
-.nav-link-emergencia {
-  background: var(--red);
-  color: white;
-  border: 1px solid rgba(255,255,255,0.15);
-}
-.nav-link-emergencia:hover {
-  background: var(--red-dark);
-  border-color: rgba(255,255,255,0.3);
 }
 
 /* ─── Bottom Nav (Mobile) ─── */
@@ -139,11 +143,38 @@ nav.navbar {
 }
 .nav-bottom-link svg {
   flex-shrink: 0;
+  display: block;
+}
+
+/* ─── Alerta badge ─── */
+.nav-bottom-btn-icon-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.nav-bottom-btn-badge {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  width: 16px;
+  height: 16px;
+  background: var(--red);
+  color: white;
+  font-size: 0.6rem;
+  font-weight: 800;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid white;
+  box-shadow: 0 1px 4px rgba(207,20,43,0.4);
+  line-height: 1;
 }
 
 /* ─── Responsive ─── */
 @media (min-width: 769px) {
-  .nav-desktop {
+  .nav-desktop-links {
     display: flex;
   }
   .nav-bottom {
