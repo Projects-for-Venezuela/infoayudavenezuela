@@ -220,7 +220,10 @@ const estadosNacionales = estadosOrdenados.filter(e => e.estado !== 'Internacion
               <h3>${c.nombre}</h3>
               <span class="card-loc-meta">${c.ciudad}, ${c.estado}</span>
             </div>
-            ${isAfectado ? '<span class="badge-prioritized-mini">🔴 Zona Afectada</span>' : ''}
+            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+              ${isAfectado ? '<span class="badge-prioritized-mini">🔴 Zona Afectada</span>' : ''}
+              ${c.tipo === 'privado' ? '<span class="badge-prioritized-mini" style="background-color: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe;">🏠 Casa Particular</span>' : ''}
+            </div>
           </div>
           <div class="card-body-centro">
             ${c.direccion ? `<div class="row"><span class="row-label">Dirección</span><div class="row-value">${c.direccion}</div></div>` : ''}
