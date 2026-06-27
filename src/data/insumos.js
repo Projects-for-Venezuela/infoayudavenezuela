@@ -1,0 +1,91 @@
+export const categorias = [
+  {
+    id: "agua-alimentos",
+    nombre: "Agua y Alimentos",
+    icono: "\u{1F4A7}",
+    color: "#0284C7",
+    items: [
+      { nombre: "Agua potable", descripcion: "Botellones, botellas selladas o envases de agua para consumo. Prioridad máxima." },
+      { nombre: "Alimentos no perecederos", descripcion: "Arroz, pasta, harina, granos, atún, sardinas, leche en polvo, fórmula infantil." },
+      { nombre: "Alimentos enlatados", descripcion: "Vegetales, frutas, granos, carnes y pescados enlatados. Fáciles de almacenar y distribuir." },
+      { nombre: "Comida para bebés", descripcion: "Fórmula láctea, compotas, cereales infantiles, leche de continuación." },
+      { nombre: "Snacks y barras energéticas", descripcion: "Barras de granola, frutos secos, galletas envasadas, jugos individuales." },
+    ],
+  },
+  {
+    id: "medicinas",
+    nombre: "Medicinas e Insumos Médicos",
+    icono: "\u{2695}\u{FE0F}",
+    color: "#CF142B",
+    items: [
+      { nombre: "Medicamentos genéricos", descripcion: "Analgésicos (acetaminofén, ibuprofeno), antiinflamatorios, antibióticos de amplio espectro." },
+      { nombre: "Medicamentos controlados", descripcion: "Para enfermedades crónicas: hipertensión, diabetes, asma, epilepsia. Entregar con receta." },
+      { nombre: "Suero oral / electrolitos", descripcion: "Sobres de suero oral, sales de rehidratación para prevenir deshidratación." },
+      { nombre: "Material de cura", descripcion: "Gasas estériles, vendas, algodón, esparadrapo, apósitos, jabón quirúrgico." },
+      { nombre: "Desinfectantes", descripcion: "Alcohol antiséptico, agua oxigenada, yodo povidona, cloro para limpieza de heridas." },
+      { nombre: "Equipo médico básico", descripcion: "Guantes quirúrgicos, mascarillas, jeringas, termómetros, tensiómetros, estetoscopios." },
+      { nombre: "Medicamentos tópicos", descripcion: "Crema antibiótica, antihistamínicos, calmantes musculares, protectores solares." },
+    ],
+  },
+  {
+    id: "higiene",
+    nombre: "Higiene Personal y Limpieza",
+    icono: "\u{1F9F4}",
+    color: "#0891B2",
+    items: [
+      { nombre: "Pañales", descripcion: "Pañales desechables para bebés y adultos, toallas húmedas, crema para pañalitis." },
+      { nombre: "Productos de higiene femenina", descripcion: "Toallas sanitarias, tampones, protectores diarios." },
+      { nombre: "Artículos de aseo", descripcion: "Jabón de baño, champú, cepillos de dientes, pasta dental, desodorante." },
+      { nombre: "Productos de limpieza", descripcion: "Cloro, desinfectante multiuso, jabón líquido para ropa, escobas, traperos, cubetas." },
+      { nombre: "Papel higiénico y servilletas", descripcion: "Rollo de papel higiénico, servilletas de papel, toallas de cocina." },
+    ],
+  },
+  {
+    id: "herramientas",
+    nombre: "Herramientas y Equipo de Rescate",
+    icono: "\u{1F6E0}\u{FE0F}",
+    color: "#D97706",
+    items: [
+      { nombre: "Herramientas manuales", descripcion: "Palas, picos, barras, martillos, alicates, cortafríos, cinceles, carretillas." },
+      { nombre: "Equipo de iluminación", descripcion: "Linternas, lámparas recargables, velas, fósforos, baterías / pilas AA y AAA." },
+      { nombre: "Equipo de protección", descripcion: "Cascos de seguridad, guantes de trabajo resistentes, tapabocas, gafas protectoras." },
+      { nombre: "Cuerdas y amarre", descripcion: "Cuerdas de nylon, sogas, cinchos de amarre, cinta adhesiva industrial." },
+      { nombre: "Equipo de comunicación", descripcion: "Radios portátiles (walkie-talkies), altavoces / megáfonos baterías de repuesto." },
+    ],
+  },
+  {
+    id: "cobijas-ropa",
+    nombre: "Cobijas, Ropa y Abrigo",
+    icono: "\u{1F9E5}",
+    color: "#7C3AED",
+    items: [
+      { nombre: "Cobijas y mantas", descripcion: "Frazadas, cobijas térmicas, sleeping bags, colchonetas plegables." },
+      { nombre: "Ropa en buen estado", descripcion: "Camisas, pantalones, ropa interior, medias, zapatos cerrados, ropa de abrigo." },
+      { nombre: "Ropa para bebés y niños", descripcion: "Mudas enteritas, bodies, pijamas, zapatos de bebé, pañales de tela." },
+      { nombre: "Ropa de cama", descripcion: "Sábanas, almohadas, fundas, colchonetas inflables para refugios temporales." },
+    ],
+  },
+  {
+    id: "infraestructura",
+    nombre: "Infraestructura y Logística",
+    icono: "\u{1F3D7}\u{FE0F}",
+    color: "#059669",
+    items: [
+      { nombre: "Carpas y toldos", descripcion: "Carpas familiares, lonas impermeables, toldos de campaña para refugios temporales." },
+      { nombre: "Generadores eléctricos", descripcion: "Plantas eléctricas portátiles, extensiones, multitomas, cables de repuesto." },
+      { nombre: "Tanques de agua", descripcion: "Tanques plegables, bidones, galones para almacenamiento y distribución de agua." },
+      { nombre: "Kit de primeros auxilios", descripcion: "Botiquines completos listos para distribución inmediata en refugios." },
+      { nombre: "Transporte y logística", descripcion: "Vehículos disponibles para traslado de donaciones, combustible (gasolina) para flotilla." },
+    ],
+  },
+];
+
+export const consejos = [
+  "Verifica que los alimentos no estén vencidos ni dañados.",
+  "Entrega medicamentos con su etiqueta original y fecha de vencimiento vigente.",
+  "Separa la ropa por tipo y talla antes de donar.",
+  "Las herramientas de mano deben estar en buen estado, sin óxido.",
+  "Etiqueta las cajas con el contenido para agilizar la clasificación en los centros.",
+  "Si donas agua, prefiere envases sellados y protegidos del sol.",
+  "Coordina con el centro de acopio antes de llegar para saber si están recibiendo donaciones.",
+];

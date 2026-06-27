@@ -1,0 +1,64 @@
+---
+import "../styles/enlaces.css";
+import SugerirRefugioModal from "./SugerirRefugioModal.astro";
+---
+<div class="section-card" style="margin-top: 1.5rem;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+    <h3 class="section-title" style="margin-bottom: 0;">🏠 Refugios Disponibles</h3>
+    <button id="btnSugerirRefugio" class="btn-sugerir-enlace" aria-label="Sugerir nuevo refugio">+ Sugerir Refugio</button>
+  </div>
+  
+  <div class="enlaces-grid" id="refugiosSectionGrid">
+    <!-- Refugios estáticos o fallback mientras carga (opcional) -->
+    <div class="enlace-card" id="refugiosLoadingCard">
+      <p style="font-size: 0.85rem; color: var(--muted);">Cargando refugios...</p>
+    </div>
+  </div>
+  
+  <a href="/refugios" class="btn-ver-mas" style="display: block; text-align: center; text-decoration: none; margin-top: 1rem;">
+    Ver más Refugios &rarr;
+  </a>
+</div>
+
+<SugerirRefugioModal />
+
+<script>
+  import { supabase } from "../lib/supabase";
+  import { escapeHtml } from "../lib/escape";
+
+  const grid = document.getElementById('refugiosSectionGrid');
+
+  async function loadRefugiosPreview() {
+    if (!grid || !supabase) return;
+    try {
+      const { data, error } = await supabase
+        .from('refugios')
+        .select('*')
+        .eq('verificado', true)
+        .order('created_at', { ascending: false })
+        .limit(4);
+
+      if (error) throw error;
+      
+      if (data && data.length > 0) {
+        grid.innerHTML = data.map((r: any) => `
+          <div class="enlace-card">
+            <div class="enlace-header">
+              <span class="enlace-cat">${escapeHtml(r.estado)} - ${escapeHtml(r.ciudad)}</span>
+            </div>
+            <h4>${escapeHtml(r.nombre)}</h4>
+            <p style="font-size: 0.85rem; color: var(--muted);">${escapeHtml(r.direccion || 'Sin dirección específica')}</p>
+            <p style="font-size: 0.75rem; color: var(--blue); margin-top: 0.5rem;"><strong>Capacidad:</strong> ${escapeHtml(r.capacidad || 'No especificada')}</p>
+          </div>
+        `).join("");
+      } else {
+        grid.innerHTML = '<p style="color: var(--muted); font-size: 0.9rem; padding: 1rem;">No hay refugios registrados por el momento.</p>';
+      }
+    } catch (e) {
+      console.error(e);
+      grid.innerHTML = '<p style="color: var(--red); font-size: 0.9rem; padding: 1rem;">No se pudieron cargar los refugios.</p>';
+    }
+  }
+
+  loadRefugiosPreview();
+</script>

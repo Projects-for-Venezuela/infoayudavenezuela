@@ -1,0 +1,67 @@
+---
+import "../styles/insumos.css";
+import Layout from "../layouts/Layout.astro";
+import { categorias, consejos } from "../data/insumos";
+---
+
+<Layout title="Insumos Necesarios"
+  description="Guía completa de insumos necesarios para donar: alimentos, medicinas, herramientas, higiene, ropa y equipo de rescate para los afectados por el sismo en Venezuela."
+  canonical="https://infoayudavenezuela.vercel.app/insumos"
+  showHero={false}
+>
+  <header class="ins-hero">
+    <div class="ins-hero-bg">
+      <div class="ins-hero-content">
+        <span class="ins-hero-badge">GUÍA</span>
+        <h1>Insumos <span>Necesarios</span></h1>
+        <p>Todo lo que puedes donar para ayudar a los afectados — <strong>medicinas, alimentos, herramientas, higiene y más</strong></p>
+      </div>
+    </div>
+  </header>
+
+  <div class="ins-alert">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    <span><strong>Importante:</strong> Verifica con tu centro de acopio más cercano qué insumos están recibiendo actualmente antes de movilizarte.</span>
+  </div>
+
+  <div class="ins-grid">
+    {categorias.map((cat) => (
+      <section class="ins-categoria">
+        <div class="ins-cat-head" style={`background:${cat.color};`}>
+          <span class="ins-cat-icon">{cat.icono}</span>
+          <h2>{cat.nombre}</h2>
+          <span class="ins-cat-count">{cat.items.length}</span>
+        </div>
+        <div class="ins-cat-body">
+          {cat.items.map((item) => (
+            <div class="ins-item">
+              <span class="ins-item-bullet" style={`background:${cat.color};`}></span>
+              <div class="ins-item-info">
+                <span class="ins-item-nombre">{item.nombre}</span>
+                <span class="ins-item-desc">{item.descripcion}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    ))}
+  </div>
+
+  <div class="ins-consejos">
+    <h3>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0018 8 6 6 0 006 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 008.91 14"/></svg>
+      Consejos para donar</h3>
+    <div class="ins-consejos-list">
+      {consejos.map((c, i) => (
+        <div class="ins-consejo">
+          <span class="ins-consejo-num">{i + 1}</span>
+          <span>{c}</span>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <div class="ins-footer">
+    <a href="/">&larr; Volver al inicio</a>
+  </div>
+</Layout>
