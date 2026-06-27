@@ -380,15 +380,17 @@
   function saveHistory() {
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(history.slice(-30))); } catch {}
   }
+  
   function scrollBottom() { requestAnimationFrame(() => { messages.scrollTop = messages.scrollHeight; }); }
 
   function isNearBottom() {
     const el = messages;
+    if (!el) return false;
     return el.scrollHeight - el.scrollTop - el.clientHeight < 60;
   }
 
   function onScroll() {
-    scrollBtn.classList.toggle('show', !isNearBottom());
+    scrollBtn?.classList.toggle('show', !isNearBottom());
   }
 
   function formatAI(text) {
@@ -402,7 +404,7 @@
     while (i < lines.length) {
       const line = lines[i];
       if (line === '') { i++; continue; }
-      const listItems = [];
+      const listItems: string[] = [];
       while (i < lines.length && /^(\s*[-*]\s|\s*\d+[.)]\s)/.test(lines[i])) {
         const li = lines[i].replace(/^(\s*[-*]\s|\s*\d+[.)]\s)/, '');
         listItems.push(`<li>${inline(li)}</li>`);
@@ -412,7 +414,7 @@
         paragraphs.push(`<ul>${listItems.join('')}</ul>`);
         continue;
       }
-      const para = [];
+      const para: string[] = [];
       while (i < lines.length && lines[i] !== '' && !/^(\s*[-*]\s|\s*\d+[.)]\s)/.test(lines[i])) {
         para.push(inline(lines[i]));
         i++;
@@ -426,8 +428,8 @@
     return new Date().toLocaleTimeString('es-VE', { hour: '2-digit', minute: '2-digit' });
   }
 
-  function addGroup(role) {
-    const existing = messages.querySelector('.chat-group:last-child');
+  function addGroup(role: string) {
+    const existing = messages?.querySelector('.chat-group:last-child');
     if (existing && existing.classList.contains(role)) return existing;
     const group = document.createElement('div');
     group.className = `chat-group ${role}`;
@@ -436,10 +438,10 @@
     const name = role === 'user' ? 'Tú' : 'Asistente';
     label.innerHTML = `${name} <span class="chat-label-time">${getTime()}</span>`;
     group.appendChild(label);
-    if (welcome.style.display !== 'none' && welcome.parentNode === messages) {
-      messages.insertBefore(group, welcome);
+    if (welcome?.style.display !== 'none' && welcome?.parentNode === messages) {
+      messages?.insertBefore(group, welcome);
     } else {
-      messages.appendChild(group);
+      messages?.appendChild(group);
     }
     return group;
   }
@@ -469,7 +471,7 @@
     typing.className = 'chat-typing';
     typing.innerHTML = '<span></span><span></span><span></span>';
     group.appendChild(typing);
-    messages.appendChild(group);
+    messages?.appendChild(group);
     scrollBottom();
   }
 
@@ -483,12 +485,19 @@
   }
 
   function autoResize() {
+
+    if (!input) return;
+
     input.style.height = 'auto';
     input.style.height = Math.min(input.scrollHeight, 120) + 'px';
   }
 
   async function sendMessage(text) {
     if (!text || loading) return;
+
+    if (!input) return;
+    if (!welcome) return;
+
     input.value = ''; input.style.height = '42px';
     welcome.style.display = 'none';
     addMessage(text, 'user');

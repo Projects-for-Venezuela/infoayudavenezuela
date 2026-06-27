@@ -16,13 +16,35 @@
 |------|------------|-----------|
 | Framework | Astro 7 (static output, adapter Vercel) | No migrar a Next.js, Remix, SvelteKit |
 | Backend de datos | Supabase (Postgres + JS client `@supabase/supabase-js`) | No cambiar a MongoDB, Firebase, o Prisma |
-| Estilos | CSS modular plano (`src/styles/*.css`) importado por componente | No introducir Tailwind,styled-components, CSS Modules, Stitches, vanilla-extract |
+| Estilos | Tailwind CSS v4 (vía `@tailwindcss/vite`, CSS-first config en `src/styles/global.css`) | No introducir styled-components, CSS Modules, Stitches, vanilla-extract |
 | Iconos | SVG inline (Lucide-style, `stroke-width="2"`), sin librerías | No mezclar Heroicons + Phosphor + Lucide; no usar emoji como icono de feature |
 | JS del cliente | Vanilla JS en `<script>` dentro de `.astro`, sin build step | No introducir React, Vue, Svelte, Alpine, Stimulus |
 | Package manager | pnpm ( existe `pnpm-lock.yaml` y `pnpm-workspace.yaml`) | No usar npm ni yarn para instalar; nunca mezclar lockfiles |
 | Despliegue | Vercel (`@astrojs/vercel`) | No cambiar a Netlify, Cloudflare Pages sin aprobación explícita |
 
-**Regla:** Si el proyecto ya usa una tecnología, se mantiene. No se introducen dependencias nuevas sin justificación documentada y sin romper el bundle actual.
+**Regla:** La migración a Tailwind v4 es incremental — pagina por pagina, sin romper el funcionamiento existente. Los design tokens (`:root` vars) se mantienen en `global.css` y se mapean a `@theme` de Tailwind. No se introducen dependencias nuevas sin justificación documentada y sin romper el bundle actual.
+
+### 1.1 Configuración Tailwind — referencia
+
+- **Integración:** `@tailwindcss/vite` plugin en `astro.config.mjs` (no `@astrojs/tailwind` — ese es para v3).
+- **Config:** CSS-first con `@import "tailwindcss"` + bloque `@theme` en `src/styles/global.css`. No hay `tailwind.config.js`.
+- **Tokens:** Los `--blue`, `--red`, `--yellow`, etc. del `:root` se exponen vía `@theme` para generar utilities (`bg-blue`, `text-red`, etc.).
+- **Tipografía:** Seguir usando el system stack — NO Inter/Geist (prioridad 2G/3G).
+
+```css
+@import "tailwindcss";
+
+@theme {
+  --color-blue: #00247D;
+  --color-blue-dark: #001845;
+  --color-red: #CF142B;
+  --color-red-dark: #A00F22;
+  --color-yellow: #FFCC00;
+  --color-gold: #D4A800;
+  --radius-card: 12px;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+```
 
 ---
 
@@ -60,18 +82,20 @@ No existe suite de pruebas automatizadas ni linter configurado — el build de A
 - **No se inlinean estilos en `<style>` dentro de los componentes.** Los estilos viven en `src/styles/*.css` y se importan: `import "../styles/foo.css";`.
 - HTML semántico: `nav`, `main`, `header`, `footer`, `section`, `article`, `dialog` antes que `div`.
 
-### 3.3 CSS — reglas estrictas
+### 3.3 CSS / Tailwind — reglas estrictas
 
-1. **Un archivo CSS por UI domain** (`navbar.css`, `hero.css`, `index.css`, etc.). No se crea un único CSS gigante; no se inlinean estilos globales en componentes.
-2. **Variables CSS en `:root`** dentro de `global.css`. **NunCA** introducir colores nuevos como literales hex si ya existe una variable para ese rol (ver §5).
-3. **Mobile-first.** Breakpoints con `@media (max-width: Npx)` donde N sea 480 / 640 / 768. El proyecto usa este patrón — manténgo.
-4. **`transition: all` está prohibido.** Listar propiedades específicas: `transition: transform .2s, box-shadow .2s, border-color .2s`.
-5. **Animaciones GPU-only.** Solo `transform` y `opacity` se animan. `width`, `height`, `top`, `left`, `margin`, `padding` no se animan.
-6. **`prefers-reduced-motion` se respeta.** Todo el código de animación/transición está cubierto por el reset global en `global.css`. Animaciones nuevas deben probar que no lo rompen. Animaciones pulsadas infinitas (ej. `nec-pulse`) deben incluirse en el reset.
-7. **`:focus-visible` siempre visible.** Hay un estilo global en `global.css` (`outline: 3px solid var(--focus-ring)`). Nunca sobre.escribir con `outline: none` sin un reemplazo visible.
-8. **`env(safe-area-inset-*)` se respeta** en fixed elements (ya hecho en `.nav-bottom` y `.nav-more-sheet`). Mantener.
-9. **No `!important`** excepto en casos renderizados en JS donde la especificidad no alcanza (ver `.card-prioritized` en `index.css` — caso justificado y existente). Nuevos `!important` requieren justificación.
-10. **Hover gating:** Las animaciones `:hover` que involucren `transform` (scale, translateY) en mobile se envuelven en `@media (hover: hover) and (pointer: fine)` cuando sean costosas o produzcan flicker. Ya se hizo en `.card:hover .card-img img`. Mantener el patrón.
+1. **Migración incremental.** Cada página se migra de CSS modular a Tailwind utilities de una vez, con `pnpm build` pasando antes de continuar con la siguiente. No mezclar CSS modular y utilities en el mismo componente migrado.
+2. **Design tokens en `@theme`** dentro de `global.css`. Los colores, radius, fuentes y spacing se definen como `--color-*`, `--radius-*`, `--font-*` en el bloque `@theme` y generan utilities automáticamente. **NUNCA** introducir hex literales en utilities (`bg-[#00247D]`) si ya existe un token para ese rol (ver §4.1).
+3. **CSS modular legacy** (`src/styles/*.css`) se elimina cuando la página/componente que lo importaba queda 100% migrada a Tailwind. Mientras coexisten ambas capas, no duplicar estilos.
+4. **Mobile-first.** Tailwind se usa con breakpoints `sm:` (640px), `md:` (768px). El proyecto usa `max-width` sea, al migrar se invierte a `min-width` (mobile-first nativo de Tailwind). Justificar excepciones.
+5. **`transition-all` está prohibido.** Listar propiedades específicas: `transition-colors`, `transition-transform`, `transition-shadow`, etc. Lo mismo para CSS legacy.
+6. **Animaciones GPU-only.** Solo `transform` y `opacity` se animan. `width`, `height`, `top`, `left`, `margin`, `padding` no se animan.
+7. **`prefers-reduced-motion` se respeta.** El reset global en `global.css` cubre toda animación/transición. Animaciones nuevas deben probar que no lo rompen. Animaciones pulsadas infinitas (ej. `nec-pulse`) deben incluirse en el reset. En Tailwind: `motion-safe:` y `motion-reduce:` variants.
+8. **`:focus-visible` siempre visible.** Hay un estilo global en `global.css` (`outline: 3px solid var(--focus-ring)`). En Tailwind, no sobre.escribir con `outline-none` sin un reemplazo visible (`focus-visible:ring-2`, etc.).
+9. **`env(safe-area-inset-*)` se respeta** en fixed elements (`.nav-bottom` y `.nav-more-sheet` ya lo usan). Al migrar, mantener `pb-[max(0.35rem,env(safe-area-inset-bottom))]` o equivalente.
+10. **No `!important`** excepto en casos renderizados en JS donde la especificidad no alcanza (ver `.card-prioritized` — caso justificado y existente). Nuevos `!important` requieren justificación. En Tailwind, usar `!` prefix solo cuando sea necesario.
+11. **Hover gating:** Las animaciones `:hover` que involucren `transform` (scale, translateY) en mobile se envuelven en `hover:scale-*` solo dentro de `@media (hover: hover) and (pointer: fine)` o usando el variant experimental `[@media(hover:hover)&and(pointer:fine)]:hover:scale-105`. Mantener el patrón existente.
+12. **No estilos inline en `<style>` dentro de `.astro`.** Los estilos viven en utilities de Tailwind o, mientras dure la migración, en `src/styles/*.css` importados.
 
 ### 3.4 JavaScript del cliente
 
@@ -154,7 +178,7 @@ El proyecto tiene **identidad visual definida** — bandera venezolana (amarillo
 
 1. **Carga en 2G/3G es prioridad.** No se añaden bundles JS > 50KB. No se importan fuentes web. No se añaden polyfills innecesarios.
 2. **`loading="lazy"`** en imágenes no críticas (banderas). `width`/`height` o `aspect-ratio` en imágenes para prevenir CLS.
-3. **CSS modular por componente** — solo se carga el CSS de la página actual. Mantener los imports en el frontmatter de cada página.
+3. **CSS modular por componente** → migrando a Tailwind v4. Durante la migración, solo se carga el CSS de la página actual (modular) + el bundle purgado de Tailwind. Al completar la migración, Tailwind genera un único CSS purgado por página.
 4. **Fallback offline** con datos embebidos en `data-*` attributes — el proyecto funciona sin Supabase. Toda mejora de datos debe respetar el fallback (nUNCA romper el render estático del server-side).
 5. **`setInterval` de reload** (5 min) se respeta — puede mejorarse con `requestIdleCallback` o `document.visibilityState`, pero no se elimina.
 6. **No `backdrop-filter: blur()` excepto en modales.** El modal ya lo usa; no añadir en cards/héroes (costoso en Android gama baja).
@@ -196,9 +220,8 @@ El agente puede proponer y ejecutar mejoras que **no rompen nada** y que se alin
 ### Lo que NO se hace sin aprobación
 
 - Rediseños visuales (cambio de paleta, tipografía, layout grid).
-- Cambiar el stack tecnológico (framework, DB, CSS approach).
 - Eliminar funcionalidad existente por "estética" o "modernización".
-- Introducir dependencias npm nuevas.
+- Introducir dependencias npm nuevas (salvo las aprobadas en el stack §1).
 - Cambiar el alcance del contenido (quitar secciones, páginas).
 - Migrar de Supabase a otra DB.
 
@@ -227,7 +250,7 @@ src/
 ├── lib/              # Utilidades (supabase.js, escape.ts)
 ├── pages/            # Rutas: index, emergencia, estado/[estado], insumos, necesidades, noticias, refugios, sobre-nosotros
 ├── scripts/          # Seed de Supabase
-└── styles/           # CSS modular por UI (un archivo por dominio visual)
+└── styles/           # `global.css` (tokens + @theme + reset global) + CSS modular legacy (se elimina al migrar a Tailwind)
 public/
 └── flags/*.webp      # Banderas de estados venezolanos
 .agents/skills/       # Skills de ui-craft, audit, heuristic, colorize — CARGAR cuando aplique
