@@ -1,0 +1,79 @@
+---
+import "../styles/noticias.css";
+import Layout from "../layouts/Layout.astro";
+import { supabase } from "../lib/supabase";
+
+let noticias: any[] = [];
+if (supabase) {
+  const { data } = await supabase
+    .from("noticias")
+    .select("*")
+    .in("estado", ["verificado", "falso"])
+    .order("created_at", { ascending: false });
+  if (data) {
+    noticias = data;
+  }
+}
+
+const formatDate = (dateString: string) => {
+  const d = new Date(dateString);
+  return d.toLocaleDateString('es-VE', { 
+    year: 'numeric', month: 'short', day: 'numeric',
+    hour: '2-digit', minute: '2-digit'
+  });
+};
+---
+
+<Layout title="Centro de Noticias Verificadas"
+  description="Centralización y certificación de noticias sobre la situación en Venezuela. Desmintiendo rumores y validando información."
+  canonical="https://infoayudavenezuela.vercel.app/noticias"
+  showHero={false}
+>
+  <header class="noticias-hero">
+    <div class="noticias-hero-badge">CENTRO DE NOTICIAS</div>
+    <h1>Información <span>Verificada</span></h1>
+    <p>Centralizamos y certificamos noticias para evitar la desinformación. Aquí encontrarás información validada y rumores desmentidos.</p>
+  </header>
+
+  <div class="container" style="max-width: 800px; margin: 0 auto; padding: 0 1.25rem;">
+    {noticias.length === 0 ? (
+      <div class="no-results">
+        No hay noticias verificadas o desmentidas en este momento.
+      </div>
+    ) : (
+      <div class="noticias-feed">
+        {noticias.map((n) => (
+          <article class="noticia-card">
+            <div class="noticia-header">
+              <h2 class="noticia-title">{n.titulo}</h2>
+              {n.estado === 'verificado' && (
+                <span class="noticia-status verificado">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+                  Verificado
+                </span>
+              )}
+              {n.estado === 'falso' && (
+                <span class="noticia-status falso">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                  Falso
+                </span>
+              )}
+            </div>
+            
+            <p class="noticia-desc">{n.descripcion}</p>
+            
+            <div class="noticia-footer">
+              <span class="noticia-date">Actualizado: {formatDate(n.created_at)}</span>
+              {n.fuente && (
+                <a href={n.fuente} target="_blank" rel="noopener noreferrer" class="noticia-link">
+                  Ver fuente
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+                </a>
+              )}
+            </div>
+          </article>
+        ))}
+      </div>
+    )}
+  </div>
+</Layout>
