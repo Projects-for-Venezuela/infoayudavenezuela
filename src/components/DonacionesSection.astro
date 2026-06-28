@@ -1,0 +1,341 @@
+---
+import { enfoques, organizaciones } from "../data/donaciones.js";
+import { safeUrl } from "../lib/escape";
+
+export interface Props {
+  showTrustSeals?: boolean;
+  showPaymentDetails?: boolean;
+}
+
+const { showTrustSeals = true, showPaymentDetails = true } = Astro.props;
+
+const orgs = [...organizaciones].sort((a, b) => (a.orden || 0) - (b.orden || 0));
+
+const enfoqueChips = [{ id: "todos", label: "Todos" }, ...enfoques];
+
+const ordenPaises = ["Venezuela", "Internacional", "España", "México", "Chile", "Colombia", "Argentina"];
+const paisChips = [
+  { id: "todos", label: "Todos" },
+  ...ordenPaises.filter((p) => orgs.some((o) => o.pais === p)).map((p) => ({ id: p, label: p })),
+];
+
+const enfBase = "inline-flex items-center min-h-11 px-[13px] rounded-full border-[1.5px] text-[0.82rem] font-semibold cursor-pointer whitespace-nowrap transition-colors duration-150";
+const paisBase = "inline-flex items-center min-h-11 px-[13px] rounded-full border-[1.5px] text-[0.78rem] font-semibold cursor-pointer whitespace-nowrap transition-colors duration-150";
+---
+
+<section class="bg-white border border-border rounded-xl p-4 sm:p-5 shadow-[0_1px_2px_rgba(16,24,40,0.05)]">
+  <header class="flex flex-col gap-2.5 mb-5 pb-4 border-b border-border">
+    <div class="flex items-center gap-3">
+      <span class="inline-flex items-center justify-center w-11 h-11 shrink-0 rounded-xl bg-blue shadow-[0_2px_6px_rgba(0,36,125,0.28)]">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M11 14h2a2 2 0 1 0 0-4h-3c-.6 0-1.1.2-1.4.6L3 16"/><path d="m7 20 1.6-1.4c.3-.4.8-.6 1.4-.6h4c1.1 0 2.1-.4 2.8-1.2l4.6-4.4a2 2 0 0 0-2.75-2.91l-4.2 3.9"/><path d="m2 15 6 6"/><path d="M19.5 8.5c.7-.7 1.5-1.6 1.5-2.7A2.73 2.73 0 0 0 16 4a2.78 2.78 0 0 0-5 1.8c0 1.2.8 2 1.5 2.8L16 12Z"/></svg>
+      </span>
+      <div class="flex flex-col gap-1">
+        <h1 class="m-0 text-[1.6rem] font-extrabold tracking-tight leading-[1.05] text-blue text-balance">Dónde Donar</h1>
+        <span class="block w-[42px] h-1 rounded-full bg-yellow"></span>
+      </div>
+    </div>
+    <p class="m-0 text-[0.9rem] leading-relaxed text-[#4B5563] text-pretty">Organizaciones con respuesta activa al sismo. Dona con seguridad: cada enlace lleva al sitio oficial de la organización.</p>
+  </header>
+
+  <div role="note" class="flex items-start gap-2.5 bg-[#EFF3FB] border border-[#C7D7F0] rounded-lg px-3 py-2.5 mb-4">
+    <svg class="shrink-0 mt-px text-blue" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
+    <p class="m-0 text-[0.8rem] leading-relaxed text-text text-pretty"><strong class="text-blue">InfoAyuda no recibe ni gestiona donaciones y nunca te pedirá dinero.</strong> Tu aporte va directo a la organización que elijas, a través de su sitio oficial.</p>
+  </div>
+
+  <div class="mb-3.5">
+    <span class="block mb-2 text-[0.68rem] font-bold tracking-[0.08em] uppercase text-muted">Filtrar por enfoque</span>
+    <div role="group" aria-label="Filtrar por enfoque" class="flex flex-wrap gap-2" id="enfoqueGroup">
+      {enfoqueChips.map((c) => (
+        <button
+          type="button"
+          data-enfoque={c.id}
+          aria-pressed={c.id === "todos" ? "true" : "false"}
+          class:list={[enfBase, c.id === "todos" ? "bg-blue text-white border-blue" : "bg-white border-border text-[#374151] hover:bg-[#F8F9FB] hover:border-blue"]}
+        >{c.label}</button>
+      ))}
+    </div>
+  </div>
+
+  <div class="flex flex-wrap items-end justify-between gap-3.5 p-3 bg-[#F8F9FB] border border-border rounded-lg mb-2">
+    <div class="flex-1 min-w-[230px]">
+      <span class="flex items-center gap-1.5 mb-2 text-[0.68rem] font-bold tracking-[0.08em] uppercase text-muted">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+        Donar desde mi país
+      </span>
+      <div role="group" aria-label="Filtrar por país o región" class="flex flex-wrap gap-2" id="paisGroup">
+        {paisChips.map((c) => (
+          <button
+            type="button"
+            data-pais={c.id}
+            aria-pressed={c.id === "todos" ? "true" : "false"}
+            class:list={[paisBase, c.id === "todos" ? "bg-[#EAF0FB] text-blue border-blue" : "bg-white border-border text-[#374151] hover:border-[#9CA3AF]"]}
+          >{c.label}</button>
+        ))}
+      </div>
+    </div>
+
+    <button
+      id="toggleExterior"
+      type="button"
+      role="switch"
+      aria-checked="false"
+      aria-label="Mostrar solo organizaciones que reciben donaciones desde el exterior"
+      class="inline-flex items-center gap-2.5 min-h-11 pl-3.5 pr-3 py-2 rounded-full border-[1.5px] border-border bg-white cursor-pointer transition-colors duration-150"
+    >
+      <span id="toggleExteriorText" class="text-[0.8rem] font-semibold text-[#374151] whitespace-nowrap">Donar desde el exterior</span>
+      <span id="toggleExteriorTrack" class="relative w-10 h-6 rounded-full bg-[#CBD2DC] shrink-0 transition-colors duration-150">
+        <span id="toggleExteriorKnob" class="absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform duration-150"></span>
+      </span>
+    </button>
+  </div>
+
+  <p id="donacionesCount" aria-live="polite" class="mt-1 mb-3.5 text-[0.78rem] text-muted tabular-nums">{orgs.length} organizaciones</p>
+
+  <div id="donacionesGrid" class="grid gap-3 grid-cols-[repeat(auto-fill,minmax(min(100%,280px),1fr))]">
+    {orgs.map((o) => (
+      <article data-card data-enfoque={o.enfoque} data-pais={o.pais} data-exterior={o.donable_exterior ? "1" : "0"} class="flex flex-col gap-2.5 bg-[#F8F9FB] border border-border rounded-lg p-4">
+        <div class="flex flex-wrap gap-1.5">
+          <span class="inline-flex items-center px-2.5 py-[3px] rounded-md bg-[#ECF1FB] text-blue text-[0.66rem] font-bold tracking-wide uppercase">{o.tipo}</span>
+          <span class="inline-flex items-center gap-1 px-2.5 py-[3px] rounded-md bg-white border border-border text-[#374151] text-[0.66rem] font-semibold">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+            {o.pais}
+          </span>
+        </div>
+
+        <h2 class="m-0 text-base font-bold leading-tight text-text text-balance">{o.nombre}</h2>
+        <p class="m-0 flex-1 text-[0.82rem] leading-relaxed text-muted text-pretty">{o.descripcion}</p>
+
+        {o.donable_exterior === false && (
+          <span class="inline-flex items-center gap-1.5 text-[0.72rem] font-semibold text-amber">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="m2 2 20 20"/></svg>
+            Recibe donaciones solo dentro del país
+          </span>
+        )}
+
+        {showTrustSeals && (o.sello_confianza || []).length > 0 && (
+          <div class="flex flex-wrap items-center gap-1.5">
+            <svg class="text-green" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>
+            {o.sello_confianza.map((s) => (
+              <span class="inline-flex items-center px-2.5 py-[3px] rounded-full bg-[#ECFDF3] border border-[#A7E8C2] text-green text-[0.7rem] font-semibold">{s}</span>
+            ))}
+          </div>
+        )}
+
+        {showPaymentDetails && o.datos_pago && (
+          <div class="bg-[#FFFBEB] border border-[#FDE68A] rounded-lg p-2.5">
+            <div class="flex items-center gap-1.5 mb-1.5">
+              <svg class="text-amber" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><line x1="3" x2="21" y1="22" y2="22"/><line x1="6" x2="6" y1="18" y2="11"/><line x1="10" x2="10" y1="18" y2="11"/><line x1="14" x2="14" y1="18" y2="11"/><line x1="18" x2="18" y1="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg>
+              <span class="text-[0.68rem] font-bold tracking-wide uppercase text-amber">Datos para transferencia</span>
+            </div>
+            <p class="m-0 mb-2 text-[0.78rem] leading-snug text-text break-words">{o.datos_pago}</p>
+            <button type="button" data-copy={o.datos_pago} class="inline-flex items-center gap-1.5 min-h-9 px-2.5 py-1.5 rounded-md border border-[#FDE68A] bg-white text-amber text-[0.74rem] font-semibold cursor-pointer">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+              <span data-copy-label>Copiar datos</span>
+            </button>
+          </div>
+        )}
+
+        <div class="flex mt-0.5">
+          <a href={safeUrl(o.url_oficial) || "#"} target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-1.5 min-h-9 px-[15px] py-[7px] rounded-lg bg-blue text-white text-[0.82rem] font-bold no-underline cursor-pointer transition-colors duration-150 hover:bg-blue-dark">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+            Donar
+          </a>
+        </div>
+      </article>
+    ))}
+  </div>
+
+  <div id="donacionesEmpty" hidden class="text-center py-9 px-4 text-muted">
+    <svg class="mx-auto mb-2 text-[#9CA3AF]" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+    <p class="m-0 text-[0.9rem] font-semibold text-[#374151]">No hay organizaciones con estos filtros.</p>
+    <p class="mt-1 mb-0 text-[0.82rem]">Prueba con otro enfoque o país.</p>
+  </div>
+
+  <button id="donacionesVerMas" type="button" hidden class="inline-flex items-center justify-center gap-1.5 w-full min-h-12 mt-3.5 p-2.5 rounded-lg border-2 border-border bg-white text-blue text-[0.9rem] font-bold cursor-pointer transition-colors duration-150 hover:bg-[#F8F9FB] hover:border-blue"></button>
+</section>
+
+<div id="donacionesData" data-orgs={JSON.stringify(orgs)} data-seals={showTrustSeals ? "1" : "0"} data-pago={showPaymentDetails ? "1" : "0"} hidden></div>
+
+<script>
+  import { escapeHtml, escapeArray, safeUrl } from "../lib/escape";
+
+  const dataEl = document.getElementById("donacionesData") as HTMLElement;
+  const grid = document.getElementById("donacionesGrid") as HTMLElement;
+  const countEl = document.getElementById("donacionesCount") as HTMLElement;
+  const emptyEl = document.getElementById("donacionesEmpty") as HTMLElement;
+  const verMasBtn = document.getElementById("donacionesVerMas") as HTMLButtonElement;
+  const enfoqueGroup = document.getElementById("enfoqueGroup") as HTMLElement;
+  const paisGroup = document.getElementById("paisGroup") as HTMLElement;
+  const toggle = document.getElementById("toggleExterior") as HTMLButtonElement;
+  const toggleText = document.getElementById("toggleExteriorText") as HTMLElement;
+  const toggleTrack = document.getElementById("toggleExteriorTrack") as HTMLElement;
+  const toggleKnob = document.getElementById("toggleExteriorKnob") as HTMLElement;
+
+  if (!dataEl || !grid) {
+    // sin datos: el render server-side se queda como está
+  } else {
+    const SRC: any[] = JSON.parse(dataEl.dataset.orgs || "[]");
+    const showSeals = dataEl.dataset.seals === "1";
+    const showPago = dataEl.dataset.pago === "1";
+
+    const state = { enfoque: "todos", pais: "todos", exterior: false, showAll: false };
+
+    const ENF_BASE = "inline-flex items-center min-h-11 px-[13px] rounded-full border-[1.5px] text-[0.82rem] font-semibold cursor-pointer whitespace-nowrap transition-colors duration-150";
+    const ENF_ON = "bg-blue text-white border-blue";
+    const ENF_OFF = "bg-white border-border text-[#374151] hover:bg-[#F8F9FB] hover:border-blue";
+    const PAIS_BASE = "inline-flex items-center min-h-11 px-[13px] rounded-full border-[1.5px] text-[0.78rem] font-semibold cursor-pointer whitespace-nowrap transition-colors duration-150";
+    const PAIS_ON = "bg-[#EAF0FB] text-blue border-blue";
+    const PAIS_OFF = "bg-white border-border text-[#374151] hover:border-[#9CA3AF]";
+
+    const PIN = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>';
+    const GLOBE_OFF = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="m2 2 20 20"/></svg>';
+    const SHIELD_CHECK = '<svg class="text-green" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>';
+    const BANK = '<svg class="text-amber" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><line x1="3" x2="21" y1="22" y2="22"/><line x1="6" x2="6" y1="18" y2="11"/><line x1="10" x2="10" y1="18" y2="11"/><line x1="14" x2="14" y1="18" y2="11"/><line x1="18" x2="18" y1="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg>';
+    const COPY = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>';
+    const HEART = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>';
+
+    function cardHtml(o: any) {
+      const tipo = escapeHtml(o.tipo);
+      const pais = escapeHtml(o.pais);
+      const nombre = escapeHtml(o.nombre);
+      const desc = escapeHtml(o.descripcion);
+      const href = safeUrl(o.url_oficial) || "#";
+      const sellos = escapeArray(o.sello_confianza || []);
+      const localOnly = o.donable_exterior === false;
+      const showLocal = localOnly
+        ? `<span class="inline-flex items-center gap-1.5 text-[0.72rem] font-semibold text-amber">${GLOBE_OFF}Recibe donaciones solo dentro del país</span>`
+        : "";
+      const showSellos = showSeals && sellos.length > 0
+        ? `<div class="flex flex-wrap items-center gap-1.5">${SHIELD_CHECK}${sellos.map((s) => `<span class="inline-flex items-center px-2.5 py-[3px] rounded-full bg-[#ECFDF3] border border-[#A7E8C2] text-green text-[0.7rem] font-semibold">${s}</span>`).join("")}</div>`
+        : "";
+      const showPagoBlock = showPago && o.datos_pago
+        ? `<div class="bg-[#FFFBEB] border border-[#FDE68A] rounded-lg p-2.5">
+            <div class="flex items-center gap-1.5 mb-1.5">${BANK}<span class="text-[0.68rem] font-bold tracking-wide uppercase text-amber">Datos para transferencia</span></div>
+            <p class="m-0 mb-2 text-[0.78rem] leading-snug text-text break-words">${escapeHtml(o.datos_pago)}</p>
+            <button type="button" data-copy="${escapeHtml(o.datos_pago)}" class="inline-flex items-center gap-1.5 min-h-9 px-2.5 py-1.5 rounded-md border border-[#FDE68A] bg-white text-amber text-[0.74rem] font-semibold cursor-pointer">${COPY}<span data-copy-label>Copiar datos</span></button>
+          </div>`
+        : "";
+      return `
+        <article data-card class="flex flex-col gap-2.5 bg-[#F8F9FB] border border-border rounded-lg p-4">
+          <div class="flex flex-wrap gap-1.5">
+            <span class="inline-flex items-center px-2.5 py-[3px] rounded-md bg-[#ECF1FB] text-blue text-[0.66rem] font-bold tracking-wide uppercase">${tipo}</span>
+            <span class="inline-flex items-center gap-1 px-2.5 py-[3px] rounded-md bg-white border border-border text-[#374151] text-[0.66rem] font-semibold">${PIN}${pais}</span>
+          </div>
+          <h2 class="m-0 text-base font-bold leading-tight text-text text-balance">${nombre}</h2>
+          <p class="m-0 flex-1 text-[0.82rem] leading-relaxed text-muted text-pretty">${desc}</p>
+          ${showLocal}
+          ${showSellos}
+          ${showPagoBlock}
+          <div class="flex mt-0.5">
+            <a href="${href}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-1.5 min-h-9 px-[15px] py-[7px] rounded-lg bg-blue text-white text-[0.82rem] font-bold no-underline cursor-pointer transition-colors duration-150 hover:bg-blue-dark">${HEART}Donar</a>
+          </div>
+        </article>`;
+    }
+
+    function bindCopy() {
+      grid.querySelectorAll("[data-copy]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const val = btn.getAttribute("data-copy") || "";
+          try { navigator.clipboard && navigator.clipboard.writeText(val); } catch (e) {}
+          const label = btn.querySelector("[data-copy-label]") as HTMLElement;
+          if (!label) return;
+          label.textContent = "Copiado ✓";
+          setTimeout(() => { label.textContent = "Copiar datos"; }, 1600);
+        });
+      });
+    }
+
+    function applyVerMas(total: number) {
+      if (!verMasBtn) return;
+      void grid.offsetWidth;
+      const cols = getComputedStyle(grid).gridTemplateColumns.split(" ").filter(Boolean).length || 1;
+      const maxVisible = cols * 2;
+      const cards = grid.querySelectorAll("[data-card]");
+      if (total <= maxVisible) {
+        cards.forEach((c) => c.classList.remove("hidden"));
+        verMasBtn.hidden = true;
+        return;
+      }
+      verMasBtn.hidden = false;
+      if (state.showAll) {
+        cards.forEach((c) => c.classList.remove("hidden"));
+        verMasBtn.textContent = "Ver menos ↑";
+      } else {
+        cards.forEach((c, i) => c.classList.toggle("hidden", i >= maxVisible));
+        verMasBtn.textContent = "Ver " + (total - maxVisible) + " más ↓";
+      }
+    }
+
+    function render() {
+      const filtered = SRC.filter((o) =>
+        (state.enfoque === "todos" || o.enfoque === state.enfoque) &&
+        (state.pais === "todos" || o.pais === state.pais) &&
+        (!state.exterior || o.donable_exterior === true)
+      );
+      grid.innerHTML = filtered.map(cardHtml).join("");
+      countEl.textContent = filtered.length === 1 ? "1 organización" : filtered.length + " organizaciones";
+      if (emptyEl) emptyEl.hidden = filtered.length > 0;
+      applyVerMas(filtered.length);
+      bindCopy();
+    }
+
+    function paintToggle(on: boolean) {
+      toggle.classList.toggle("border-blue", on);
+      toggle.classList.toggle("bg-[#EAF0FB]", on);
+      toggle.classList.toggle("border-border", !on);
+      toggle.classList.toggle("bg-white", !on);
+      toggleText.classList.toggle("text-blue", on);
+      toggleText.classList.toggle("text-[#374151]", !on);
+      toggleTrack.classList.toggle("bg-blue", on);
+      toggleTrack.classList.toggle("bg-[#CBD2DC]", !on);
+      toggleKnob.classList.toggle("translate-x-4", on);
+      toggle.setAttribute("aria-checked", on ? "true" : "false");
+    }
+
+    enfoqueGroup?.addEventListener("click", (e) => {
+      const btn = (e.target as HTMLElement).closest("[data-enfoque]") as HTMLElement;
+      if (!btn) return;
+      state.enfoque = btn.dataset.enfoque || "todos";
+      state.showAll = false;
+      enfoqueGroup.querySelectorAll("[data-enfoque]").forEach((b) => {
+        const on = (b as HTMLElement).dataset.enfoque === state.enfoque;
+        b.className = ENF_BASE + " " + (on ? ENF_ON : ENF_OFF);
+        b.setAttribute("aria-pressed", on ? "true" : "false");
+      });
+      render();
+    });
+
+    paisGroup?.addEventListener("click", (e) => {
+      const btn = (e.target as HTMLElement).closest("[data-pais]") as HTMLElement;
+      if (!btn) return;
+      state.pais = btn.dataset.pais || "todos";
+      state.showAll = false;
+      paisGroup.querySelectorAll("[data-pais]").forEach((b) => {
+        const on = (b as HTMLElement).dataset.pais === state.pais;
+        b.className = PAIS_BASE + " " + (on ? PAIS_ON : PAIS_OFF);
+        b.setAttribute("aria-pressed", on ? "true" : "false");
+      });
+      render();
+    });
+
+    toggle?.addEventListener("click", () => {
+      state.exterior = !state.exterior;
+      state.showAll = false;
+      paintToggle(state.exterior);
+      render();
+    });
+
+    verMasBtn?.addEventListener("click", () => {
+      state.showAll = !state.showAll;
+      render();
+    });
+
+    let resizeRaf = 0;
+    window.addEventListener("resize", () => {
+      cancelAnimationFrame(resizeRaf);
+      resizeRaf = requestAnimationFrame(() => applyVerMas(grid.querySelectorAll("[data-card]").length));
+    });
+
+    render();
+  }
+</script>
