@@ -50,7 +50,7 @@
 </dialog>
 
 <script>
-  import { supabase } from "../lib/supabase";
+  import { getSupabase } from "../lib/supabase";
 
   const reportarDesaparecidoDialog = document.getElementById('reportarDesaparecidoDialog') as HTMLDialogElement;
   const btnReportarDesaparecido = document.getElementById('btnReportarDesaparecido') as HTMLButtonElement;
@@ -95,6 +95,7 @@
       const ultima_ubicacion = (document.getElementById('formDesaparecidoUbicacion') as HTMLInputElement).value.trim();
       const descripcion = (document.getElementById('formDesaparecidoDescripcion') as HTMLTextAreaElement).value.trim() || null;
 
+      const supabase = await getSupabase();
       if (!supabase) {
         alert('El sistema está operando en modo local/sin conexión.');
         submitBtn.textContent = originalText;
