@@ -170,10 +170,10 @@ import EmergenciaCTA from "../components/EmergenciaCTA.astro";
 
       handleFilter();
     } catch (err) {
-      console.error("Error cargando necesidades:", err);
+      console.error("Error cargando centros de donación:", err);
       statusEl.textContent = "Error al cargar";
       statusEl.className = STATUS.offline;
-      container.innerHTML = `<div class="${NO_RESULTS}">No se pudieron cargar las necesidades. Verifica tu conexión e intenta de nuevo.</div>`;
+      container.innerHTML = `<div class="${NO_RESULTS}">No se pudieron cargar los centros de donación. Verifica tu conexión e intenta de nuevo.</div>`;
     }
   }
 
