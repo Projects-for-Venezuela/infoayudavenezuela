@@ -149,19 +149,16 @@ import EmergenciaCTA from "../../components/EmergenciaCTA.astro";
         supabase
           .from('refugiados')
           .select('*, refugios(nombre, ciudad, estado)')
-          .eq('verificado', true)
           .or(`nombre_completo.ilike.%${q}%,cedula.ilike.%${q}%`)
           .limit(20),
         supabase
           .from('desaparecidos')
           .select('*')
-          .eq('verificado', true)
           .or(`nombre_completo.ilike.%${q}%,cedula.ilike.%${q}%`)
           .limit(20),
         supabase
           .from('pacientes')
           .select('*')
-          .eq('verificado', true)
           .or(`nombre_paciente.ilike.%${q}%,cedula.ilike.%${q}%`)
           .limit(20)
       ]);
