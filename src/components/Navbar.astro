@@ -51,7 +51,7 @@ import ReportarNecesidadModal from "./ReportarNecesidadModal.astro";
   </div>
 </nav>
 
-<nav class="fixed bottom-0 left-0 right-0 z-[200] bg-white border-t border-border flex items-stretch p-1.5 pb-[max(0.375rem,env(safe-area-inset-bottom))] shadow-[0_-2px_12px_rgba(0,0,0,0.06)] lg:hidden" id="navBottom">
+<nav class="fixed bottom-0 left-0 right-0 z-200 bg-white border-t border-border flex items-stretch p-1.5 pb-[max(0.375rem,env(safe-area-inset-bottom))] shadow-[0_-2px_12px_rgba(0,0,0,0.06)] lg:hidden" id="navBottom">
   <a href="/" class="flex-1 flex flex-col items-center justify-center gap-0.5 px-1 py-1.5 rounded-lg text-[0.62rem] font-semibold text-muted no-underline border-none bg-transparent cursor-pointer transition-colors duration-150 min-h-11 select-none active:text-blue active:bg-[#F0F4FF]">
     <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
     <span>Inicio</span>
@@ -81,8 +81,8 @@ import ReportarNecesidadModal from "./ReportarNecesidadModal.astro";
   </button>
 </nav>
 
-<div id="navMoreOverlay" class="fixed inset-0 bg-black/40 z-[300] opacity-0 invisible transition-opacity duration-200"></div>
-<div id="navMoreSheet" class="fixed left-0 right-0 bottom-0 z-[301] bg-white rounded-t-2xl p-2 pb-[max(0.75rem,env(safe-area-inset-bottom))] translate-y-full transition-transform duration-300 ease-[cubic-bezier(.32,.72,0,1)] shadow-[0_-4px_24px_rgba(0,0,0,0.12)]">
+<div id="navMoreOverlay" class="fixed inset-0 bg-black/40 z-300 opacity-0 invisible transition-opacity duration-200"></div>
+<div id="navMoreSheet" class="fixed left-0 right-0 bottom-0 z-301 bg-white rounded-t-2xl p-2 pb-[max(0.75rem,env(safe-area-inset-bottom))] translate-y-full transition-transform duration-300 ease-[cubic-bezier(.32,.72,0,1)] shadow-[0_-4px_24px_rgba(0,0,0,0.12)]">
   <div class="w-9 h-1 rounded bg-[#D1D5DB] mx-auto mb-3"></div>
   <div class="flex items-center justify-between mb-2 px-2">
     <div class="text-xs font-semibold uppercase tracking-wide text-muted">Más opciones</div>
@@ -373,11 +373,11 @@ import ReportarNecesidadModal from "./ReportarNecesidadModal.astro";
 
   function showNecError(id: string, msg: string) {
     const el = document.getElementById(id) as HTMLElement;
-    if (el) { el.textContent = msg; el.classList.add('visible'); }
+    if (el) { el.textContent = msg; el.classList.remove('hidden'); }
   }
   function clearNecErrors() {
-    document.querySelectorAll('#reportarNecesidadForm .form-error').forEach(el => {
-      el.textContent = ''; el.classList.remove('visible');
+    document.querySelectorAll('#reportarNecesidadForm [data-error]').forEach(el => {
+      el.textContent = ''; el.classList.add('hidden');
     });
   }
 
