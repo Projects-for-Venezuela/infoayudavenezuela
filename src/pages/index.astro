@@ -57,7 +57,6 @@ const fallbackEnlaces = [
 
 <Layout title="Inicio"
   description="Directorio de centros de acopio verificados en Venezuela. Encuentra dónde donar agua, alimentos, medicinas e insumos para los afectados por el sismo del 24 de junio de 2026. Cobertura nacional e internacional."
-  canonical="https://infoayudavenezuela.vercel.app/"
 >
   <div id="fallbackData" 
        data-centros={JSON.stringify(fallbackCentros)} 
@@ -183,7 +182,7 @@ const fallbackEnlaces = [
 </Layout>
 
 <script>
-  import { supabase } from "../lib/supabase";
+  import { getSupabase } from "../lib/supabase";
   import { ZONAS_AFECTADAS, sortCentros } from "../data/centros";
   import { escapeHtml, escapeArray, safeUrl } from "../lib/escape";
 
@@ -515,6 +514,7 @@ const fallbackEnlaces = [
     try {
       dbStatus.textContent = "Conectando...";
       dbStatus.className = STATUS_LOADING;
+      const supabase = await getSupabase();
       if (!supabase) throw new Error("Supabase client not initialized");
 
       const { data, error } = await supabase
@@ -559,6 +559,7 @@ const fallbackEnlaces = [
 
   async function loadNecesidadesPreview() {
     try {
+      const supabase = await getSupabase();
       if (!supabase) return;
       const { data, error } = await supabase
         .from('necesidades_urgentes')
@@ -623,10 +624,18 @@ const fallbackEnlaces = [
 
   initCitySelect();
   handleFilter();
-  loadData();
-  loadNecesidadesPreview();
-  // Refresh every 5 minutes (300000 ms)
-  setInterval(loadData, 300000);
-  setInterval(loadNecesidadesPreview, 300000);
+
+  const onIdle = (cb: () => void) =>
+    "requestIdleCallback" in window
+      ? (window as any).requestIdleCallback(cb, { timeout: 2000 })
+      : setTimeout(cb, 200);
+
+  onIdle(() => {
+    loadData();
+    loadNecesidadesPreview();
+    // Refresh every 5 minutes (300000 ms)
+    setInterval(loadData, 300000);
+    setInterval(loadNecesidadesPreview, 300000);
+  });
 </script>
 

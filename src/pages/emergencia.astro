@@ -1,7 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import { numeros_nacionales as fallbackNacionales, caracas as fallbackCaracas } from "../data/emergencia";
-import { supabase } from "../lib/supabase.js";
+import { getSupabase } from "../lib/supabase.js";
 
 const catMeta = {
   bomberos: { label: "Bomberos", icon: "fire", color: "#CF142B" },
@@ -14,6 +14,7 @@ let numeros_nacionales = fallbackNacionales;
 let caracas = fallbackCaracas;
 
 try {
+  const supabase = await getSupabase();
   if (supabase) {
     const { data, error } = await supabase
       .from("numeros_emergencia")
@@ -50,7 +51,6 @@ const caracasTotal = Object.keys(catMeta).reduce((sum, key) => {
 
 <Layout title="Números de Emergencia"
   description="Números de emergencia activos en Venezuela 24 horas: Bomberos, Protección Civil, Rescate, Policía, radio informativo. Líneas del 171 y números locales de Caracas."
-  canonical="https://infoayudavenezuela.vercel.app/emergencia"
   showHero={false}
 >
   <header class="relative -mt-4 md:-mt-6 mb-6 w-screen ml-[calc(-50vw+50%)] overflow-hidden bg-linear-to-br from-[#991B1B] via-red to-[#DC2626] text-white">

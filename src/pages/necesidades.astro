@@ -3,7 +3,9 @@ import Layout from "../layouts/Layout.astro";
 import EmergenciaCTA from "../components/EmergenciaCTA.astro";
 ---
 
-<Layout title="Necesidades Urgentes" showHero={false}>
+<Layout title="Necesidades Urgentes"
+  description="Necesidades urgentes reportadas por los afectados por el sismo del 24 de junio de 2026 en Venezuela: agua, alimentos, medicinas e insumos prioritarios. Reporta o atiende una necesidad."
+  showHero={false}>
   <header class="relative -mt-4 md:-mt-6 mb-6 w-screen ml-[calc(-50vw+50%)] overflow-hidden bg-gradient-to-br from-red-dark via-[#991B1B] to-red text-white">
     <div class="pointer-events-none absolute inset-0 bg-[repeating-linear-gradient(45deg,transparent,transparent_20px,rgba(255,255,255,0.04)_20px,rgba(255,255,255,0.04)_40px)]" aria-hidden="true"></div>
     <div class="relative max-w-[640px] mx-auto text-center px-5 py-10 sm:py-12">
@@ -56,7 +58,7 @@ import EmergenciaCTA from "../components/EmergenciaCTA.astro";
 </Layout>
 
 <script>
-  import { supabase } from "../lib/supabase";
+  import { getSupabase } from "../lib/supabase";
   import { ZONAS_AFECTADAS } from "../data/centros";
   import { escapeHtml } from "../lib/escape";
 
@@ -153,6 +155,7 @@ import EmergenciaCTA from "../components/EmergenciaCTA.astro";
     try {
       statusEl.textContent = "Cargando necesidades...";
       statusEl.className = STATUS.loading;
+      const supabase = await getSupabase();
       if (!supabase) throw new Error("Supabase client not initialized");
 
       const { data, error } = await supabase
@@ -201,5 +204,7 @@ import EmergenciaCTA from "../components/EmergenciaCTA.astro";
     });
   });
 
-  loadData();
+  ("requestIdleCallback" in window
+    ? (window as any).requestIdleCallback(loadData, { timeout: 2000 })
+    : setTimeout(loadData, 200));
 </script>

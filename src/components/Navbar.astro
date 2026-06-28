@@ -140,7 +140,7 @@ import ReportarNecesidadModal from "./ReportarNecesidadModal.astro";
 <ReportarNecesidadModal />
 
 <script>
-  import { supabase } from "../lib/supabase";
+  import { getSupabase } from "../lib/supabase";
 
   const navRefreshBtn = document.getElementById('navRefreshBtn');
   if (navRefreshBtn) {
@@ -265,6 +265,7 @@ import ReportarNecesidadModal from "./ReportarNecesidadModal.astro";
         return;
       }
 
+      const supabase = await getSupabase();
       if (!supabase) {
         alert('El sistema está operando en modo local/sin conexión.');
         submitBtn.textContent = originalText;
@@ -366,6 +367,7 @@ import ReportarNecesidadModal from "./ReportarNecesidadModal.astro";
         return;
       }
 
+      const supabase = await getSupabase();
       if (!supabase) {
         alert('El sistema está operando en modo local/sin conexión.');
         submitBtn.textContent = originalText;
@@ -462,6 +464,7 @@ import ReportarNecesidadModal from "./ReportarNecesidadModal.astro";
 
       if (hasError) return;
 
+      const supabase = await getSupabase();
       if (!supabase) {
         showNecError('necErrorNecesitan', 'El sistema está en modo local/sin conexión.');
         return;

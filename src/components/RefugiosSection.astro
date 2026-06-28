@@ -22,13 +22,15 @@ import SugerirRefugioModal from "./SugerirRefugioModal.astro";
 <SugerirRefugioModal />
 
 <script>
-  import { supabase } from "../lib/supabase";
+  import { getSupabase } from "../lib/supabase";
   import { escapeHtml } from "../lib/escape";
 
   const grid = document.getElementById('refugiosSectionGrid');
 
   async function loadRefugiosPreview() {
-    if (!grid || !supabase) return;
+    if (!grid) return;
+    const supabase = await getSupabase();
+    if (!supabase) return;
     try {
       const { data, error } = await supabase
         .from('refugios')
@@ -60,5 +62,7 @@ import SugerirRefugioModal from "./SugerirRefugioModal.astro";
     }
   }
 
-  loadRefugiosPreview();
+  ("requestIdleCallback" in window
+    ? (window as any).requestIdleCallback(loadRefugiosPreview, { timeout: 2000 })
+    : setTimeout(loadRefugiosPreview, 200));
 </script>

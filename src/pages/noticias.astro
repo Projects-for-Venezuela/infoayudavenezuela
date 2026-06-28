@@ -53,7 +53,7 @@ import Layout from "../layouts/Layout.astro";
 </Layout>
 
 <script>
-  import { supabase } from "../lib/supabase";
+  import { getSupabase } from "../lib/supabase";
   import { escapeHtml, safeUrl } from "../lib/escape";
 
   const feedContainer = document.getElementById('noticiasFeedContainer');
@@ -68,7 +68,9 @@ import Layout from "../layouts/Layout.astro";
   };
 
   async function loadNoticias() {
-    if (!supabase || !feedContainer) return;
+    if (!feedContainer) return;
+    const supabase = await getSupabase();
+    if (!supabase) return;
 
     try {
       const { data, error } = await supabase
@@ -135,14 +137,20 @@ import Layout from "../layouts/Layout.astro";
     }
   }
 
-  loadNoticias();
+  ("requestIdleCallback" in window
+    ? (window as any).requestIdleCallback(initNoticias, { timeout: 2000 })
+    : setTimeout(initNoticias, 200));
 
-  if (supabase) {
-    supabase
-      .channel('noticias_changes_public')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'noticias' }, () => {
-        loadNoticias();
-      })
-      .subscribe();
+  async function initNoticias() {
+    loadNoticias();
+    const supabase = await getSupabase();
+    if (supabase) {
+      supabase
+        .channel('noticias_changes_public')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'noticias' }, () => {
+          loadNoticias();
+        })
+        .subscribe();
+    }
   }
 </script>

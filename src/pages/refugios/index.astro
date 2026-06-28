@@ -7,7 +7,9 @@ import SugerirRefugioModal from "../../components/SugerirRefugioModal.astro";
 import ReportarRefugiadoModal from "../../components/ReportarRefugiadoModal.astro";
 ---
 
-<Layout title="Refugios" showHero={false}>
+<Layout title="Refugios"
+  description="Directorio de refugios habilitados en Venezuela para los afectados por el sismo del 24 de junio de 2026. Ubicaciones, capacidad y cómo reportar un refugio o a una persona refugiada."
+  showHero={false}>
   <header class="relative -mt-4 md:-mt-6 mb-6 w-screen ml-[calc(-50vw+50%)] overflow-hidden bg-gradient-to-br from-[#1E3A5F] via-[#1D4ED8] to-[#3B82F6] text-white">
     <div class="pointer-events-none absolute inset-0 bg-[repeating-linear-gradient(45deg,transparent,transparent_20px,rgba(255,255,255,0.03)_20px,rgba(255,255,255,0.03)_40px)]" aria-hidden="true"></div>
     <div class="relative max-w-[640px] mx-auto text-center px-5 py-10 sm:py-12">
@@ -73,7 +75,7 @@ import ReportarRefugiadoModal from "../../components/ReportarRefugiadoModal.astr
 </Layout>
 
 <script>
-  import { supabase } from "../../lib/supabase";
+  import { getSupabase } from "../../lib/supabase";
   import { ZONAS_AFECTADAS } from "../../data/centros";
   import { escapeHtml, escapeArray } from "../../lib/escape";
 
@@ -248,6 +250,7 @@ import ReportarRefugiadoModal from "../../components/ReportarRefugiadoModal.astr
     try {
       dbStatus.textContent = "Conectando...";
       dbStatus.className = SB.loading;
+      const supabase = await getSupabase();
       if (!supabase) throw new Error("Supabase client not initialized");
 
       const { data, error } = await supabase.from('refugios').select('*').eq('verificado', true);
@@ -293,6 +296,7 @@ import ReportarRefugiadoModal from "../../components/ReportarRefugiadoModal.astr
   citySelect.addEventListener('change', handleFilter);
   if (typeSelect) typeSelect.addEventListener('change', handleFilter);
 
-  loadData();
-  setInterval(loadData, 300000);
+  ("requestIdleCallback" in window
+    ? (window as any).requestIdleCallback(() => { loadData(); setInterval(loadData, 300000); }, { timeout: 2000 })
+    : setTimeout(() => { loadData(); setInterval(loadData, 300000); }, 200));
 </script>
