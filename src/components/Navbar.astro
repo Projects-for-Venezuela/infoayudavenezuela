@@ -215,8 +215,7 @@ import ReportarNecesidadModal from "./ReportarNecesidadModal.astro";
   if (successCloseBtn) successCloseBtn.addEventListener('click', closeForm);
 
   sugerirDialog.addEventListener('click', (e) => {
-    const r = sugerirDialog.getBoundingClientRect();
-    if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) {
+    if (e.target === sugerirDialog) {
       sugerirDialog.close();
     }
   });
@@ -314,8 +313,7 @@ import ReportarNecesidadModal from "./ReportarNecesidadModal.astro";
   if (enlaceSuccessCloseBtn) enlaceSuccessCloseBtn.addEventListener('click', closeEnlaceForm);
 
   sugerirEnlaceDialog.addEventListener('click', (e) => {
-    const r = sugerirEnlaceDialog.getBoundingClientRect();
-    if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) {
+    if (e.target === sugerirEnlaceDialog) {
       sugerirEnlaceDialog.close();
     }
   });
@@ -426,8 +424,7 @@ import ReportarNecesidadModal from "./ReportarNecesidadModal.astro";
   if (necSuccessCloseBtn) necSuccessCloseBtn.addEventListener('click', closeNecForm);
 
   reportarNecesidadDialog.addEventListener('click', (e) => {
-    const r = reportarNecesidadDialog.getBoundingClientRect();
-    if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) {
+    if (e.target === reportarNecesidadDialog) {
       reportarNecesidadDialog.close();
     }
   });
