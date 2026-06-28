@@ -499,7 +499,7 @@ import ReportarNecesidadModal from "./ReportarNecesidadModal.astro";
     if (e.key !== 'Escape') return;
     const openSheet = document.querySelector('.nav-more-sheet.open');
     if (openSheet) { closeMoreSheet(); return; }
-    const openDialog = document.querySelector('dialog.modal-dialog[open]');
+    const openDialog = document.querySelector('dialog[open]');
     if (openDialog) { (openDialog as HTMLDialogElement).close(); }
   });
 </script>
