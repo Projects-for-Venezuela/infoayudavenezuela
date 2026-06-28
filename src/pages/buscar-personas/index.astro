@@ -128,6 +128,10 @@ import ReportarDesaparecidoModal from "../../components/ReportarDesaparecidoModa
             ${p.telefono ? `<div class="flex gap-2 items-start"><span class="${LBL}">Contacto</span><div class="${VAL}">${safeTelefono}</div></div>` : ''}
             ${p.detalle_1_value ? `<div class="flex gap-2 items-start"><span class="${LBL}">${safeDetalleLabel}</span><div class="${VAL}">${safeDetalleValue}</div></div>` : ''}
           </div>
+          ${p.tipo === 'Desaparecido' ? `<div class="px-4 pb-4 pt-1"><button type="button" class="btn-reportar-encontrado w-full px-3 py-2 bg-[#F1F5F9] hover:bg-[#E2E8F0] text-blue font-bold text-xs rounded-lg transition-colors border border-border flex items-center justify-center gap-2" data-nombre="${safeNombre}" data-cedula="${safeCedula}">
+            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            Reportar Localización
+          </button></div>` : ''}
         </div>
       `;
     }).join("");
@@ -220,6 +224,44 @@ import ReportarDesaparecidoModal from "../../components/ReportarDesaparecidoModa
 
       searchStatus.style.display = "none";
       renderPersonas(unifiedPersonas);
+
+      // Attach event listeners to the new buttons
+      document.querySelectorAll('.btn-reportar-encontrado').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const target = e.currentTarget as HTMLElement;
+          const nombre = target.dataset.nombre || '';
+          const cedula = target.dataset.cedula || '';
+          
+          const reportarRefugiadoForm = document.getElementById('reportarRefugiadoForm') as HTMLFormElement;
+          const reportarRefugiadoDialog = document.getElementById('reportarRefugiadoDialog') as HTMLDialogElement;
+          const formSuccessMessage = document.getElementById('formRefugiadoSuccessMessage') as HTMLElement;
+          
+          if (reportarRefugiadoForm && reportarRefugiadoDialog) {
+             reportarRefugiadoForm.style.display = 'flex';
+             if (formSuccessMessage) formSuccessMessage.style.display = 'none';
+             reportarRefugiadoForm.reset();
+             
+             // Reset UI state for dynamic fields
+             const containerRefugio = document.getElementById('containerRefugiadoRefugioSelect') as HTMLElement;
+             const selectRefugio = document.getElementById('formRefugiadoRefugio') as HTMLSelectElement;
+             const containerUbicacion = document.getElementById('containerRefugiadoUbicacionActual') as HTMLElement;
+             const inputUbicacion = document.getElementById('formRefugiadoUbicacionActual') as HTMLInputElement;
+             
+             if (containerRefugio) containerRefugio.style.display = 'none';
+             if (selectRefugio) selectRefugio.required = false;
+             if (containerUbicacion) containerUbicacion.style.display = 'none';
+             if (inputUbicacion) inputUbicacion.required = false;
+
+             const nombreInput = document.getElementById('formRefugiadoNombre') as HTMLInputElement;
+             const cedulaInput = document.getElementById('formRefugiadoCedula') as HTMLInputElement;
+             
+             if(nombreInput) nombreInput.value = nombre;
+             if(cedulaInput && cedula !== 'undefined' && cedula) cedulaInput.value = cedula;
+             
+             reportarRefugiadoDialog.showModal();
+          }
+        });
+      });
 
     } catch (err) {
       console.error(err);
