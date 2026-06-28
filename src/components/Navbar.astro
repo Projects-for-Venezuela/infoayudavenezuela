@@ -30,6 +30,10 @@ import ReportarNecesidadModal from "./ReportarNecesidadModal.astro";
         <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
         Necesidades
       </a>
+      <a href="/donacion-sangre" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold text-white/80 no-underline whitespace-nowrap transition-colors duration-150 hover:bg-white/10 hover:text-white">
+        <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+        Sangre
+      </a>
       <a href="/buscar-personas" class="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold text-white/80 no-underline whitespace-nowrap transition-colors duration-150 hover:bg-white/10 hover:text-white">
         <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         Buscar Personas
@@ -106,6 +110,13 @@ import ReportarNecesidadModal from "./ReportarNecesidadModal.astro";
     <div class="flex flex-col gap-0.5">
       <span class="font-semibold text-sm">Donaciones</span>
       <span class="text-xs text-muted">Dónde donar para la emergencia</span>
+    </div>
+  </a>
+  <a href="/donacion-sangre" class="flex items-center gap-3 p-3.5 rounded-card text-sm text-text no-underline transition-colors duration-150 active:bg-[#F3F4F6]">
+    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true" focusable="false" class="text-blue"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+    <div class="flex flex-col gap-0.5">
+      <span class="font-semibold text-sm">Donación de Sangre</span>
+      <span class="text-xs text-muted">Directorio de bancos de sangre</span>
     </div>
   </a>
   <a href="/buscar-personas" class="flex items-center gap-3 p-3.5 rounded-card text-sm text-text no-underline transition-colors duration-150 active:bg-[#F3F4F6]">
