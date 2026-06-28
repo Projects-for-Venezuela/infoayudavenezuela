@@ -176,7 +176,7 @@ import EmergenciaCTA from "../../components/EmergenciaCTA.astro";
           detalle_1_label: 'Salud',
           detalle_1_value: p.estado_salud,
           badge_label: 'En Refugio',
-          badge_color: 'var(--blue)'
+          badge_color: '#00247D'
         })),
         ...(desaparecidosRes.data || []).map((p: any) => ({
           tipo: 'Desaparecido',
@@ -188,7 +188,7 @@ import EmergenciaCTA from "../../components/EmergenciaCTA.astro";
           detalle_1_label: 'Descripción',
           detalle_1_value: p.descripcion,
           badge_label: p.status || 'Buscando',
-          badge_color: p.status?.toLowerCase() === 'encontrado' ? '#15803d' : 'var(--red)'
+          badge_color: p.status?.toLowerCase() === 'encontrado' ? '#15803D' : '#CF142B'
         })),
         ...(pacientesRes.data || []).map((p: any) => ({
           tipo: 'Paciente',
@@ -200,7 +200,7 @@ import EmergenciaCTA from "../../components/EmergenciaCTA.astro";
           detalle_1_label: 'Necesitan',
           detalle_1_value: p.necesitan,
           badge_label: p.estatus || 'Paciente',
-          badge_color: 'var(--yellow)'
+          badge_color: '#FFCC00'
         }))
       ];
 
