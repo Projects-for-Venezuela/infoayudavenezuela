@@ -96,7 +96,7 @@ import EmergenciaCTA from "../../components/EmergenciaCTA.astro";
       const safeBadge = escapeHtml(p.badge_label);
       const badgeColor = p.badge_color;
       const badgeText = badgeColor === '#FFCC00' ? '#1A1D23' : 'white';
-      const primariaLabel = p.tipo === 'Desaparecido' ? 'Últ. Ubicación' : p.tipo === 'Paciente' ? 'Hospital' : 'Refugio';
+      const primariaLabel = p.tipo === 'Desaparecido' ? 'Últ. Ubicación' : p.tipo === 'Paciente' || p.tipo === 'Hospital/Clínica' ? 'Hospital' : p.tipo === 'Residencia' || p.tipo === 'Otro' ? 'Ubicación' : 'Refugio';
       const secundariaLabel = p.tipo === 'Paciente' ? 'Ciudad' : 'Ubicación';
 
       return `
@@ -163,18 +163,24 @@ import EmergenciaCTA from "../../components/EmergenciaCTA.astro";
       if (pacientesRes.error) throw pacientesRes.error;
 
       const unifiedPersonas = [
-        ...(refugiadosRes.data || []).map((p: any) => ({
-          tipo: 'Refugiado',
-          nombre: p.nombre_completo,
-          cedula: p.cedula,
-          ubicacion_primaria: p.refugios?.nombre || 'Desconocido',
-          ubicacion_secundaria: p.refugios?.ciudad ? `${p.refugios.ciudad}, ${p.refugios.estado || ''}` : p.refugios?.estado,
-          telefono: p.telefono,
-          detalle_1_label: 'Salud',
-          detalle_1_value: p.estado_salud,
-          badge_label: 'En Refugio',
-          badge_color: '#00247D'
-        })),
+        ...(refugiadosRes.data || []).map((p: any) => {
+          const isRefugio = p.tipo_ubicacion === 'Refugio' || !p.tipo_ubicacion;
+          const isResidencia = p.tipo_ubicacion === 'Residencia';
+          const isHospital = p.tipo_ubicacion === 'Hospital/Clínica';
+          
+          return {
+            tipo: p.tipo_ubicacion || 'Refugio',
+            nombre: p.nombre_completo,
+            cedula: p.cedula,
+            ubicacion_primaria: isRefugio ? (p.refugios?.nombre || 'Desconocido') : (p.ubicacion_actual || 'Desconocida'),
+            ubicacion_secundaria: isRefugio ? (p.refugios?.ciudad ? `${p.refugios.ciudad}, ${p.refugios.estado || ''}` : p.refugios?.estado) : null,
+            telefono: p.telefono,
+            detalle_1_label: 'Salud',
+            detalle_1_value: p.estado_salud,
+            badge_label: isResidencia ? 'A Salvo' : isHospital ? 'En Hospital' : isRefugio ? 'En Refugio' : 'Localizado',
+            badge_color: isResidencia ? '#15803D' : '#00247D'
+          };
+        }),
         ...(desaparecidosRes.data || []).map((p: any) => ({
           tipo: 'Desaparecido',
           nombre: p.nombre_completo,
