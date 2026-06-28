@@ -86,23 +86,25 @@ import EmergenciaCTA from "../../components/EmergenciaCTA.astro";
     }
 
     mainGrid.innerHTML = personas.map((p: any) => {
-      const refugio = p.refugios || {};
-      const safeNombre = escapeHtml(p.nombre_completo);
+      const safeNombre = escapeHtml(p.nombre);
       const safeCedula = escapeHtml(p.cedula);
-      const safeRefugio = escapeHtml(refugio.nombre || 'Desconocido');
-      const safeCiudad = escapeHtml(refugio.ciudad);
-      const safeEstado = escapeHtml(refugio.estado);
+      const safePrimaria = escapeHtml(p.ubicacion_primaria);
+      const safeSecundaria = escapeHtml(p.ubicacion_secundaria);
       const safeTelefono = escapeHtml(p.telefono);
-      const safeSalud = escapeHtml(p.estado_salud);
-      const ubicacion = (refugio.ciudad || refugio.estado)
-        ? `${refugio.ciudad ? safeCiudad + ', ' : ''}${safeEstado}`
-        : '';
+      const safeDetalleLabel = escapeHtml(p.detalle_1_label);
+      const safeDetalleValue = escapeHtml(p.detalle_1_value);
+      const safeBadge = escapeHtml(p.badge_label);
+      const badgeColor = p.badge_color;
+      const badgeText = badgeColor === '#FFCC00' ? '#1A1D23' : 'white';
+      const primariaLabel = p.tipo === 'Desaparecido' ? 'Últ. Ubicación' : p.tipo === 'Paciente' ? 'Hospital' : 'Refugio';
+      const secundariaLabel = p.tipo === 'Paciente' ? 'Ciudad' : 'Ubicación';
 
       return `
-        <div class="flex flex-col bg-white border border-border rounded-xl overflow-hidden transition-[box-shadow,border-color] duration-150 hover:shadow-md hover:border-[#C7CDD8]">
-          <div class="flex items-center gap-2.5 pt-3.5 px-4">
-            <div class="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 bg-blue">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        <div class="relative flex flex-col bg-white border border-border rounded-xl overflow-hidden transition-[box-shadow,border-color] duration-150 hover:shadow-md hover:border-[#C7CDD8]">
+          <span class="absolute top-3 right-3 text-[0.6rem] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full" style="background:${badgeColor};color:${badgeText};">${safeBadge}</span>
+          <div class="flex items-center gap-2.5 pt-3.5 px-4 pr-24">
+            <div class="w-9 h-9 rounded-lg flex items-center justify-center shrink-0" style="background:${badgeColor};">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${badgeText}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
             </div>
             <div class="flex flex-col flex-1 min-w-0">
               <h3 class="text-sm font-bold tracking-tight text-text leading-snug">${safeNombre}</h3>
@@ -110,10 +112,10 @@ import EmergenciaCTA from "../../components/EmergenciaCTA.astro";
             </div>
           </div>
           <div class="px-4 pt-2.5 pb-3.5 flex flex-col gap-1.5">
-            <div class="flex gap-2 items-start"><span class="${LBL}">Refugio</span><div class="text-sm text-blue font-semibold flex-1 leading-relaxed min-w-0 wrap-break-word">${safeRefugio}</div></div>
-            ${ubicacion ? `<div class="flex gap-2 items-start"><span class="${LBL}">Ubicación</span><div class="${VAL}">${ubicacion}</div></div>` : ''}
-            ${p.telefono ? `<div class="flex gap-2 items-start"><span class="${LBL}">Teléfono</span><div class="${VAL}">${safeTelefono}</div></div>` : ''}
-            ${p.estado_salud ? `<div class="flex gap-2 items-start"><span class="${LBL}">Salud</span><div class="${VAL}">${safeSalud}</div></div>` : ''}
+            <div class="flex gap-2 items-start"><span class="${LBL}">${primariaLabel}</span><div class="text-sm text-blue font-semibold flex-1 leading-relaxed min-w-0 wrap-break-word">${safePrimaria}</div></div>
+            ${p.ubicacion_secundaria ? `<div class="flex gap-2 items-start"><span class="${LBL}">${secundariaLabel}</span><div class="${VAL}">${safeSecundaria}</div></div>` : ''}
+            ${p.telefono ? `<div class="flex gap-2 items-start"><span class="${LBL}">Contacto</span><div class="${VAL}">${safeTelefono}</div></div>` : ''}
+            ${p.detalle_1_value ? `<div class="flex gap-2 items-start"><span class="${LBL}">${safeDetalleLabel}</span><div class="${VAL}">${safeDetalleValue}</div></div>` : ''}
           </div>
         </div>
       `;
@@ -138,17 +140,72 @@ import EmergenciaCTA from "../../components/EmergenciaCTA.astro";
 
       if (!supabase) throw new Error("Supabase no disponible");
 
-      const { data, error } = await supabase
-        .from('refugiados')
-        .select('*, refugios(nombre, ciudad, estado)')
-        .eq('verificado', true)
-        .or(`nombre_completo.ilike.%${q}%,cedula.ilike.%${q}%`)
-        .limit(50);
+      const [refugiadosRes, desaparecidosRes, pacientesRes] = await Promise.all([
+        supabase
+          .from('refugiados')
+          .select('*, refugios(nombre, ciudad, estado)')
+          .eq('verificado', true)
+          .or(`nombre_completo.ilike.%${q}%,cedula.ilike.%${q}%`)
+          .limit(20),
+        supabase
+          .from('desaparecidos')
+          .select('*')
+          .eq('verificado', true)
+          .or(`nombre_completo.ilike.%${q}%,cedula.ilike.%${q}%`)
+          .limit(20),
+        supabase
+          .from('pacientes')
+          .select('*')
+          .eq('verificado', true)
+          .or(`nombre_paciente.ilike.%${q}%,cedula.ilike.%${q}%`)
+          .limit(20)
+      ]);
 
-      if (error) throw error;
+      if (refugiadosRes.error) throw refugiadosRes.error;
+      if (desaparecidosRes.error) throw desaparecidosRes.error;
+      if (pacientesRes.error) throw pacientesRes.error;
+
+      const unifiedPersonas = [
+        ...(refugiadosRes.data || []).map((p: any) => ({
+          tipo: 'Refugiado',
+          nombre: p.nombre_completo,
+          cedula: p.cedula,
+          ubicacion_primaria: p.refugios?.nombre || 'Desconocido',
+          ubicacion_secundaria: p.refugios?.ciudad ? `${p.refugios.ciudad}, ${p.refugios.estado || ''}` : p.refugios?.estado,
+          telefono: p.telefono,
+          detalle_1_label: 'Salud',
+          detalle_1_value: p.estado_salud,
+          badge_label: 'En Refugio',
+          badge_color: 'var(--blue)'
+        })),
+        ...(desaparecidosRes.data || []).map((p: any) => ({
+          tipo: 'Desaparecido',
+          nombre: p.nombre_completo,
+          cedula: p.cedula,
+          ubicacion_primaria: p.ultima_ubicacion || 'Desconocida',
+          ubicacion_secundaria: null,
+          telefono: p.fuente,
+          detalle_1_label: 'Descripción',
+          detalle_1_value: p.descripcion,
+          badge_label: p.status || 'Buscando',
+          badge_color: p.status?.toLowerCase() === 'encontrado' ? '#15803d' : 'var(--red)'
+        })),
+        ...(pacientesRes.data || []).map((p: any) => ({
+          tipo: 'Paciente',
+          nombre: p.nombre_paciente,
+          cedula: p.cedula,
+          ubicacion_primaria: p.hospital || 'Desconocido',
+          ubicacion_secundaria: p.ciudad ? `${p.ciudad}, ${p.estado || ''}` : p.estado,
+          telefono: p.contacto,
+          detalle_1_label: 'Necesitan',
+          detalle_1_value: p.necesitan,
+          badge_label: p.estatus || 'Paciente',
+          badge_color: 'var(--yellow)'
+        }))
+      ];
 
       searchStatus.style.display = "none";
-      renderPersonas(data || []);
+      renderPersonas(unifiedPersonas);
 
     } catch (err) {
       console.error(err);
