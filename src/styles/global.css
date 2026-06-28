@@ -1,4 +1,4 @@
-* { margin: 0; padding: 0; box-sizing: border-box; }
+@layer base { * { margin: 0; padding: 0; box-sizing: border-box; } }
 @supports (scroll-behavior: smooth) {
   @media (prefers-reduced-motion: no-preference) {
     html { scroll-behavior: smooth; }

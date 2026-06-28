@@ -4,6 +4,7 @@ import "../styles/necesidades.css";
 import Layout from "../layouts/Layout.astro";
 import EnlacesSection from "../components/EnlacesSection.astro";
 import AlertBox from "../components/AlertBox.astro";
+import SismoAlert from "../components/SismoAlert.astro";
 import StatsRow from "../components/StatsRow.astro";
 import SearchFilters from "../components/SearchFilters.astro";
 import InsumosSection from "../components/InsumosSection.astro";
@@ -63,7 +64,9 @@ const fallbackEnlaces = [
        data-estados={JSON.stringify(estadosOrdenados)}
        style="display: none;"></div>
 
-  <AlertBox />
+       <SismoAlert />
+       
+       <AlertBox />
 
   <StatsRow {totalCentros} {totalEstados} {totalCiudades} />
 
