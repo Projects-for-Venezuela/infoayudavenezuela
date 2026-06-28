@@ -166,6 +166,11 @@ import ReportarNecesidadModal from "./ReportarNecesidadModal.astro";
     homeSugerirBtn.addEventListener('click', openSugerirForm);
   }
 
+  const btnReportarCentro = document.getElementById('btnReportarCentro') as HTMLButtonElement | null;
+  if (btnReportarCentro) {
+    btnReportarCentro.addEventListener('click', openSugerirForm);
+  }
+
   const homeReportarBtn = document.getElementById('homeReportarBtn') as HTMLButtonElement | null;
   if (homeReportarBtn) {
     homeReportarBtn.addEventListener('click', () => {
