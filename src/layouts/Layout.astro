@@ -4,6 +4,7 @@ import Navbar from "../components/Navbar.astro";
 import Hero from "../components/Hero.astro";
 import Footer from "../components/Footer.astro";
 import ChatWidget from "../components/ChatWidget.astro";
+import { SITE_URL } from "../lib/site.js";
 
 export interface Props {
   title: string;
@@ -21,8 +22,9 @@ const {
   showHero = true,
 } = Astro.props;
 
-const siteUrl = "https://infoayudavenezuela.site";
-const canonicalUrl = canonical || `${siteUrl}${Astro.url.pathname}`;
+const siteUrl = SITE_URL;
+const normalizedPath = Astro.url.pathname.replace(/\/+$/, "") || "/";
+const canonicalUrl = canonical || `${siteUrl}${normalizedPath}`;
 const fullTitle = title === "Inicio"
   ? "Info Ayuda Venezuela — Directorio de ayuda humanitaria"
   : `${title} | Info Ayuda Venezuela`;
@@ -74,6 +76,18 @@ const fullTitle = title === "Inicio"
         "target": `${siteUrl}/?q={search_term_string}`,
         "query-input": "required name=search_term_string"
       }
+    })} />
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Info Ayuda Venezuela",
+      "url": siteUrl,
+      "logo": `${siteUrl}/img/vnzl.png`,
+      "description": "Plataforma ciudadana que centraliza centros de acopio, refugios, necesidades urgentes y números de emergencia para los afectados por el sismo del 24 de junio de 2026 en Venezuela.",
+      "areaServed": {
+        "@type": "Country",
+        "name": "Venezuela",
+      },
     })} />
   </head>
   <body>

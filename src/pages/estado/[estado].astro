@@ -1,6 +1,7 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import { estados, centrosPorEstado, resolveEstado, flagUrl, slug, unslug } from "../../data/centros";
+import { SITE_URL } from "../../lib/site.js";
 
 export async function getStaticPaths() {
   return estados.map(({ estado }: any) => ({
@@ -19,7 +20,7 @@ const total = ciudades.reduce((s: number, c: any) => s + c.centros.length, 0);
 const description = esInternacional
   ? `Centros de acopio internacionales para ayudar a los afectados por el sismo en Venezuela. Donaciones desde el exterior.`
   : `Centros de acopio verificados en ${display}, Venezuela. ${total} centro${total !== 1 ? 's' : ''} activo${total !== 1 ? 's' : ''}. Encuentra dónde donar agua, alimentos, medicinas e insumos.`;
-const canonical = `https://infoayudavenezuela.vercel.app/estado/${estado}`;
+const canonical = `${SITE_URL}/estado/${estado}`;
 ---
 
 <Layout title={display} {description} {canonical}>
