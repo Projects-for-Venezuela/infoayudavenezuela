@@ -192,6 +192,7 @@ El proyecto tiene **identidad visual definida** — bandera venezolana (amarillo
 3. **Validación client-side** en formularios (longitud, patrón HTML, no-HTML-injection). Los `alert()` actuales son defensivos — mantenerlos mientras no haya reemplazo inline.
 4. **Supabase RLS (Row-Level Security)** debe estar configurada para inserts públicos como `verificado: false`. No se cambia esto sin aprobación.
 5. **No commitear `.env`** ni claves. `.env.example` es la plantilla —mantenerla sincronizada si se añaden variables.
+6. **Reporte de vulnerabilidades:** No documentar vectores de ataque ni debilidades de seguridad en el repositorio. Cualquier hallazgo sensible se comunica directamente al equipo de desarrollo por canales privados, no a través de issues públicos.
 
 ---
 
