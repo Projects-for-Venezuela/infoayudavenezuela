@@ -47,7 +47,7 @@ import ReportarDesaparecidoModal from "../../components/ReportarDesaparecidoModa
     <span id="searchStatus" class="ml-auto text-xs font-bold px-2 py-0.5 rounded-full uppercase tracking-wide inline-flex items-center gap-1 bg-[#DCFCE7] text-[#15803D] border border-[#BBF7D0]" style="display: none;"></span>
   </div>
 
-  <div class="grid gap-4 grid-cols-[repeat(auto-fill,minmax(260px,1fr))] items-start mb-8" id="mainGrid">
+  <div class="grid gap-4 grid-cols-[repeat(auto-fill,minmax(260px,1fr))] mb-8" id="mainGrid">
     <div class="col-span-full flex flex-col items-center justify-center text-center py-12 px-4 text-muted">
       <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="mb-4 text-[#CBD5E1]" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
       <span class="text-sm text-pretty">Escribe un nombre o cédula en el buscador de arriba para comenzar.</span>
@@ -70,8 +70,8 @@ import ReportarDesaparecidoModal from "../../components/ReportarDesaparecidoModa
   const resultsCount = document.getElementById('resultsCount') as HTMLElement;
   const searchStatus = document.getElementById('searchStatus') as HTMLElement;
 
-  const GRID_RESULTS = "grid gap-4 grid-cols-[repeat(auto-fill,minmax(280px,1fr))] items-start mb-8";
-  const GRID_EMPTY = "grid gap-4 grid-cols-[repeat(auto-fill,minmax(260px,1fr))] items-start mb-8";
+  const GRID_RESULTS = "grid gap-4 grid-cols-[repeat(auto-fill,minmax(280px,1fr))] mb-8";
+  const GRID_EMPTY = "grid gap-4 grid-cols-[repeat(auto-fill,minmax(260px,1fr))] mb-8";
   const SS_BASE = "ml-auto text-xs font-bold px-2 py-0.5 rounded-full uppercase tracking-wide inline-flex items-center gap-1";
   const SS = {
     loading: `${SS_BASE} bg-[#E2E8F0] text-[#64748B]`,
@@ -109,9 +109,12 @@ import ReportarDesaparecidoModal from "../../components/ReportarDesaparecidoModa
       const badgeText = badgeColor === '#FFCC00' ? '#1A1D23' : 'white';
       const primariaLabel = p.tipo === 'Desaparecido' ? 'Últ. Ubicación' : p.tipo === 'Paciente' || p.tipo === 'Hospital/Clínica' ? 'Hospital' : p.tipo === 'Residencia' || p.tipo === 'Otro' ? 'Ubicación' : 'Refugio';
       const secundariaLabel = p.tipo === 'Paciente' ? 'Ciudad' : 'Ubicación';
+      const isFound = p.badge_label && (p.badge_label.toLowerCase() === 'found' || p.badge_label.toLowerCase() === 'encontrado' || p.badge_label.toLowerCase() === 'localizado');
+      const hasLocation = safePrimaria && safePrimaria !== 'Desconocida' && safePrimaria !== 'Desconocido';
+      const showReportBtn = p.tipo === 'Desaparecido' && !(isFound && hasLocation);
 
       return `
-        <div class="relative flex flex-col bg-white border border-border rounded-xl overflow-hidden transition-[box-shadow,border-color] duration-150 hover:shadow-md hover:border-[#C7CDD8]">
+        <div class="relative flex flex-col h-full bg-white border border-border rounded-xl overflow-hidden transition-[box-shadow,border-color] duration-150 hover:shadow-md hover:border-[#C7CDD8]">
           <span class="absolute top-3 right-3 text-[0.6rem] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full" style="background:${badgeColor};color:${badgeText};">${safeBadge}</span>
           <div class="flex items-center gap-2.5 pt-3.5 px-4 pr-24">
             <div class="w-9 h-9 rounded-lg flex items-center justify-center shrink-0" style="background:${badgeColor};">
@@ -122,13 +125,13 @@ import ReportarDesaparecidoModal from "../../components/ReportarDesaparecidoModa
               ${p.cedula ? `<span class="text-xs text-muted font-medium tabular-nums">V-${safeCedula}</span>` : ''}
             </div>
           </div>
-          <div class="px-4 pt-2.5 pb-3.5 flex flex-col gap-1.5">
+          <div class="px-4 pt-2.5 pb-3.5 flex flex-col gap-1.5 flex-grow">
             <div class="flex gap-2 items-start"><span class="${LBL}">${primariaLabel}</span><div class="text-sm text-blue font-semibold flex-1 leading-relaxed min-w-0 wrap-break-word">${safePrimaria}</div></div>
             ${p.ubicacion_secundaria ? `<div class="flex gap-2 items-start"><span class="${LBL}">${secundariaLabel}</span><div class="${VAL}">${safeSecundaria}</div></div>` : ''}
             ${p.telefono ? `<div class="flex gap-2 items-start"><span class="${LBL}">Contacto</span><div class="${VAL}">${safeTelefono}</div></div>` : ''}
             ${p.detalle_1_value ? `<div class="flex gap-2 items-start"><span class="${LBL}">${safeDetalleLabel}</span><div class="${VAL}">${safeDetalleValue}</div></div>` : ''}
           </div>
-          ${p.tipo === 'Desaparecido' ? `<div class="px-4 pb-4 pt-1"><button type="button" class="btn-reportar-encontrado w-full px-3 py-2 bg-[#F1F5F9] hover:bg-[#E2E8F0] text-blue font-bold text-xs rounded-lg transition-colors border border-border flex items-center justify-center gap-2" data-nombre="${safeNombre}" data-cedula="${safeCedula}">
+          ${showReportBtn ? `<div class="px-4 pb-4 pt-1 mt-auto"><button type="button" class="btn-reportar-encontrado w-full px-3 py-2 bg-[#F1F5F9] hover:bg-[#E2E8F0] text-blue font-bold text-xs rounded-lg transition-colors border border-border flex items-center justify-center gap-2" data-nombre="${safeNombre}" data-cedula="${safeCedula}">
             <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
             Reportar Localización
           </button></div>` : ''}
