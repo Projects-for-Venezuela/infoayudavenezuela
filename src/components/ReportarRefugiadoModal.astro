@@ -53,7 +53,7 @@
 </dialog>
 
 <script>
-  import { supabase } from "../lib/supabase";
+  import { getSupabase } from "../lib/supabase";
   import { escapeHtml } from "../lib/escape";
 
   const reportarRefugiadoDialog = document.getElementById('reportarRefugiadoDialog') as HTMLDialogElement;
@@ -66,6 +66,7 @@
   const formRefugiadoRefugioSelect = document.getElementById('formRefugiadoRefugio') as HTMLSelectElement;
 
   async function loadRefugiosForSelect() {
+    const supabase = await getSupabase();
     if (!supabase) return;
     const { data, error } = await supabase.from('refugios').select('id, nombre, ciudad, estado').eq('verificado', true).order('nombre');
 
@@ -120,6 +121,7 @@
       const refugio_id = formRefugiadoRefugioSelect.value;
       const estado_salud = (document.getElementById('formRefugiadoSalud') as HTMLInputElement).value.trim() || null;
 
+      const supabase = await getSupabase();
       if (!supabase) {
         alert('El sistema está operando en modo local/sin conexión.');
         submitBtn.textContent = originalText;

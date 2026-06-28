@@ -58,7 +58,7 @@ import EmergenciaCTA from "../components/EmergenciaCTA.astro";
 </Layout>
 
 <script>
-  import { supabase } from "../lib/supabase";
+  import { getSupabase } from "../lib/supabase";
   import { ZONAS_AFECTADAS } from "../data/centros";
   import { escapeHtml } from "../lib/escape";
 
@@ -155,6 +155,7 @@ import EmergenciaCTA from "../components/EmergenciaCTA.astro";
     try {
       statusEl.textContent = "Cargando necesidades...";
       statusEl.className = STATUS.loading;
+      const supabase = await getSupabase();
       if (!supabase) throw new Error("Supabase client not initialized");
 
       const { data, error } = await supabase
@@ -203,5 +204,7 @@ import EmergenciaCTA from "../components/EmergenciaCTA.astro";
     });
   });
 
-  loadData();
+  ("requestIdleCallback" in window
+    ? (window as any).requestIdleCallback(loadData, { timeout: 2000 })
+    : setTimeout(loadData, 200));
 </script>

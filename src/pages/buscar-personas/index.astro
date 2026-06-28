@@ -52,7 +52,7 @@ import EmergenciaCTA from "../../components/EmergenciaCTA.astro";
 </Layout>
 
 <script>
-  import { supabase } from "../../lib/supabase";
+  import { getSupabase } from "../../lib/supabase";
   import { escapeHtml } from "../../lib/escape";
 
   const searchPersonInput = document.getElementById('searchPersonInput') as HTMLInputElement;
@@ -140,6 +140,7 @@ import EmergenciaCTA from "../../components/EmergenciaCTA.astro";
       searchStatus.className = SS.loading;
       searchStatus.style.display = "inline-flex";
 
+      const supabase = await getSupabase();
       if (!supabase) throw new Error("Supabase no disponible");
 
       const [refugiadosRes, desaparecidosRes, pacientesRes] = await Promise.all([

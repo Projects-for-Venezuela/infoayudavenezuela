@@ -36,7 +36,7 @@ const { enlaces } = Astro.props;
 <div id="enlacesFallbackData" data-enlaces={JSON.stringify(enlaces)} style="display: none;"></div>
 
 <script>
-  import { supabase } from "../lib/supabase";
+  import { getSupabase } from "../lib/supabase";
   import { escapeHtml, safeUrl } from "../lib/escape";
 
   const fallbackEl = document.getElementById('enlacesFallbackData') as HTMLElement;
@@ -109,6 +109,7 @@ const { enlaces } = Astro.props;
 
   async function loadEnlaces() {
     try {
+      const supabase = await getSupabase();
       if (!supabase) throw new Error("Supabase client not initialized");
       const { data, error } = await supabase
         .from('enlaces_ayuda')
@@ -125,5 +126,7 @@ const { enlaces } = Astro.props;
   }
 
   renderEnlaces();
-  loadEnlaces();
+  ("requestIdleCallback" in window
+    ? (window as any).requestIdleCallback(loadEnlaces, { timeout: 2000 })
+    : setTimeout(loadEnlaces, 200));
 </script>

@@ -20,14 +20,16 @@ const MOCK_FOUND = 0;
 </div>
 
 <script>
-  import { supabase } from "../lib/supabase";
+  import { getSupabase } from "../lib/supabase";
 
   const statTotal = document.getElementById("statPersonasTotal");
   const statMissing = document.getElementById("statPersonasMissing");
   const statFound = document.getElementById("statPersonasFound");
 
   async function loadPersonasStats() {
-    if (!supabase || !statTotal || !statMissing || !statFound) return;
+    if (!statTotal || !statMissing || !statFound) return;
+    const supabase = await getSupabase();
+    if (!supabase) return;
 
     try {
       const { count: totalCount, error: e1 } = await supabase
@@ -54,6 +56,13 @@ const MOCK_FOUND = 0;
     }
   }
 
-  loadPersonasStats();
-  setInterval(loadPersonasStats, 300000); // 5min
+  const onIdle = (cb: () => void) =>
+    "requestIdleCallback" in window
+      ? (window as any).requestIdleCallback(cb, { timeout: 2000 })
+      : setTimeout(cb, 200);
+
+  onIdle(() => {
+    loadPersonasStats();
+    setInterval(loadPersonasStats, 300000); // 5min
+  });
 </script>
