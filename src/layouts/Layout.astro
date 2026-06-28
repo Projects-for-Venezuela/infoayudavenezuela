@@ -1,7 +1,5 @@
 ---
 import "../styles/global.css";
-import "../styles/skeleton.css";
-import "../styles/tailwind.css";
 import Navbar from "../components/Navbar.astro";
 import Hero from "../components/Hero.astro";
 import Footer from "../components/Footer.astro";
@@ -23,7 +21,7 @@ const {
   showHero = true,
 } = Astro.props;
 
-const siteUrl = "https://infoayudavenezuela.vercel.app";
+const siteUrl = "https://infoayudavenezuela.site";
 const canonicalUrl = canonical || `${siteUrl}${Astro.url.pathname}`;
 const fullTitle = title === "Inicio"
   ? "Info Ayuda Venezuela — Directorio de ayuda humanitaria"

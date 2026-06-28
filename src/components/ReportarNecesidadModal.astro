@@ -1,119 +1,117 @@
-<dialog id="reportarNecesidadDialog" class="modal-dialog modal-dialog--alerta" aria-labelledby="reportarDialogTitle">
-  <div class="modal-content">
-    <div class="modal-header">
-<div class="modal-header-left">
-        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-        <h2 id="reportarDialogTitle">Reportar Necesidad Urgente</h2>
+<dialog id="reportarNecesidadDialog" aria-labelledby="reportarDialogTitle" class="m-auto w-[90%] max-w-[550px] p-0 border-0 rounded-card bg-white overflow-hidden outline-none shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1),0_10px_10px_-5px_rgba(0,0,0,0.04)] backdrop:bg-[rgba(15,23,42,0.65)] backdrop:backdrop-blur-xs backdrop:animate-[fadeIn_0.2s_ease-out]">
+  <div class="p-5 sm:p-6 max-h-[90vh] overflow-y-auto">
+    <div class="flex justify-between items-center mb-4 pb-3 border-b border-[#FECACA]">
+      <div class="flex items-center gap-2">
+        <svg class="shrink-0 text-red" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <h2 id="reportarDialogTitle" class="text-[1.2rem] font-bold text-[#991B1B] tracking-tight">Reportar Necesidad Urgente</h2>
       </div>
-      <button id="closeNecesidadDialogBtn" class="close-btn" type="button" aria-label="Cerrar modal">&times;</button>
+      <button id="closeNecesidadDialogBtn" type="button" aria-label="Cerrar modal" class="flex items-center justify-center min-w-11 min-h-11 -mr-2 bg-transparent border-0 text-2xl leading-none text-muted cursor-pointer transition-colors duration-150 hover:text-red">&times;</button>
     </div>
 
-    <form id="reportarNecesidadForm" class="modal-form">
-      <p class="form-help">Reporta un lugar, refugio o comunidad que necesite ayuda urgente. Los datos se publicarán tras ser verificados por un moderador.</p>
+    <form id="reportarNecesidadForm" class="flex flex-col gap-3">
+      <p class="text-[0.78rem] text-muted -mb-0.5 text-pretty">Reporta un lugar, refugio o comunidad que necesite ayuda urgente. Los datos se publicarán tras ser verificados por un moderador.</p>
 
-      <div class="form-row">
-        <div class="form-group">
-          <label for="necFormEstado">Estado *</label>
-          <select id="necFormEstado" required>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div class="flex flex-col gap-1">
+          <label for="necFormEstado" class="text-[0.78rem] font-semibold text-text">Estado *</label>
+          <select id="necFormEstado" required class="w-full px-3 py-2.5 text-[0.85rem] bg-white border-[1.5px] border-border rounded-lg outline-none cursor-pointer transition-colors duration-200 focus:border-blue">
             <option value="">Selecciona</option>
             <option value="Distrito Capital">Distrito Capital (Caracas)</option>
             <option value="La Guaira">La Guaira</option>
             <option value="Miranda">Miranda (El Junquito)</option>
             <option value="Falcón">Falcón (Tucacas)</option>
           </select>
-          <span class="form-error" id="necErrorEstado"></span>
+          <span data-error class="hidden text-[0.73rem] text-[#DC2626] leading-tight" id="necErrorEstado"></span>
+        </div>
+        <div class="flex flex-col gap-1">
+          <label for="necFormCiudad" class="text-[0.78rem] font-semibold text-text">Ciudad / Municipio *</label>
+          <input type="text" id="necFormCiudad" placeholder="Ej. Barquisimeto, Macuto" required class="w-full px-3 py-2.5 text-[0.85rem] bg-white border-[1.5px] border-border rounded-lg outline-none transition-colors duration-200 focus:border-blue" />
+          <span data-error class="hidden text-[0.73rem] text-[#DC2626] leading-tight" id="necErrorCiudad"></span>
         </div>
       </div>
 
-      <div class="form-row">
-        <div class="form-group">
-          <label for="necFormCiudad">Ciudad / Municipio *</label>
-          <input type="text" id="necFormCiudad" placeholder="Ej. Barquisimeto, Macuto" required />
-          <span class="form-error" id="necErrorCiudad"></span>
-        </div>
-        <div class="form-group">
-          <label for="necFormLugar">Lugar / Refugio *</label>
-          <input type="text" id="necFormLugar" placeholder="Ej. Refugio La Paz, Centro Comunitario" required />
-          <span class="form-error" id="necErrorLugar"></span>
-        </div>
+      <div class="flex flex-col gap-1">
+        <label for="necFormLugar" class="text-[0.78rem] font-semibold text-text">Lugar / Refugio *</label>
+        <input type="text" id="necFormLugar" placeholder="Ej. Refugio La Paz, Centro Comunitario" required class="w-full px-3 py-2.5 text-[0.85rem] bg-white border-[1.5px] border-border rounded-lg outline-none transition-colors duration-200 focus:border-blue" />
+        <span data-error class="hidden text-[0.73rem] text-[#DC2626] leading-tight" id="necErrorLugar"></span>
       </div>
 
-      <div class="form-group">
-        <label for="necFormDireccion">Dirección</label>
-        <textarea id="necFormDireccion" rows="2" placeholder="Dirección exacta o punto de referencia del lugar..."></textarea>
+      <div class="flex flex-col gap-1">
+        <label for="necFormDireccion" class="text-[0.78rem] font-semibold text-text">Dirección</label>
+        <textarea id="necFormDireccion" rows="2" placeholder="Dirección exacta o punto de referencia del lugar..." class="w-full px-3 py-2 text-[0.85rem] bg-white border-[1.5px] border-border rounded-lg outline-none transition-colors duration-200 resize-y focus:border-blue"></textarea>
       </div>
 
-      <div class="form-group">
-        <label>Categoría de la necesidad *</label>
-        <div class="nec-categorias" id="necCategorias">
-          <label class="nec-cat-item">
-            <input type="checkbox" name="necCat" value="Agua/Alimentos" />
-            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      <div class="flex flex-col gap-1.5">
+        <label class="text-[0.78rem] font-semibold text-text">Categoría de la necesidad *</label>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-1.5" id="necCategorias">
+          <label class="flex items-center gap-1.5 px-2 py-1.5 rounded-lg border-[1.5px] border-border cursor-pointer text-[0.78rem] font-medium text-text select-none leading-tight transition-[border-color,background-color] duration-150 has-checked:border-[#991B1B] has-checked:bg-[#FEF2F2] has-focus-visible:ring-2 has-focus-visible:ring-yellow [&:has(:checked)_svg]:text-[#991B1B]">
+            <input type="checkbox" name="necCat" value="Agua/Alimentos" class="sr-only" />
+            <svg class="shrink-0 text-muted transition-colors duration-150" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" aria-hidden="true" focusable="false"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
             Agua/Alimentos
           </label>
-          <label class="nec-cat-item">
-            <input type="checkbox" name="necCat" value="Medicinas" />
-            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+          <label class="flex items-center gap-1.5 px-2 py-1.5 rounded-lg border-[1.5px] border-border cursor-pointer text-[0.78rem] font-medium text-text select-none leading-tight transition-[border-color,background-color] duration-150 has-checked:border-[#991B1B] has-checked:bg-[#FEF2F2] has-focus-visible:ring-2 has-focus-visible:ring-yellow [&:has(:checked)_svg]:text-[#991B1B]">
+            <input type="checkbox" name="necCat" value="Medicinas" class="sr-only" />
+            <svg class="shrink-0 text-muted transition-colors duration-150" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" aria-hidden="true" focusable="false"><rect x="4" y="4" width="16" height="16" rx="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
             Medicinas
           </label>
-          <label class="nec-cat-item">
-            <input type="checkbox" name="necCat" value="Ropa/Cobijas" />
-            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18"/><path d="M12 6v4"/></svg>
+          <label class="flex items-center gap-1.5 px-2 py-1.5 rounded-lg border-[1.5px] border-border cursor-pointer text-[0.78rem] font-medium text-text select-none leading-tight transition-[border-color,background-color] duration-150 has-checked:border-[#991B1B] has-checked:bg-[#FEF2F2] has-focus-visible:ring-2 has-focus-visible:ring-yellow [&:has(:checked)_svg]:text-[#991B1B]">
+            <input type="checkbox" name="necCat" value="Ropa/Cobijas" class="sr-only" />
+            <svg class="shrink-0 text-muted transition-colors duration-150" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" aria-hidden="true" focusable="false"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18"/><path d="M12 6v4"/></svg>
             Ropa/Cobijas
           </label>
-          <label class="nec-cat-item">
-            <input type="checkbox" name="necCat" value="Higiene" />
-            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/><line x1="3.6" y1="7.2" x2="20.4" y2="7.2"/><line x1="3.6" y1="16.8" x2="20.4" y2="16.8"/><line x1="12" y1="3" x2="12" y2="21"/></svg>
+          <label class="flex items-center gap-1.5 px-2 py-1.5 rounded-lg border-[1.5px] border-border cursor-pointer text-[0.78rem] font-medium text-text select-none leading-tight transition-[border-color,background-color] duration-150 has-checked:border-[#991B1B] has-checked:bg-[#FEF2F2] has-focus-visible:ring-2 has-focus-visible:ring-yellow [&:has(:checked)_svg]:text-[#991B1B]">
+            <input type="checkbox" name="necCat" value="Higiene" class="sr-only" />
+            <svg class="shrink-0 text-muted transition-colors duration-150" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" aria-hidden="true" focusable="false"><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/><line x1="3.6" y1="7.2" x2="20.4" y2="7.2"/><line x1="3.6" y1="16.8" x2="20.4" y2="16.8"/><line x1="12" y1="3" x2="12" y2="21"/></svg>
             Higiene
           </label>
-          <label class="nec-cat-item">
-            <input type="checkbox" name="necCat" value="Herramientas" />
-            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
+          <label class="flex items-center gap-1.5 px-2 py-1.5 rounded-lg border-[1.5px] border-border cursor-pointer text-[0.78rem] font-medium text-text select-none leading-tight transition-[border-color,background-color] duration-150 has-checked:border-[#991B1B] has-checked:bg-[#FEF2F2] has-focus-visible:ring-2 has-focus-visible:ring-yellow [&:has(:checked)_svg]:text-[#991B1B]">
+            <input type="checkbox" name="necCat" value="Herramientas" class="sr-only" />
+            <svg class="shrink-0 text-muted transition-colors duration-150" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" aria-hidden="true" focusable="false"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
             Herramientas
           </label>
-          <label class="nec-cat-item">
-            <input type="checkbox" name="necCat" value="Rescate" />
-            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
+          <label class="flex items-center gap-1.5 px-2 py-1.5 rounded-lg border-[1.5px] border-border cursor-pointer text-[0.78rem] font-medium text-text select-none leading-tight transition-[border-color,background-color] duration-150 has-checked:border-[#991B1B] has-checked:bg-[#FEF2F2] has-focus-visible:ring-2 has-focus-visible:ring-yellow [&:has(:checked)_svg]:text-[#991B1B]">
+            <input type="checkbox" name="necCat" value="Rescate" class="sr-only" />
+            <svg class="shrink-0 text-muted transition-colors duration-150" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" aria-hidden="true" focusable="false"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
             Rescate
           </label>
-          <label class="nec-cat-item">
-            <input type="checkbox" name="necCat" value="Albergue" />
-            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path d="M3 21h18"/><path d="M4 21V5a2 2 0 012-2h12a2 2 0 012 2v16"/><path d="M9 21v-4h6v4"/></svg>
+          <label class="flex items-center gap-1.5 px-2 py-1.5 rounded-lg border-[1.5px] border-border cursor-pointer text-[0.78rem] font-medium text-text select-none leading-tight transition-[border-color,background-color] duration-150 has-checked:border-[#991B1B] has-checked:bg-[#FEF2F2] has-focus-visible:ring-2 has-focus-visible:ring-yellow [&:has(:checked)_svg]:text-[#991B1B]">
+            <input type="checkbox" name="necCat" value="Albergue" class="sr-only" />
+            <svg class="shrink-0 text-muted transition-colors duration-150" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" aria-hidden="true" focusable="false"><path d="M3 21h18"/><path d="M4 21V5a2 2 0 012-2h12a2 2 0 012 2v16"/><path d="M9 21v-4h6v4"/></svg>
             Albergue
           </label>
-          <label class="nec-cat-item">
-            <input type="checkbox" name="necCat" value="Otro" />
-            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+          <label class="flex items-center gap-1.5 px-2 py-1.5 rounded-lg border-[1.5px] border-border cursor-pointer text-[0.78rem] font-medium text-text select-none leading-tight transition-[border-color,background-color] duration-150 has-checked:border-[#991B1B] has-checked:bg-[#FEF2F2] has-focus-visible:ring-2 has-focus-visible:ring-yellow [&:has(:checked)_svg]:text-[#991B1B]">
+            <input type="checkbox" name="necCat" value="Otro" class="sr-only" />
+            <svg class="shrink-0 text-muted transition-colors duration-150" width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
             Otro
           </label>
         </div>
-        <span class="form-error" id="necErrorCategoria"></span>
+        <span data-error class="hidden text-[0.73rem] text-[#DC2626] leading-tight" id="necErrorCategoria"></span>
       </div>
 
-      <div class="form-group">
-        <label for="necFormNecesitan">¿Qué necesitan URGENTE? *</label>
-        <textarea id="necFormNecesitan" rows="3" placeholder="Describe detalladamente lo que más necesitan: medicinas específicas, agua potable, alimentos no perecederos, carpas, frazadas, etc..." required></textarea>
-        <span class="form-error" id="necErrorNecesitan"></span>
+      <div class="flex flex-col gap-1">
+        <label for="necFormNecesitan" class="text-[0.78rem] font-semibold text-text">¿Qué necesitan URGENTE? *</label>
+        <textarea id="necFormNecesitan" rows="3" placeholder="Describe detalladamente lo que más necesitan: medicinas específicas, agua potable, alimentos no perecederos, carpas, frazadas, etc..." required class="w-full px-3 py-2.5 text-[0.85rem] bg-white border-[1.5px] border-border rounded-lg outline-none transition-colors duration-200 resize-y focus:border-blue"></textarea>
+        <span data-error class="hidden text-[0.73rem] text-[#DC2626] leading-tight" id="necErrorNecesitan"></span>
       </div>
 
-      <div class="form-group">
-        <label for="necFormContacto">Contacto</label>
-        <input type="text" id="necFormContacto" placeholder="Teléfono, Instagram, email..." />
+      <div class="flex flex-col gap-1">
+        <label for="necFormContacto" class="text-[0.78rem] font-semibold text-text">Contacto</label>
+        <input type="text" id="necFormContacto" placeholder="Teléfono, Instagram, email..." class="w-full px-3 py-2.5 text-[0.85rem] bg-white border-[1.5px] border-border rounded-lg outline-none transition-colors duration-200 focus:border-blue" />
       </div>
 
-      <div class="form-actions">
-        <button type="button" id="cancelNecFormBtn" class="btn btn-secondary">Cancelar</button>
-        <button type="submit" id="submitNecFormBtn" class="btn btn-primary btn-danger">Enviar Reporte</button>
+      <div class="flex justify-end gap-2 mt-2 pt-4 border-t border-border">
+        <button type="button" id="cancelNecFormBtn" class="min-h-11 px-5 py-2 rounded-lg text-[0.85rem] font-semibold cursor-pointer bg-white text-text border border-border transition-colors duration-150 hover:bg-[#F1F5F9] hover:border-[#CBD5E1]">Cancelar</button>
+        <button type="submit" id="submitNecFormBtn" class="min-h-11 px-5 py-2 rounded-lg text-[0.85rem] font-semibold cursor-pointer bg-[#DC2626] text-white border border-transparent transition-colors duration-150 hover:bg-[#991B1B]">Enviar Reporte</button>
       </div>
     </form>
 
-    <div id="necFormSuccessMessage" class="form-success-msg" style="display: none;">
-      <div class="success-icon">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+    <div id="necFormSuccessMessage" class="flex-col items-center text-center py-8 px-4 gap-3" style="display: none;">
+      <div class="w-12 h-12 rounded-full bg-[#DCFCE7] text-[#15803D] flex items-center justify-center">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 6L9 17l-5-5"/></svg>
       </div>
-      <h3>¡Reporte Enviado!</h3>
-      <p>Gracias por reportar. Los datos han sido registrados de forma segura y se publicarán tan pronto sean verificados por nuestro equipo.</p>
-      <button id="necSuccessCloseBtn" class="btn btn-primary">Entendido</button>
+      <h3 class="text-[1.2rem] font-bold text-[#15803D] tracking-tight">¡Reporte Enviado!</h3>
+      <p class="text-[0.86rem] text-muted leading-relaxed mb-2 text-pretty">Gracias por reportar. Los datos han sido registrados de forma segura y se publicarán tan pronto sean verificados por nuestro equipo.</p>
+      <button id="necSuccessCloseBtn" class="min-h-11 px-5 py-2 rounded-lg text-[0.85rem] font-semibold cursor-pointer bg-blue text-white border border-transparent transition-colors duration-150 hover:bg-blue-dark">Entendido</button>
     </div>
   </div>
 </dialog>
