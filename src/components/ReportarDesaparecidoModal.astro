@@ -1,0 +1,121 @@
+<dialog id="reportarDesaparecidoDialog" aria-labelledby="reportarDesaparecidoDialogTitle" class="m-auto w-[90%] max-w-[550px] p-0 border-0 rounded-card bg-white overflow-hidden outline-none shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1),0_10px_10px_-5px_rgba(0,0,0,0.04)] backdrop:bg-[rgba(15,23,42,0.65)] backdrop:backdrop-blur-xs backdrop:animate-[fadeIn_0.2s_ease-out]">
+  <div class="p-5 sm:p-6 max-h-[90vh] overflow-y-auto">
+    <div class="flex justify-between items-center mb-4 pb-3 border-b border-border">
+      <h2 id="reportarDesaparecidoDialogTitle" class="text-[1.2rem] font-bold text-red-dark tracking-tight">Reportar Persona Desaparecida</h2>
+      <button id="closeDesaparecidoDialogBtn" type="button" aria-label="Cerrar modal" class="flex items-center justify-center min-w-11 min-h-11 -mr-2 bg-transparent border-0 text-2xl leading-none text-muted cursor-pointer transition-colors duration-150 hover:text-red">&times;</button>
+    </div>
+
+    <form id="reportarDesaparecidoForm" class="flex flex-col gap-3">
+      <p class="text-[0.78rem] text-muted -mb-0.5 text-pretty">Registra a una persona desaparecida o de la cual no se tiene información. La publicación será visible de inmediato en nuestra base de datos para facilitar su búsqueda.</p>
+
+      <div class="flex flex-col gap-1">
+        <label for="formDesaparecidoNombre" class="text-[0.78rem] font-semibold text-text">Nombre Completo *</label>
+        <input type="text" id="formDesaparecidoNombre" placeholder="Ej. María González" required class="w-full px-3 py-2.5 text-[0.85rem] bg-white border-[1.5px] border-border rounded-lg outline-none transition-colors duration-200 focus:border-red" />
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div class="flex flex-col gap-1">
+          <label for="formDesaparecidoCedula" class="text-[0.78rem] font-semibold text-text">Cédula de Identidad</label>
+          <input type="text" id="formDesaparecidoCedula" placeholder="Ej. 12345678" class="w-full px-3 py-2.5 text-[0.85rem] bg-white border-[1.5px] border-border rounded-lg outline-none transition-colors duration-200 focus:border-red" />
+        </div>
+        <div class="flex flex-col gap-1">
+          <label for="formDesaparecidoTelefono" class="text-[0.78rem] font-semibold text-text">Teléfono de Contacto (Tuyo) *</label>
+          <input type="text" id="formDesaparecidoTelefono" placeholder="Ej. 0424-1234567" required class="w-full px-3 py-2.5 text-[0.85rem] bg-white border-[1.5px] border-border rounded-lg outline-none transition-colors duration-200 focus:border-red" />
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="formDesaparecidoUbicacion" class="text-[0.78rem] font-semibold text-text">Última Ubicación Conocida *</label>
+        <input type="text" id="formDesaparecidoUbicacion" placeholder="Ej. Las Tejerías, Sector El Béisbol..." required class="w-full px-3 py-2.5 text-[0.85rem] bg-white border-[1.5px] border-border rounded-lg outline-none transition-colors duration-200 focus:border-red" />
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="formDesaparecidoDescripcion" class="text-[0.78rem] font-semibold text-text">Descripción / Rasgos / Vestimenta</label>
+        <textarea id="formDesaparecidoDescripcion" rows="2" placeholder="Ej. Camisa azul, jean, 1.70m de altura..." class="w-full px-3 py-2.5 text-[0.85rem] bg-white border-[1.5px] border-border rounded-lg outline-none transition-colors duration-200 focus:border-red"></textarea>
+      </div>
+
+      <div class="flex justify-end gap-2 mt-2 pt-4 border-t border-border">
+        <button type="button" id="cancelDesaparecidoFormBtn" class="min-h-11 px-5 py-2 rounded-lg text-[0.85rem] font-semibold cursor-pointer bg-white text-text border border-border transition-colors duration-150 hover:bg-[#F1F5F9] hover:border-[#CBD5E1]">Cancelar</button>
+        <button type="submit" id="submitDesaparecidoFormBtn" class="min-h-11 px-5 py-2 rounded-lg text-[0.85rem] font-semibold cursor-pointer bg-red text-white border border-transparent transition-colors duration-150 hover:bg-red-dark">Registrar Desaparecido</button>
+      </div>
+    </form>
+
+    <div id="formDesaparecidoSuccessMessage" class="flex-col items-center text-center py-8 px-4 gap-3" style="display: none;">
+      <div class="w-12 h-12 rounded-full bg-[#FEE2E2] text-[#B91C1C] flex items-center justify-center text-2xl font-bold">!</div>
+      <h3 class="text-[1.2rem] font-bold text-[#B91C1C] tracking-tight">¡Registro Publicado!</h3>
+      <p class="text-[0.86rem] text-muted leading-relaxed mb-2 text-pretty">Los datos de la persona desaparecida ya están en nuestro sistema público para ayudar a su pronta localización.</p>
+      <button id="successDesaparecidoCloseBtn" class="min-h-11 px-5 py-2 rounded-lg text-[0.85rem] font-semibold cursor-pointer bg-red text-white border border-transparent transition-colors duration-150 hover:bg-red-dark">Entendido</button>
+    </div>
+  </div>
+</dialog>
+
+<script>
+  import { supabase } from "../lib/supabase";
+
+  const reportarDesaparecidoDialog = document.getElementById('reportarDesaparecidoDialog') as HTMLDialogElement;
+  const btnReportarDesaparecido = document.getElementById('btnReportarDesaparecido') as HTMLButtonElement;
+  const closeDesaparecidoDialogBtn = document.getElementById('closeDesaparecidoDialogBtn') as HTMLButtonElement;
+  const cancelDesaparecidoFormBtn = document.getElementById('cancelDesaparecidoFormBtn') as HTMLButtonElement;
+  const reportarDesaparecidoForm = document.getElementById('reportarDesaparecidoForm') as HTMLFormElement;
+  const formDesaparecidoSuccessMessage = document.getElementById('formDesaparecidoSuccessMessage') as HTMLElement;
+  const successDesaparecidoCloseBtn = document.getElementById('successDesaparecidoCloseBtn') as HTMLButtonElement;
+
+  if (btnReportarDesaparecido) {
+    btnReportarDesaparecido.addEventListener('click', () => {
+      reportarDesaparecidoForm.style.display = 'flex';
+      formDesaparecidoSuccessMessage.style.display = 'none';
+      reportarDesaparecidoForm.reset();
+      reportarDesaparecidoDialog.showModal();
+    });
+  }
+
+  const closeDesaparecidoForm = () => { reportarDesaparecidoDialog.close(); };
+  if (closeDesaparecidoDialogBtn) closeDesaparecidoDialogBtn.addEventListener('click', closeDesaparecidoForm);
+  if (cancelDesaparecidoFormBtn) cancelDesaparecidoFormBtn.addEventListener('click', closeDesaparecidoForm);
+  if (successDesaparecidoCloseBtn) successDesaparecidoCloseBtn.addEventListener('click', closeDesaparecidoForm);
+
+  reportarDesaparecidoDialog.addEventListener('click', (e) => {
+    const r = reportarDesaparecidoDialog.getBoundingClientRect();
+    if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) {
+      reportarDesaparecidoDialog.close();
+    }
+  });
+
+  if (reportarDesaparecidoForm) {
+    reportarDesaparecidoForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const submitBtn = document.getElementById('submitDesaparecidoFormBtn') as HTMLButtonElement;
+      const originalText = submitBtn.textContent || '';
+      submitBtn.textContent = 'Enviando...';
+      submitBtn.disabled = true;
+
+      const nombre_completo = (document.getElementById('formDesaparecidoNombre') as HTMLInputElement).value.trim();
+      const cedula = (document.getElementById('formDesaparecidoCedula') as HTMLInputElement).value.trim() || null;
+      const fuente = (document.getElementById('formDesaparecidoTelefono') as HTMLInputElement).value.trim();
+      const ultima_ubicacion = (document.getElementById('formDesaparecidoUbicacion') as HTMLInputElement).value.trim();
+      const descripcion = (document.getElementById('formDesaparecidoDescripcion') as HTMLTextAreaElement).value.trim() || null;
+
+      if (!supabase) {
+        alert('El sistema está operando en modo local/sin conexión.');
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+        return;
+      }
+
+      try {
+        const { error } = await supabase.from('desaparecidos').insert({
+          nombre_completo, cedula, fuente, ultima_ubicacion, descripcion, status: 'Buscando'
+        });
+        if (error) throw error;
+        reportarDesaparecidoForm.style.display = 'none';
+        formDesaparecidoSuccessMessage.style.display = 'flex';
+      } catch (err) {
+        console.error('Error insertando desaparecido en Supabase:', err);
+        alert('Hubo un error al enviar el registro.');
+      } finally {
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+      }
+    });
+  }
+</script>
