@@ -1,61 +1,67 @@
 ---
 import Layout from "../layouts/Layout.astro";
+
+const devs = [
+  { name: "Enyell Duarte", phone: "+58 412-3557704", email: "enyelldev@gmail.com" },
+  { name: "Adel Gannem", phone: "+58 424-5785645", email: "adelganndev@gmail.com" },
+  { name: "Fabrizio Franco", phone: "+58 426-7239855", email: "fabriziofrancotami@gmail.com" },
+  { name: "Kevin Villegas Perez", phone: "+57 3173552802", email: "villegasdeveloper@outlook.es" },
+  { name: "Adrian Rangel", phone: "+58 416-7753045", email: "adrijar21@gmail.com" },
+  { name: "Gabriel Hernandez", phone: "+56 975134383", email: "gbhr115@gmail.com" },
+];
 ---
 
 <Layout title="Acerca de"
   description="Sobre Info Ayuda Venezuela: plataforma ciudadana para centralizar la información de donaciones, necesidades urgentes y números de emergencia tras el sismo del 24 de junio de 2026."
-  canonical="https://infoayudavenezuela.vercel.app/sobre-nosotros"
+  canonical="https://infoayudavenezuela.site/sobre-nosotros"
   showHero={false}
 >
-  <div class="about-container">
-    <a href="/" class="back-link">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+  <div class="max-w-[800px] mx-auto pb-8">
+    <a href="/" class="inline-flex items-center gap-1.5 mb-5 px-3 py-1.5 text-[0.86rem] font-medium text-blue no-underline bg-white border border-border rounded-lg transition-colors duration-150 hover:bg-[#F8F9FB] hover:border-[#C7CDD8]">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
       Volver al inicio
     </a>
 
-    <div class="hero-local">
-      <div>
-        <h1>Sobre esta iniciativa</h1>
-        <p class="hero-local-meta">Centralizando la ayuda para los afectados por el sismo del 24 de junio de 2026.</p>
-      </div>
+    <div class="mb-7 pb-5 border-b-2 border-border">
+      <h1 class="text-[1.4rem] font-bold text-blue tracking-tight text-balance mb-0.5">Sobre esta iniciativa</h1>
+      <p class="text-[0.86rem] text-muted">Centralizando la ayuda para los afectados por el sismo del 24 de junio de 2026.</p>
     </div>
 
-    <div class="about-grid">
-      <!-- 1. El Propósito -->
-      <div class="section-card">
-        <h3 class="section-title">🎯 El Propósito</h3>
-        <p class="text-content">
-          Tras la emergencia nacional, la información sobre dónde donar y qué insumos se necesitaban comenzó a dispersarse rápidamente. 
+    <div class="flex flex-col gap-6">
+      <div class="bg-white rounded-card border border-border p-5 shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
+        <h2 class="flex items-center gap-2 text-[0.95rem] font-bold text-text tracking-tight">
+          <svg class="text-blue shrink-0" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+          El Propósito
+        </h2>
+        <p class="leading-relaxed text-[#4B5563] text-base mt-2 text-pretty">
+          Tras la emergencia nacional, la información sobre dónde donar y qué insumos se necesitaban comenzó a dispersarse rápidamente.
           Esta plataforma nace con un único objetivo: <strong>centralizar todos los centros de acopio verificados en un solo lugar</strong>, accesible para cualquier persona, incluso con conexiones inestables.
         </p>
       </div>
 
-      <!-- 2. Equipo y Contactos -->
-      <div class="section-card">
-        <h3 class="section-title">👨‍💻 Quiénes están detrás</h3>
-        <p class="text-content">
+      <div class="bg-white rounded-card border border-border p-5 shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
+        <h2 class="flex items-center gap-2 text-[0.95rem] font-bold text-text tracking-tight">
+          <svg class="text-blue shrink-0" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          Quiénes están detrás
+        </h2>
+        <p class="leading-relaxed text-[#4B5563] text-base mt-2 text-pretty">
           Somos un equipo de desarrolladores radicados en Venezuela. Al vivir de cerca el impacto de la emergencia, decidimos aportar creando esta herramienta tecnológica para facilitar la logística comunitaria.
         </p>
-        
-        <div class="footer-contacts">
-          <h4 class="contacts-title">Contacto / Soporte Técnico</h4>
-          <div class="contacts-list">
-            {[
-              { name: "Enyell Duarte", phone: "+58 412-3557704", email: "enyelldev@gmail.com" },
-              { name: "Adel Gannem", phone: "+58 424-5785645", email: "adelganndev@gmail.com" },
-              { name: "Fabrizio Franco", phone: "+58 426-7239855", email: "fabriziofrancotami@gmail.com" },
-              { name: "Kevin Villegas Perez", phone: "+57 3173552802", email: "villegasdeveloper@outlook.es" },
-              { name: "Adrian Rangel", phone: "+58 416-7753045", email: "adrijar21@gmail.com" },
-              { name: "Gabriel Hernandez", phone: "+56 975134383", email: "gbhr115@gmail.com" }
-            ].map(dev => (
-              <div class="contact-row">
-                <span class="dev-name">{dev.name}</span>
-                <div class="dev-links">
-                  <a href={`tel:${dev.phone.replace(/ /g, '')}`}>
-                    <span class="icon">📞</span> {dev.phone}
+
+        <div class="mt-7">
+          <h3 class="mb-3 pb-2 text-base font-semibold text-[#374151] border-b border-[#E5E7EB]">Contacto / Soporte Técnico</h3>
+          <div class="flex flex-col gap-3">
+            {devs.map(dev => (
+              <div class="flex flex-col gap-1 py-2 sm:flex-row sm:items-center sm:justify-between">
+                <span class="font-bold text-[#111827]">{dev.name}</span>
+                <div class="flex gap-4 flex-wrap">
+                  <a href={`tel:${dev.phone.replace(/ /g, '')}`} class="inline-flex items-center gap-1.5 text-[0.85rem] text-blue no-underline hover:underline">
+                    <svg class="shrink-0" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                    {dev.phone}
                   </a>
-                  <a href={`mailto:${dev.email}`}>
-                    <span class="icon">✉️</span> {dev.email}
+                  <a href={`mailto:${dev.email}`} class="inline-flex items-center gap-1.5 text-[0.85rem] text-blue no-underline hover:underline break-all">
+                    <svg class="shrink-0" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg>
+                    {dev.email}
                   </a>
                 </div>
               </div>
@@ -64,50 +70,31 @@ import Layout from "../layouts/Layout.astro";
         </div>
       </div>
 
-      <div class="section-card">
-        <h3 class="section-title">🤝 Cómo Colaborar</h3>
-        <p class="text-content">
+      <div class="bg-white rounded-card border border-border p-5 shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
+        <h2 class="flex items-center gap-2 text-[0.95rem] font-bold text-text tracking-tight">
+          <svg class="text-blue shrink-0" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20.42 4.58a5.4 5.4 0 0 0-7.65 0l-.77.78-.77-.78a5.4 5.4 0 0 0-7.65 0C1.46 6.7 1.33 10.28 4 13l8 8 8-8c2.67-2.72 2.54-6.3.42-8.42z"/></svg>
+          Cómo Colaborar
+        </h2>
+        <p class="leading-relaxed text-[#4B5563] text-base mt-2 text-pretty">
           Esta plataforma es mantenida de forma voluntaria. Si conoces un centro de acopio que no está en la lista, o notas que alguna información ha cambiado, tu reporte salva vidas.
         </p>
-        <div class="button-group">
-          <button id="btnReportarCentro" class="btn btn-primary" style="width: 100%;">
+        <div class="mt-4">
+          <button id="btnReportarCentro" type="button" class="w-full inline-flex items-center justify-center gap-2 px-5 py-3 min-h-11 rounded-lg font-semibold text-white bg-blue border-0 cursor-pointer transition-colors duration-150 hover:bg-blue-dark">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Reportar un nuevo centro
           </button>
         </div>
       </div>
 
-      <div class="section-card disclaimer-card">
-        <h3 class="section-title disclaimer-title">⚠️ Descargo de Responsabilidad</h3>
-        <p class="disclaimer-text">
+      <div class="bg-[#FEF2F2] rounded-card border border-border border-l-[5px] border-l-red p-5 shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
+        <h2 class="flex items-center gap-2 text-[0.95rem] font-bold text-red tracking-tight">
+          <svg class="shrink-0" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          Descargo de Responsabilidad
+        </h2>
+        <p class="text-[#991B1B] text-[0.9rem] leading-relaxed mt-2 text-pretty">
           Recomendamos encarecidamente <strong>contactar a los números o redes sociales indicados en cada centro</strong> antes de movilizarse para confirmar disponibilidad.
         </p>
       </div>
     </div>
   </div>
 </Layout>
-
-<style>
-  .about-container { max-width: 800px; margin: 0 auto; padding-bottom: 2rem; }
-  .about-grid { display: flex; flex-direction: column; gap: 1.5rem; }
-  .text-content { line-height: 1.6; color: #4b5563; font-size: 1rem; margin-top: 0.5rem; }
-  
-  /* Contactos */
-  .footer-contacts { margin-top: 2rem; }
-  .contacts-title { margin-bottom: 1rem; color: #374151; font-size: 1rem; border-bottom: 1px solid #e5e7eb; padding-bottom: 0.5rem; }
-  .contacts-list { display: flex; flex-direction: column; gap: 12px; }
-  .contact-row { display: flex; flex-direction: column; gap: 4px; padding: 8px 0; }
-  .dev-name { font-weight: 700; color: #111827; }
-  .dev-links { display: flex; gap: 15px; flex-wrap: wrap; }
-  .dev-links a { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; color: #00247D; text-decoration: none; }
-  .dev-links a:hover { text-decoration: underline; }
-
-  @media (min-width: 600px) {
-    .contact-row { flex-direction: row; align-items: center; justify-content: space-between; }
-  }
-
-  /* Botones y tarjetas */
-  .btn { display: inline-flex; align-items: center; justify-content: center; padding: 0.75rem 1.25rem; border-radius: 8px; font-weight: 600; cursor: pointer; border: none; }
-  .btn-primary { background-color: #00247D; color: #ffffff; }
-  .disclaimer-card { border-left: 5px solid #CF142B; background-color: #fef2f2; padding-left: 15px }
-  .disclaimer-text { color: #991b1b; font-size: 0.9rem; }
-</style>

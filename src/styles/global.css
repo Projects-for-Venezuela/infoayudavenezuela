@@ -1,35 +1,38 @@
-* { margin: 0; padding: 0; box-sizing: border-box; }
+@import "tailwindcss";
+
+@theme {
+  --color-blue: #00247D;
+  --color-blue-dark: #001845;
+  --color-red: #CF142B;
+  --color-red-dark: #A00F22;
+  --color-yellow: #FFCC00;
+  --color-gold: #D4A800;
+  --color-bg: #F4F5F7;
+  --color-card: #FFFFFF;
+  --color-text: #1A1D23;
+  --color-muted: #6B7280;
+  --color-border: #E2E6ED;
+  --color-focus: #FFCC00;
+  --color-amber: #854d0e;
+  --color-green: #166534;
+  --radius-card: 12px;
+  --radius-pill: 9999px;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
 @supports (scroll-behavior: smooth) {
   @media (prefers-reduced-motion: no-preference) {
     html { scroll-behavior: smooth; }
   }
 }
-:root {
-  --red: #CF142B;
-  --red-dark: #A00F22;
-  --blue: #00247D;
-  --blue-dark: #001845;
-  --yellow: #FFCC00;
-  --gold: #D4A800;
-  --bg: #F4F5F7;
-  --card: #FFFFFF;
-  --text: #1A1D23;
-  --muted: #6B7280;
-  --border: #E2E6ED;
-  --radius: 12px;
-  --focus-ring: var(--yellow);
-}
 
-/* ─── Focus visible global (accesibilidad por teclado) ─── */
 :focus { outline: none; }
 :focus-visible {
-  outline: 3px solid var(--focus-ring);
+  outline: 3px solid var(--color-yellow);
   outline-offset: 2px;
   border-radius: 4px;
 }
-nav.navbar :focus-visible { outline-color: var(--yellow); }
 
-/* ─── Utilidad de solo-screen-reader ─── */
 .sr-only {
   position: absolute;
   width: 1px; height: 1px;
@@ -40,13 +43,12 @@ nav.navbar :focus-visible { outline-color: var(--yellow); }
   border: 0;
 }
 
-/* ─── Skip to content (navegación por teclado) ─── */
 .skip-link {
   position: absolute;
   top: -100px;
   left: 0.5rem;
   z-index: 999;
-  background: var(--blue-dark);
+  background: var(--color-blue-dark);
   color: white;
   padding: 0.6rem 1rem;
   border-radius: 8px;
@@ -60,7 +62,6 @@ nav.navbar :focus-visible { outline-color: var(--yellow); }
   outline-offset: 2px;
 }
 
-/* ─── Reduced motion global ─── */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
@@ -69,16 +70,18 @@ nav.navbar :focus-visible { outline-color: var(--yellow); }
     scroll-behavior: auto !important;
   }
 }
+
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  background: var(--bg);
-  color: var(--text);
+  font-family: var(--font-sans);
+  background: var(--color-bg);
+  color: var(--color-text);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
+
 main {
   flex: 1;
   max-width: 1000px;
@@ -88,4 +91,29 @@ main {
 }
 @media (max-width: 768px) {
   main { padding: 1rem 0.75rem calc(56px + 1rem); }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.animate-spin { animation: spin 1s linear infinite; }
+
+@keyframes nec-pulse {
+  0%, 100% { box-shadow: 0 2px 6px rgba(207,20,43,0.3); }
+  50% { box-shadow: 0 2px 12px rgba(207,20,43,0.5); }
+}
+
+@keyframes accordion-down {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-spin { animation: none; }
 }

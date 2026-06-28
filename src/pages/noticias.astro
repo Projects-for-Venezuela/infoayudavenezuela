@@ -1,49 +1,49 @@
 ---
-import "../styles/noticias.css";
 import Layout from "../layouts/Layout.astro";
 ---
 
 <Layout title="Centro de Noticias Verificadas"
   description="Centralización y certificación de noticias sobre la situación en Venezuela. Desmintiendo rumores y validando información."
-  canonical="https://infoayudavenezuela.vercel.app/noticias"
+  canonical="https://infoayudavenezuela.site/noticias"
   showHero={false}
 >
-  <header class="noti-hero">
-    <div class="noti-hero-bg">
-      <div class="noti-hero-content">
-        <span class="noti-hero-badge">VERIFICADO</span>
-        <h1>Centro de <span>Noticias</span></h1>
-        <span class="noti-hero-badge">Centro de Noticias</span>
-        <h1>Noticias Verificadas</h1>
-        <p>Mantente informado con información certificada y contrastada para evitar la propagación de noticias falsas.</p>
-      </div>
+  <header class="relative -mt-4 md:-mt-6 mb-6 w-screen ml-[calc(-50vw+50%)] overflow-hidden bg-gradient-to-br from-blue via-[#1E40AF] to-[#2563EB] text-white">
+    <div class="pointer-events-none absolute inset-0 bg-[repeating-linear-gradient(45deg,transparent,transparent_20px,rgba(255,255,255,0.03)_20px,rgba(255,255,255,0.03)_40px)]" aria-hidden="true"></div>
+    <div class="relative max-w-[640px] mx-auto text-center px-5 py-10 sm:py-12">
+      <span class="inline-block bg-white/20 border border-white/25 text-white text-[0.7rem] font-extrabold uppercase tracking-[0.06em] px-3 py-1 rounded-full mb-4">Verificado</span>
+      <h1 class="text-2xl sm:text-[1.9rem] font-extrabold tracking-tight leading-tight text-balance mb-2">
+        Centro de <span class="text-[#93C5FD]">Noticias</span>
+      </h1>
+      <p class="text-sm sm:text-[0.9rem] text-white/85 max-w-[480px] mx-auto leading-relaxed text-balance">
+        Mantente informado con información <strong class="text-white font-semibold">certificada y contrastada</strong> para evitar la propagación de noticias falsas.
+      </p>
     </div>
   </header>
 
-  <div class="noticias-banner">
-    <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-    <div class="noticias-banner-text">
-      <strong>¿Tienes información para verificar?</strong> Envía capturas, enlaces o audios a <a href="mailto:eine@kattze.online" style="font-weight: 600; text-decoration: underline; color: inherit;">eine@kattze.online</a> y nuestro equipo las verificará antes de publicarlas.
+  <div class="flex items-start gap-3 max-w-[800px] xl:max-w-[960px] mx-auto -mt-3 mb-6 px-4 py-3.5 bg-[#FFFBEB] border border-[#FDE68A] border-l-4 border-l-[#D97706] rounded-r-lg rounded-l-sm text-sm text-[#92400E] leading-relaxed">
+    <svg class="shrink-0 mt-0.5 text-[#D97706]" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    <div>
+      <strong>¿Tienes información para verificar?</strong> Envía capturas, enlaces o audios a <a href="mailto:eine@kattze.online" class="font-semibold underline text-inherit">eine@kattze.online</a> y nuestro equipo las verificará antes de publicarlas.
     </div>
   </div>
 
-  <div class="container" style="max-width: 800px; margin: 0 auto; padding: 0 1.25rem;">
+  <div class="max-w-[800px] xl:max-w-[960px] mx-auto px-5">
     <div id="noticiasFeedContainer">
-      <div class="noticias-feed">
+      <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-5 mb-12 items-start">
         {[1, 2, 3].map(() => (
-          <article class="noticia-card animate-pulse">
-            <div class="noticia-header" style="display:flex; justify-content:space-between; margin-bottom:1rem;">
-              <div class="skeleton-h6 skeleton-bg skeleton-rounded skeleton-w-3-4"></div>
-              <div class="skeleton-h6 skeleton-bg skeleton-rounded-full skeleton-w-24"></div>
+          <article class="animate-pulse bg-white border border-border border-t-4 border-t-border rounded-xl p-5 shadow-[0_1px_3px_rgba(16,24,40,0.06)]">
+            <div class="flex justify-between gap-4 mb-4">
+              <div class="h-6 bg-[#E5E7EB] rounded w-3/4"></div>
+              <div class="h-6 bg-[#E5E7EB] rounded-full w-24 shrink-0"></div>
             </div>
-            <div class="noticia-desc" style="margin-bottom:1.5rem;">
-              <div class="skeleton-h4 skeleton-bg skeleton-rounded skeleton-w-full skeleton-mb-2"></div>
-              <div class="skeleton-h4 skeleton-bg skeleton-rounded skeleton-w-5-6 skeleton-mb-2"></div>
-              <div class="skeleton-h4 skeleton-bg skeleton-rounded skeleton-w-4-6"></div>
+            <div class="mb-6">
+              <div class="h-4 bg-[#E5E7EB] rounded w-full mb-2"></div>
+              <div class="h-4 bg-[#E5E7EB] rounded w-5/6 mb-2"></div>
+              <div class="h-4 bg-[#E5E7EB] rounded w-4/6"></div>
             </div>
-            <div class="noticia-footer" style="display:flex; justify-content:space-between;">
-              <div class="skeleton-h4 skeleton-bg skeleton-rounded skeleton-w-32"></div>
-              <div class="skeleton-h4 skeleton-bg skeleton-rounded skeleton-w-24"></div>
+            <div class="flex justify-between gap-4">
+              <div class="h-4 bg-[#E5E7EB] rounded w-32"></div>
+              <div class="h-4 bg-[#E5E7EB] rounded w-24"></div>
             </div>
           </article>
         ))}
@@ -54,12 +54,13 @@ import Layout from "../layouts/Layout.astro";
 
 <script>
   import { supabase } from "../lib/supabase";
+  import { escapeHtml, safeUrl } from "../lib/escape";
 
   const feedContainer = document.getElementById('noticiasFeedContainer');
 
   const formatDate = (dateString: string) => {
     const d = new Date(dateString);
-    return d.toLocaleDateString('es-VE', { 
+    return d.toLocaleDateString('es-VE', {
       year: 'numeric', month: 'short', day: 'numeric',
       hour: '2-digit', minute: '2-digit',
       timeZone: 'America/Caracas'
@@ -68,7 +69,7 @@ import Layout from "../layouts/Layout.astro";
 
   async function loadNoticias() {
     if (!supabase || !feedContainer) return;
-    
+
     try {
       const { data, error } = await supabase
         .from("noticias")
@@ -80,7 +81,7 @@ import Layout from "../layouts/Layout.astro";
 
       if (!data || data.length === 0) {
         feedContainer.innerHTML = `
-          <div class="no-results">
+          <div class="text-center text-muted text-sm py-10">
             No hay noticias verificadas o desmentidas en este momento.
           </div>
         `;
@@ -88,43 +89,46 @@ import Layout from "../layouts/Layout.astro";
       }
 
       feedContainer.innerHTML = `
-        <div class="noticias-feed">
-          ${data.map(n => `
-            <article class="noticia-card">
-              <div class="noticia-header">
-                <h2 class="noticia-title">${n.titulo}</h2>
-                ${n.estado === 'verificado' ? `
-                  <span class="noticia-status verificado">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
-                    Verificado
-                  </span>
-                ` : `
-                  <span class="noticia-status falso">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                    Falso
-                  </span>
-                `}
-              </div>
-              
-              <p class="noticia-desc">${n.descripcion}</p>
-              
-              <div class="noticia-footer">
-                <span class="noticia-date">Actualizado: ${formatDate(n.created_at)}</span>
-                ${n.fuente ? `
-                  <a href="${n.fuente}" target="_blank" rel="noopener noreferrer" class="noticia-link">
-                    Ver fuente
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
-                  </a>
-                ` : ''}
-              </div>
-            </article>
-          `).join('')}
+        <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-5 mb-12 items-start">
+          ${data.map(n => {
+            const esVerificado = n.estado === 'verificado';
+            const badge = esVerificado
+              ? `<span class="inline-flex items-center gap-1.5 shrink-0 text-[0.7rem] font-bold uppercase tracking-wide px-2.5 py-1 rounded-full bg-[#DCFCE7] text-[#15803D] border border-[#BBF7D0]">
+                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true" focusable="false"><path d="M20 6L9 17l-5-5"/></svg>
+                   Verificado
+                 </span>`
+              : `<span class="inline-flex items-center gap-1.5 shrink-0 text-[0.7rem] font-bold uppercase tracking-wide px-2.5 py-1 rounded-full bg-[#FEF2F2] text-[#B91C1C] border border-[#FECACA]">
+                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true" focusable="false"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                   Falso
+                 </span>`;
+            const acento = esVerificado ? 'border-t-[#16A34A]' : 'border-t-[#DC2626]';
+            const fuente = safeUrl(n.fuente);
+            const linkFuente = fuente
+              ? `<a href="${escapeHtml(fuente)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-blue font-semibold no-underline hover:underline">
+                   Ver fuente
+                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+                 </a>`
+              : '';
+            return `
+              <article class="group bg-white border border-border border-t-4 ${acento} rounded-xl p-5 shadow-[0_1px_3px_rgba(16,24,40,0.06)] flex flex-col gap-3 transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(16,24,40,0.08)]">
+                <div class="flex justify-between items-start gap-3">
+                  <h2 class="text-[1.05rem] font-bold text-text leading-snug tracking-tight text-balance">${escapeHtml(n.titulo)}</h2>
+                  ${badge}
+                </div>
+                <p class="text-[0.95rem] text-[#4B5563] leading-relaxed whitespace-pre-wrap text-pretty">${escapeHtml(n.descripcion)}</p>
+                <div class="flex justify-between items-center gap-4 mt-1 pt-3 border-t border-dashed border-border text-xs">
+                  <span class="text-muted font-medium tabular-nums">Actualizado: ${escapeHtml(formatDate(n.created_at))}</span>
+                  ${linkFuente}
+                </div>
+              </article>
+            `;
+          }).join('')}
         </div>
       `;
     } catch (error) {
       console.error('Error fetching noticias:', error);
       feedContainer.innerHTML = `
-        <div class="no-results text-red-500">
+        <div class="text-center text-red text-sm py-10">
           Hubo un error al cargar las noticias. Por favor, intenta de nuevo más tarde.
         </div>
       `;
@@ -132,8 +136,7 @@ import Layout from "../layouts/Layout.astro";
   }
 
   loadNoticias();
-  
-  // Realtime updates (opcional)
+
   if (supabase) {
     supabase
       .channel('noticias_changes_public')
