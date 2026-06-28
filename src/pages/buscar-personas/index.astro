@@ -90,32 +90,33 @@ import EmergenciaCTA from "../../components/EmergenciaCTA.astro";
     }
 
     mainGrid.innerHTML = personas.map((p: any) => {
-      const refugio = p.refugios || {};
+      const textColor = p.badge_color === 'var(--yellow)' ? 'var(--text)' : 'white';
       return `
-        <div class="card centro-card">
+        <div class="card centro-card" style="position: relative;">
           <div class="card-head-centro">
-            <div class="card-icon" style="background: var(--blue);">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <div class="card-icon" style="background: ${p.badge_color};">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${textColor}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle>
               </svg>
             </div>
-            <div class="card-title-area">
-              <h3>${p.nombre_completo}</h3>
+            <div class="card-title-area" style="padding-right: 80px;">
+              <h3>${p.nombre}</h3>
               ${p.cedula ? `<span class="card-loc-meta" style="font-weight: 500;">V-${p.cedula}</span>` : ''}
             </div>
+            <span class="status-badge" style="position: absolute; top: 1rem; right: 1rem; background: ${p.badge_color}; color: ${textColor}; border: none; font-size: 0.75rem; padding: 0.25rem 0.5rem;">${p.badge_label}</span>
           </div>
-          <div class="card-body-centro">
+          <div class="card-body-centro" style="margin-top: 0.5rem;">
             <div class="row">
-              <span class="row-label">Refugio</span>
-              <div class="row-value font-medium" style="color: var(--blue); font-weight: 600;">${refugio.nombre || 'Desconocido'}</div>
+              <span class="row-label">${p.tipo === 'Desaparecido' ? 'Últ. Ubicación' : p.tipo === 'Paciente' ? 'Hospital' : 'Refugio'}</span>
+              <div class="row-value font-medium" style="color: var(--blue); font-weight: 600;">${p.ubicacion_primaria}</div>
             </div>
-            ${refugio.ciudad || refugio.estado ? `
+            ${p.ubicacion_secundaria ? `
             <div class="row">
-              <span class="row-label">Ubicación</span>
-              <div class="row-value">${refugio.ciudad ? refugio.ciudad + ', ' : ''}${refugio.estado || ''}</div>
+              <span class="row-label">${p.tipo === 'Paciente' ? 'Ciudad' : 'Ubicación'}</span>
+              <div class="row-value">${p.ubicacion_secundaria}</div>
             </div>` : ''}
-            ${p.telefono ? `<div class="row"><span class="row-label">Teléfono</span><div class="row-value">${p.telefono}</div></div>` : ''}
-            ${p.estado_salud ? `<div class="row"><span class="row-label">Salud</span><div class="row-value">${p.estado_salud}</div></div>` : ''}
+            ${p.telefono ? `<div class="row"><span class="row-label">Contacto</span><div class="row-value">${p.telefono}</div></div>` : ''}
+            ${p.detalle_1_value ? `<div class="row"><span class="row-label">${p.detalle_1_label}</span><div class="row-value">${p.detalle_1_value}</div></div>` : ''}
           </div>
         </div>
       `;
@@ -144,17 +145,72 @@ import EmergenciaCTA from "../../components/EmergenciaCTA.astro";
 
       if (!supabase) throw new Error("Supabase no disponible");
 
-      const { data, error } = await supabase
-        .from('refugiados')
-        .select('*, refugios(nombre, ciudad, estado)')
-        .eq('verificado', true)
-        .or(`nombre_completo.ilike.%${q}%,cedula.ilike.%${q}%`)
-        .limit(50);
+      const [refugiadosRes, desaparecidosRes, pacientesRes] = await Promise.all([
+        supabase
+          .from('refugiados')
+          .select('*, refugios(nombre, ciudad, estado)')
+          .eq('verificado', true)
+          .or(`nombre_completo.ilike.%${q}%,cedula.ilike.%${q}%`)
+          .limit(20),
+        supabase
+          .from('desaparecidos')
+          .select('*')
+          .eq('verificado', true)
+          .or(`nombre_completo.ilike.%${q}%,cedula.ilike.%${q}%`)
+          .limit(20),
+        supabase
+          .from('pacientes')
+          .select('*')
+          .eq('verificado', true)
+          .or(`nombre_paciente.ilike.%${q}%,cedula.ilike.%${q}%`)
+          .limit(20)
+      ]);
 
-      if (error) throw error;
+      if (refugiadosRes.error) throw refugiadosRes.error;
+      if (desaparecidosRes.error) throw desaparecidosRes.error;
+      if (pacientesRes.error) throw pacientesRes.error;
+
+      const unifiedPersonas = [
+        ...(refugiadosRes.data || []).map((p: any) => ({
+          tipo: 'Refugiado',
+          nombre: p.nombre_completo,
+          cedula: p.cedula,
+          ubicacion_primaria: p.refugios?.nombre || 'Desconocido',
+          ubicacion_secundaria: p.refugios?.ciudad ? `${p.refugios.ciudad}, ${p.refugios.estado || ''}` : p.refugios?.estado,
+          telefono: p.telefono,
+          detalle_1_label: 'Salud',
+          detalle_1_value: p.estado_salud,
+          badge_label: 'En Refugio',
+          badge_color: 'var(--blue)'
+        })),
+        ...(desaparecidosRes.data || []).map((p: any) => ({
+          tipo: 'Desaparecido',
+          nombre: p.nombre_completo,
+          cedula: p.cedula,
+          ubicacion_primaria: p.ultima_ubicacion || 'Desconocida',
+          ubicacion_secundaria: null,
+          telefono: p.fuente,
+          detalle_1_label: 'Descripción',
+          detalle_1_value: p.descripcion,
+          badge_label: p.status || 'Buscando',
+          badge_color: p.status?.toLowerCase() === 'encontrado' ? '#15803d' : 'var(--red)'
+        })),
+        ...(pacientesRes.data || []).map((p: any) => ({
+          tipo: 'Paciente',
+          nombre: p.nombre_paciente,
+          cedula: p.cedula,
+          ubicacion_primaria: p.hospital || 'Desconocido',
+          ubicacion_secundaria: p.ciudad ? `${p.ciudad}, ${p.estado || ''}` : p.estado,
+          telefono: p.contacto,
+          detalle_1_label: 'Necesitan',
+          detalle_1_value: p.necesitan,
+          badge_label: p.estatus || 'Paciente',
+          badge_color: 'var(--yellow)'
+        }))
+      ];
 
       searchStatus.style.display = "none";
-      renderPersonas(data || []);
+      renderPersonas(unifiedPersonas);
 
     } catch (err) {
       console.error(err);
