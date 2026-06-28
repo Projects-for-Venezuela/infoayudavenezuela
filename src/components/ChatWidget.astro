@@ -351,13 +351,13 @@
   const API_URL = 'https://infoayuda-ai.vercel.app/api/chat';
   const STORAGE_KEY = 'iach';
 
-  const $ = id => document.getElementById(id);
+  const $ = <T extends HTMLElement = HTMLElement>(id: string): T => document.getElementById(id) as T;
   const toggle = $('chatToggle');
   const chatWindow = $('chatWindow');
   const scrim = $('chatScrim');
   const messages = $('chatMessages');
-  const input = $('chatInput');
-  const send = $('chatSend');
+  const input = $<HTMLTextAreaElement>('chatInput');
+  const send = $<HTMLButtonElement>('chatSend');
   const close = $('chatClose');
   let welcome = $('chatWelcome');
   const iconOpen = $('chatIconOpen');
@@ -371,7 +371,7 @@
 
   let isOpen = false;
   let loading = false;
-  let history = [];
+  let history: { role: string; content: string }[] = [];
   let unread = 0;
 
   function loadHistory() {
@@ -380,29 +380,31 @@
   function saveHistory() {
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(history.slice(-30))); } catch {}
   }
+  
   function scrollBottom() { requestAnimationFrame(() => { messages.scrollTop = messages.scrollHeight; }); }
 
   function isNearBottom() {
     const el = messages;
+    if (!el) return false;
     return el.scrollHeight - el.scrollTop - el.clientHeight < 60;
   }
 
   function onScroll() {
-    scrollBtn.classList.toggle('show', !isNearBottom());
+    scrollBtn?.classList.toggle('show', !isNearBottom());
   }
 
-  function formatAI(text) {
-    const escape = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    const inline = s => escape(s)
+  function formatAI(text: string) {
+    const escape = (s: string) => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    const inline = (s: string) => escape(s)
       .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
       .replace(/\*(.+?)\*/g, '<em>$1</em>');
     const lines = text.split('\n');
-    const paragraphs = [];
+    const paragraphs: string[] = [];
     let i = 0;
     while (i < lines.length) {
       const line = lines[i];
       if (line === '') { i++; continue; }
-      const listItems = [];
+      const listItems: string[] = [];
       while (i < lines.length && /^(\s*[-*]\s|\s*\d+[.)]\s)/.test(lines[i])) {
         const li = lines[i].replace(/^(\s*[-*]\s|\s*\d+[.)]\s)/, '');
         listItems.push(`<li>${inline(li)}</li>`);
@@ -412,7 +414,7 @@
         paragraphs.push(`<ul>${listItems.join('')}</ul>`);
         continue;
       }
-      const para = [];
+      const para: string[] = [];
       while (i < lines.length && lines[i] !== '' && !/^(\s*[-*]\s|\s*\d+[.)]\s)/.test(lines[i])) {
         para.push(inline(lines[i]));
         i++;
@@ -426,8 +428,8 @@
     return new Date().toLocaleTimeString('es-VE', { hour: '2-digit', minute: '2-digit' });
   }
 
-  function addGroup(role) {
-    const existing = messages.querySelector('.chat-group:last-child');
+  function addGroup(role: string) {
+    const existing = messages?.querySelector('.chat-group:last-child');
     if (existing && existing.classList.contains(role)) return existing;
     const group = document.createElement('div');
     group.className = `chat-group ${role}`;
@@ -436,15 +438,15 @@
     const name = role === 'user' ? 'Tú' : 'Asistente';
     label.innerHTML = `${name} <span class="chat-label-time">${getTime()}</span>`;
     group.appendChild(label);
-    if (welcome.style.display !== 'none' && welcome.parentNode === messages) {
-      messages.insertBefore(group, welcome);
+    if (welcome?.style.display !== 'none' && welcome?.parentNode === messages) {
+      messages?.insertBefore(group, welcome);
     } else {
-      messages.appendChild(group);
+      messages?.appendChild(group);
     }
     return group;
   }
 
-  function addMessage(text, role) {
+  function addMessage(text: string, role: string) {
     const group = addGroup(role);
     const bubble = document.createElement('div');
     bubble.className = 'chat-bubble-msg';
@@ -469,7 +471,7 @@
     typing.className = 'chat-typing';
     typing.innerHTML = '<span></span><span></span><span></span>';
     group.appendChild(typing);
-    messages.appendChild(group);
+    messages?.appendChild(group);
     scrollBottom();
   }
 
@@ -478,17 +480,24 @@
     if (el) el.remove();
   }
 
-  function setLoad(state) {
+  function setLoad(state: boolean) {
     loading = state; send.disabled = state; input.disabled = state;
   }
 
   function autoResize() {
+
+    if (!input) return;
+
     input.style.height = 'auto';
     input.style.height = Math.min(input.scrollHeight, 120) + 'px';
   }
 
-  async function sendMessage(text) {
+  async function sendMessage(text: string) {
     if (!text || loading) return;
+
+    if (!input) return;
+    if (!welcome) return;
+
     input.value = ''; input.style.height = '42px';
     welcome.style.display = 'none';
     addMessage(text, 'user');
@@ -517,7 +526,7 @@
     saveHistory();
   }
 
-  function addErrorMessage(text) {
+  function addErrorMessage(text: string) {
     const group = document.createElement('div');
     group.className = 'chat-group ai';
     const label = document.createElement('div');
@@ -540,7 +549,7 @@
     welcome.style.display = '';
   }
 
-  function toggleChat(open) {
+  function toggleChat(open?: boolean) {
     isOpen = open !== undefined ? open : !isOpen;
     chatWindow.classList.toggle('open', isOpen);
     scrim.classList.toggle('show', isOpen);
@@ -592,9 +601,10 @@
   }
 
   messages.addEventListener('click', e => {
-    const btn = e.target.closest('[data-suggest]');
-    if (btn) sendMessage(btn.getAttribute('data-suggest'));
-    const retry = e.target.closest('[data-retry]');
+    const target = e.target as HTMLElement | null;
+    const btn = target?.closest('[data-suggest]');
+    if (btn) sendMessage(btn.getAttribute('data-suggest') || '');
+    const retry = target?.closest('[data-retry]');
     if (retry) {
       const lastUser = [...history].reverse().find(m => m.role === 'user');
       if (lastUser) sendMessage(lastUser.content);

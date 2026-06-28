@@ -14,7 +14,7 @@
 |------|------------|-----------|
 | Framework | Astro 7 (static output, adapter Vercel) | No migrar a Next.js, Remix, SvelteKit |
 | Backend de datos | Supabase (Postgres + JS client `@supabase/supabase-js`) | No cambiar a MongoDB, Firebase, o Prisma |
-| Estilos | CSS modular plano (`src/styles/*.css`) importado por componente | No introducir Tailwind,styled-components, CSS Modules, Stitches, vanilla-extract |
+| Estilos | Tailwind CSS v4 (vía `@tailwindcss/vite`, CSS-first config en `src/styles/global.css`) — migración incremental desde CSS modular | No introducir styled-components, CSS Modules, Stitches, vanilla-extract |
 | Iconos | SVG inline (Lucide-style, `stroke-width="2"`), sin librerías | No mezclar Heroicons + Phosphor + Lucide; no usar emoji como icono de feature |
 | JS del cliente | Vanilla JS en `<script>` dentro de `.astro`, sin build step | No introducir React, Vue, Svelte, Alpine, Stimulus |
 | Package manager | pnpm ( existe `pnpm-lock.yaml` y `pnpm-workspace.yaml`) | No usar npm ni yarn para instalar; nunca mezclar lockfiles |

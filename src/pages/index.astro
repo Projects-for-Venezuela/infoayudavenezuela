@@ -1,6 +1,4 @@
 ---
-import "../styles/index.css";
-import "../styles/necesidades.css";
 import Layout from "../layouts/Layout.astro";
 import EnlacesSection from "../components/EnlacesSection.astro";
 import AlertBox from "../components/AlertBox.astro";
@@ -67,72 +65,76 @@ const fallbackEnlaces = [
 
   <StatsRow {totalCentros} {totalEstados} {totalCiudades} />
 
-  <button id="homeReportarBtn" class="btn-sugerir-home btn-reportar-home">
-    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+  <button id="homeReportarBtn" type="button" class="flex items-center justify-center gap-2 w-full mb-3 px-5 py-3.5 rounded-xl text-sm font-bold bg-[#FEF2F2] text-[#991B1B] border-2 border-[#FECACA] cursor-pointer min-h-12 select-none transition-[background-color,border-color,box-shadow] duration-150 hover:bg-[#FEE2E2] hover:border-[#FCA5A5] hover:shadow-md">
+    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
     Reportar una necesidad urgente
   </button>
 
-  <div id="necesidadesPreviewSection" class="section-card" style="display: none;">
-    <div class="necesidad-section-title" style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.9rem; font-weight: 600; margin-bottom: 0.7rem;">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+  <div id="necesidadesPreviewSection" class="bg-white border border-border rounded-xl p-4 sm:p-5 mb-4 shadow-sm" style="display: none;">
+    <div class="flex items-center gap-2 text-[0.95rem] font-bold tracking-tight mb-3">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-red" aria-hidden="true" focusable="false"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
       Necesidades Urgentes
-      <span id="necPreviewCount" class="card-badge" style="background: var(--red); font-size: 0.68rem;"></span>
+      <span id="necPreviewCount" class="bg-red text-white text-[0.62rem] font-bold px-2 py-0.5 rounded-full tabular-nums"></span>
     </div>
-    <div id="necPreviewList" class="necesidad-list"></div>
-    <a href="/necesidades" class="necesidad-cta">Ver todas las necesidades &rarr;</a>
+    <div id="necPreviewList" class="flex flex-col"></div>
+    <a href="/necesidades" class="inline-flex items-center justify-center gap-1 w-full mt-3 px-4 py-2.5 rounded-lg text-sm font-semibold text-red border-2 border-[#FECACA] no-underline min-h-11 transition-colors duration-150 hover:bg-[#FEF2F2] hover:border-red">Ver todas las necesidades &rarr;</a>
   </div>
 
   <SearchFilters />
 
-  <button id="homeSugerirBtn" class="btn-sugerir-home" type="button">
+  <button id="homeSugerirBtn" type="button" class="flex items-center justify-center gap-2 w-full mb-5 px-5 py-3.5 rounded-xl text-sm font-bold bg-yellow text-blue-dark border-2 border-gold cursor-pointer min-h-12 select-none transition-[background-color,border-color,box-shadow,transform] duration-150 hover:bg-[#F5C200] hover:-translate-y-0.5 hover:shadow-md">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
     Sugerir un centro de acopio
   </button>
 
-  <div class="section-header">
-    <h2 id="gridTitle">Estados con centros de acopio</h2>
-    <span id="resultsCount" class="results-count" style="display: none;"></span>
+  <div class="flex justify-between items-center gap-3 mb-4 pb-2 border-b border-border">
+    <h2 id="gridTitle" class="text-base font-bold tracking-tight text-text text-balance">Estados con centros de acopio</h2>
+    <span id="resultsCount" class="text-xs font-semibold text-muted bg-[#F1F5F9] px-2 py-0.5 rounded-full border border-border shrink-0" style="display: none;"></span>
   </div>
 
-  <div class="zones-filter-container" style="margin-bottom: 1.5rem;">
-    <div id="zonesFilter" class="zones-filter">
-      <button class="zone-btn active" data-filter="all">Todas las zonas</button>
-      <button class="zone-btn zone-btn--critico" data-filter="critico">
-        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+  <div class="mb-6">
+    <div id="zonesFilter" class="flex gap-2 overflow-x-auto pb-2 scrollbar-none" role="group" aria-label="Filtrar estados por nivel de ayuda">
+      <button data-filter="all" type="button" aria-pressed="true" class="inline-flex items-center gap-1.5 shrink-0 whitespace-nowrap px-4 py-2 rounded-full border border-border bg-white text-text text-xs font-semibold cursor-pointer min-h-11 transition-colors duration-150 aria-pressed:bg-blue aria-pressed:border-blue aria-pressed:text-white">Todas las zonas</button>
+      <button data-filter="critico" type="button" aria-pressed="false" class="inline-flex items-center gap-1.5 shrink-0 whitespace-nowrap px-4 py-2 rounded-full border border-[#FCA5A5] bg-white text-red-dark text-xs font-semibold cursor-pointer min-h-11 transition-colors duration-150 aria-pressed:bg-red aria-pressed:border-red aria-pressed:text-white">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
         Requiere ayuda urgente
       </button>
-      <button class="zone-btn zone-btn--camino" data-filter="en_camino">
-        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 17H4a2 2 0 01-2-2V5a2 2 0 012-2h16a2 2 0 012 2v10a2 2 0 01-2 2h-1"/><polygon points="12 15 17 21 7 21 12 15"/><path d="M12 9V1"/><path d="M12 1l3 3-3 3-3-3 3-3z"/></svg>
+      <button data-filter="en_camino" type="button" aria-pressed="false" class="inline-flex items-center gap-1.5 shrink-0 whitespace-nowrap px-4 py-2 rounded-full border border-[#FDE047] bg-white text-amber text-xs font-semibold cursor-pointer min-h-11 transition-colors duration-150 aria-pressed:bg-yellow aria-pressed:border-gold aria-pressed:text-blue-dark">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
         Ayuda en camino
       </button>
-      <button class="zone-btn zone-btn--cubierto" data-filter="cubierto">
-        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+      <button data-filter="cubierto" type="button" aria-pressed="false" class="inline-flex items-center gap-1.5 shrink-0 whitespace-nowrap px-4 py-2 rounded-full border border-[#86EFAC] bg-white text-green text-xs font-semibold cursor-pointer min-h-11 transition-colors duration-150 aria-pressed:bg-[#22C55E] aria-pressed:border-[#22C55E] aria-pressed:text-white">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
         Cubierto
       </button>
     </div>
   </div>
 
-  <div class="grid" id="mainGrid">
+  <div id="mainGrid" class="grid gap-4 grid-cols-[repeat(auto-fill,minmax(260px,1fr))]">
     {estadosNacionales.map(({ estado, ciudades }) => {
       const count = ciudades.reduce((s: number, c: any) => s + c.centros.length, 0);
       const cities = ciudades.map((c: any) => c.ciudad).join(", ");
       const isAfectado = ZONAS_AFECTADAS.includes(estado);
       const slugName = estado.replace(/ \/ /g, "--").replace(/ /g, "_");
       return (
-        <a href={`/estado/${slugName}`} class={`card state-card ${isAfectado ? 'card-prioritized' : ''}`}
+        <a href={`/estado/${slugName}`}
+           class={`state-card flex items-center gap-3 bg-white border rounded-xl p-3.5 no-underline shadow-[0_1px_2px_rgba(16,24,40,0.04)] transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-0.5 hover:shadow-[0_1px_2px_rgba(16,24,40,0.04),0_8px_24px_rgba(16,24,40,0.08)] ${isAfectado ? 'border-[#FCA5A5] bg-[#FFFAFA] hover:border-[#F87171]' : 'border-border hover:border-[#C7CDD8]'}`}
            data-name={estado.toLowerCase() + (estado === "La Guaira" ? " vargas" : "") + (estado === "Distrito Capital" ? " caracas" : "")}>
-          <div class="card-img">
-            <img src={flagUrl(estado)} alt={`Bandera de ${estado}`} loading="lazy" onerror="this.style.display='none';" />
-            {isAfectado && <span class="badge-prioritized">
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" stroke="none" style="vertical-align: sub; margin-right: 2px;" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/></svg>
-              Zona Afectada</span>}
-          </div>
-          <div class="card-body">
-            <div class="card-top">
-              <h3>{estado}</h3>
-              <span class="card-badge">{count}</span>
+          <span class="w-14 h-10 rounded-md bg-[#F1F5F9] border border-border shrink-0 overflow-hidden flex items-center justify-center shadow-sm">
+            <img src={flagUrl(estado)} alt={`Bandera de ${estado}`} loading="lazy" width="56" height="40" onerror="this.style.display='none';" class="w-full h-full object-cover" />
+          </span>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between gap-2">
+              <h3 class="text-sm font-bold tracking-tight text-text truncate">{estado}</h3>
+              <span class="bg-blue text-white text-xs font-bold px-2 py-0.5 rounded-full min-w-[26px] text-center tabular-nums shrink-0">{count}</span>
             </div>
-            <p class="card-cities">{cities}</p>
+            <p class="text-xs text-muted truncate leading-relaxed mt-0.5">{cities}</p>
+            {isAfectado && (
+              <span class="inline-flex items-center gap-1 mt-1.5 text-[0.6rem] font-bold uppercase tracking-wide text-red">
+                <svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/></svg>
+                Zona afectada
+              </span>
+            )}
           </div>
         </a>
       );
@@ -140,21 +142,22 @@ const fallbackEnlaces = [
 
     {estadoInternacional && (
       <>
-        <div class="section-header divider-internacional" style="grid-column: 1 / -1; margin-top: 1rem;">
-          <h2>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0284C7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: sub; margin-right: 4px;" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        <div class="col-span-full mt-4 mb-1 flex items-center gap-2 pb-2 border-b border-border">
+          <h2 class="flex items-center gap-2 text-base font-bold tracking-tight text-text">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0284C7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
             Apoyo Internacional</h2>
         </div>
-        <a href="/estado/internacional" class="card state-card">
-          <div class="card-img" style="display: flex; align-items: center; justify-content: center; background: #E0F2FE;">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#0284C7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-          </div>
-          <div class="card-body">
-            <div class="card-top">
-              <h3>Internacional</h3>
-              <span class="card-badge">{estadoInternacional.ciudades.reduce((s: number, c: any) => s + c.centros.length, 0)}</span>
+        <a href="/estado/internacional"
+           class="state-card flex items-center gap-3 bg-white border border-border rounded-xl p-3.5 no-underline transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-0.5 hover:border-[#C7CDD8] hover:shadow-[0_8px_24px_rgba(16,24,40,0.08)]">
+          <span class="w-14 h-10 rounded-md bg-[#E0F2FE] border border-border shrink-0 flex items-center justify-center">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0284C7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          </span>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between gap-2">
+              <h3 class="text-sm font-bold tracking-tight text-text truncate">Internacional</h3>
+              <span class="bg-blue text-white text-xs font-bold px-2 py-0.5 rounded-full min-w-[26px] text-center tabular-nums shrink-0">{estadoInternacional.ciudades.reduce((s: number, c: any) => s + c.centros.length, 0)}</span>
             </div>
-            <p class="card-cities">{estadoInternacional.ciudades.map((c: any) => c.ciudad).join(" • ")}</p>
+            <p class="text-xs text-muted truncate leading-relaxed mt-0.5">{estadoInternacional.ciudades.map((c: any) => c.ciudad).join(" • ")}</p>
           </div>
         </a>
       </>
@@ -280,7 +283,7 @@ const fallbackEnlaces = [
   function renderEstados() {
     gridTitle.textContent = "Estados con centros de acopio";
     resultsCount.style.display = "none";
-    mainGrid.className = "grid";
+    mainGrid.className = "grid gap-4 grid-cols-[repeat(auto-fill,minmax(260px,1fr))]";
 
     const agrupado = centros.reduce((acc: { em: Map<string, any>, ea: any[] }, item: any) => {
       let edto = acc.em.get(item.estado);
@@ -312,7 +315,7 @@ const fallbackEnlaces = [
     });
 
     if (agrupado.length === 0) {
-      mainGrid.innerHTML = '<div class="no-results">No se encontraron centros de acopio activos.</div>';
+      mainGrid.innerHTML = '<div class="col-span-full bg-white border border-border rounded-xl p-10 text-center text-muted text-sm">No se encontraron centros de acopio activos.</div>';
       return;
     }
 
@@ -335,26 +338,29 @@ const fallbackEnlaces = [
       const safeEstado = escapeHtml(e.estado);
       const safeAlt = escapeHtml(`Bandera de ${e.estado}`);
       
-      let badgeHtml = '';
-      let priorityClass = '';
+      let borderCls = 'border-border hover:border-[#C7CDD8]';
+      let statusPill = '';
       if (status === 'critico') {
-        priorityClass = 'card-prioritized';
-        badgeHtml = '<span class="badge-prioritized" style="background: var(--red); color: white;"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" stroke="none" style="vertical-align:sub;margin-right:2px"><circle cx="12" cy="12" r="10"/></svg> Requiere ayuda urgente</span>';
+        borderCls = 'border-[#FCA5A5] bg-[#FFFAFA] hover:border-[#F87171]';
+        statusPill = '<span class="inline-flex items-center gap-1 mt-1.5 text-[0.6rem] font-bold uppercase tracking-wide text-red"><svg width="9" height="9" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/></svg> Requiere ayuda urgente</span>';
       } else if (status === 'en_camino') {
-        badgeHtml = '<span class="badge-prioritized" style="background: var(--yellow); color: var(--blue-dark);"><svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" stroke="none" style="vertical-align:sub;margin-right:2px"><path d="M1 3h15v13H1zM16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="16.5" cy="18.5" r="2.5"/></svg> Ayuda en camino</span>';
+        borderCls = 'border-[#FDE047] bg-[#FFFEF5] hover:border-[#FACC15]';
+        statusPill = '<span class="inline-flex items-center gap-1 mt-1.5 text-[0.6rem] font-bold uppercase tracking-wide text-amber"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg> Ayuda en camino</span>';
       } else if (status === 'cubierto') {
-        badgeHtml = '<span class="badge-prioritized" style="background: #22c55e; color: white;"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:sub;margin-right:2px"><polyline points="20 6 9 17 4 12"></polyline></svg> Cubierto</span>';
+        borderCls = 'border-[#86EFAC] bg-[#F6FEF9] hover:border-[#4ADE80]';
+        statusPill = '<span class="inline-flex items-center gap-1 mt-1.5 text-[0.6rem] font-bold uppercase tracking-wide text-green"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="20 6 9 17 4 12"></polyline></svg> Cubierto</span>';
       }
 
       return `
-        <a href="/estado/${slugName}" class="card state-card ${priorityClass}">
-          <div class="card-img">
-            <img src="/flags/${sanitizedName}.webp" alt="${safeAlt}" loading="lazy" onerror="this.style.display='none';" />
-            ${badgeHtml}
-          </div>
-          <div class="card-body">
-            <div class="card-top"><h3>${safeEstado}</h3><span class="card-badge">${count}</span></div>
-            <p class="card-cities">${citiesList}</p>
+        <a href="/estado/${slugName}" class="flex items-center gap-3 bg-white border rounded-xl p-3.5 no-underline shadow-[0_1px_2px_rgba(16,24,40,0.04)] transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-0.5 hover:shadow-[0_1px_2px_rgba(16,24,40,0.04),0_8px_24px_rgba(16,24,40,0.08)] ${borderCls}">
+          <span class="w-14 h-10 rounded-md bg-[#F1F5F9] border border-border shrink-0 overflow-hidden flex items-center justify-center shadow-sm"><img src="/flags/${sanitizedName}.webp" alt="${safeAlt}" loading="lazy" width="56" height="40" onerror="this.style.display='none';" class="w-full h-full object-cover" /></span>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between gap-2">
+              <h3 class="text-sm font-bold tracking-tight text-text truncate">${safeEstado}</h3>
+              <span class="bg-blue text-white text-xs font-bold px-2 py-0.5 rounded-full min-w-[26px] text-center tabular-nums shrink-0">${count}</span>
+            </div>
+            <p class="text-xs text-muted truncate leading-relaxed mt-0.5">${citiesList}</p>
+            ${statusPill}
           </div>
         </a>
       `;
@@ -364,19 +370,17 @@ const fallbackEnlaces = [
       const count = internacional.ciudades.reduce((sum: number, c: any) => sum + c.centrosCount, 0);
       const citiesList = escapeHtml(internacional.ciudades.map((c: any) => c.ciudad).join(" • "));
       html += `
-        <div class="section-header divider-internacional" style="grid-column: 1 / -1; margin-top: 1rem;">
-          <h2><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0284C7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:sub;margin-right:4px" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> Apoyo Internacional</h2>
+        <div class="col-span-full mt-2 mb-1 flex items-center gap-2 pb-2 border-b border-border">
+          <h2 class="flex items-center gap-2 text-base font-bold tracking-tight text-text"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0284C7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> Apoyo Internacional</h2>
         </div>
-        <a href="/estado/Internacional" class="card state-card">
-          <div class="card-img" style="display: flex; align-items: center; justify-content: center; background: #E0F2FE;">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#0284C7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-          </div>
-          <div class="card-body">
-            <div class="card-top">
-              <h3>Internacional</h3>
-              <span class="card-badge">${count}</span>
+        <a href="/estado/Internacional" class="flex items-center gap-3 bg-white border border-border rounded-xl p-3.5 no-underline transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-0.5 hover:border-[#C7CDD8] hover:shadow-[0_8px_24px_rgba(16,24,40,0.08)]">
+          <span class="w-14 h-10 rounded-md bg-[#E0F2FE] border border-border shrink-0 flex items-center justify-center"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0284C7" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></span>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center justify-between gap-2">
+              <h3 class="text-sm font-bold tracking-tight text-text truncate">Internacional</h3>
+              <span class="bg-blue text-white text-xs font-bold px-2 py-0.5 rounded-full min-w-[26px] text-center tabular-nums shrink-0">${count}</span>
             </div>
-            <p class="card-cities">${citiesList}</p>
+            <p class="text-xs text-muted truncate leading-relaxed mt-0.5">${citiesList}</p>
           </div>
         </a>
       `;
@@ -389,10 +393,10 @@ const fallbackEnlaces = [
     gridTitle.textContent = "Centros de acopio encontrados";
     resultsCount.textContent = `${filtered.length} resultado${filtered.length !== 1 ? 's' : ''}`;
     resultsCount.style.display = "inline-block";
-    mainGrid.className = "grid-centros";
+    mainGrid.className = "grid gap-4 grid-cols-[repeat(auto-fill,minmax(300px,1fr))]";
 
     if (filtered.length === 0) {
-      mainGrid.innerHTML = '<div class="no-results">No se encontraron centros de acopio que coincidan con los criterios.</div>';
+      mainGrid.innerHTML = '<div class="col-span-full bg-white border border-border rounded-xl p-10 text-center text-muted text-sm">No se encontraron centros de acopio que coincidan con los criterios.</div>';
       return;
     }
 
@@ -412,48 +416,55 @@ const fallbackEnlaces = [
       const safeAcepta = escapeArray(c.acepta);
       const safeNecesitan = escapeArray(c.necesitan);
 
+      const lblCls = 'text-[0.68rem] font-semibold text-muted uppercase tracking-wide min-w-[64px] shrink-0 pt-0.5';
+      const valCls = 'text-sm text-text flex-1 leading-relaxed min-w-0 break-words';
+      const row = (label: string, value: string) => `<div class="flex gap-2 items-start"><span class="${lblCls}">${label}</span><div class="${valCls}">${value}</div></div>`;
+      const tagYellow = 'inline-block text-xs px-2.5 py-1 rounded-full border font-medium bg-[#FFFBEB] text-amber border-[#FDE68A]';
+      const tagRed = 'inline-block text-xs px-2.5 py-1 rounded-full border font-medium bg-[#FEF2F2] text-red border-[#FECACA]';
+
       const aceptaHtml = safeAcepta.length
-        ? `<div class="row"><span class="row-label">Aceptan</span><div class="row-value"><div class="tag-group">${safeAcepta.map((a: string) => `<span class="tag tag-yellow">${a}</span>`).join("")}</div></div></div>`
+        ? row('Aceptan', `<div class="flex flex-wrap gap-1">${safeAcepta.map((a: string) => `<span class="${tagYellow}">${a}</span>`).join("")}</div>`)
         : '';
       const necesitanHtml = safeNecesitan.length
-        ? `<div class="row"><span class="row-label">Urgente</span><div class="row-value"><div class="tag-group">${safeNecesitan.map((n: string) => `<span class="tag tag-red">${n}</span>`).join("")}</div></div></div>`
+        ? row('Urgente', `<div class="flex flex-wrap gap-1">${safeNecesitan.map((n: string) => `<span class="${tagRed}">${n}</span>`).join("")}</div>`)
         : '';
 
-      // Inyección automática de la bandera internacional vía FlagCDN
       let flagHtml = '';
       if (isInternacional) {
         const countryCode = getCountryCode(c.ciudad);
         if (countryCode) {
-          flagHtml = `<img src="https://flagcdn.com/20x15/${countryCode}.png" alt="Bandera" style="vertical-align: sub; margin-right: 6px; border-radius: 2px;" />`;
+          flagHtml = `<img src="https://flagcdn.com/20x15/${countryCode}.png" alt="Bandera" class="inline-block align-text-bottom mr-1.5 rounded-[2px]" />`;
         } else {
-          flagHtml = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:sub;margin-right:4px" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> `;
+          flagHtml = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-block align-text-bottom mr-1" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> `;
         }
       }
 
+      const iconBg = isAfectado ? 'bg-red' : isInternacional ? 'bg-[#0284C7]' : 'bg-blue';
+
       return `
-        <div class="card centro-card ${isAfectado ? 'card-prioritized' : ''}">
-          <div class="card-head-centro">
-            <div class="card-icon" style="background: ${isAfectado ? 'var(--red)' : isInternacional ? '#0284C7' : 'var(--blue)'};">
+        <div class="flex flex-col bg-white border ${isAfectado ? 'border-[#FCA5A5] bg-[#FFFAFA]' : 'border-border'} rounded-xl overflow-hidden transition-[box-shadow,border-color] duration-150 hover:shadow-md hover:border-[#C7CDD8]">
+          <div class="flex items-center gap-2.5 pt-3.5 px-4">
+            <div class="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${iconBg}">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
-                ${isInternacional 
+                ${isInternacional
                   ? '<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>'
                   : '<rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/>'
                 }
               </svg>
             </div>
-            <div class="card-title-area">
-              <h3>${safeNombre}</h3>
-              <span class="card-loc-meta">${flagHtml}${isInternacional ? safeCiudad : `${safeCiudad}, ${safeEstado}`}</span>
+            <div class="flex flex-col flex-1 min-w-0">
+              <h3 class="text-sm font-bold tracking-tight text-text leading-snug">${safeNombre}</h3>
+              <span class="text-xs text-muted font-medium truncate">${flagHtml}${isInternacional ? safeCiudad : `${safeCiudad}, ${safeEstado}`}</span>
             </div>
-            ${isAfectado ? '<span class="badge-prioritized-mini"><svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor" stroke="none" style="vertical-align:sub;margin-right:2px" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/></svg>Zona Afectada</span>' : ''}
+            ${isAfectado ? '<span class="shrink-0 inline-flex items-center gap-1 bg-red text-white text-[0.6rem] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded"><svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/></svg>Zona Afectada</span>' : ''}
           </div>
-          <div class="card-body-centro">
-            ${c.direccion ? `<div class="row"><span class="row-label">Dirección</span><div class="row-value">${safeDireccion}</div></div>` : ''}
-            ${c.contacto ? `<div class="row"><span class="row-label">Contacto</span><div class="row-value">${safeContacto}</div></div>` : ''}
-            ${c.hora ? `<div class="row"><span class="row-label">Horario</span><div class="row-value">${safeHora}</div></div>` : ''}
+          <div class="px-4 pt-2.5 pb-3.5 flex flex-col gap-1.5">
+            ${c.direccion ? row('Dirección', safeDireccion) : ''}
+            ${c.contacto ? row('Contacto', safeContacto) : ''}
+            ${c.hora ? row('Horario', safeHora) : ''}
             ${aceptaHtml}${necesitanHtml}
-            ${c.zelle ? `<div class="row"><span class="row-label">Zelle</span><div class="row-value">${safeZelle}</div></div>` : ''}
-            ${c.pago_movil ? `<div class="row"><span class="row-label">Pago Móvil</span><div class="row-value">${safePagoMovil}</div></div>` : ''}
+            ${c.zelle ? row('Zelle', safeZelle) : ''}
+            ${c.pago_movil ? row('Pago Móvil', safePagoMovil) : ''}
           </div>
         </div>
       `;
@@ -486,10 +497,15 @@ const fallbackEnlaces = [
     statCiudades.textContent = new Set(centros.map((c: any) => c.ciudad)).size.toString();
   }
 
+  const STATUS_BASE = "inline-flex items-center gap-1 text-[0.7rem] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide shrink-0";
+  const STATUS_LOADING = STATUS_BASE + " bg-[#E2E8F0] text-[#64748B]";
+  const STATUS_LIVE = STATUS_BASE + " bg-[#DCFCE7] text-[#15803D] border border-[#BBF7D0]";
+  const STATUS_OFFLINE = STATUS_BASE + " bg-[#FEF3C7] text-[#D97706] border border-[#FDE68A]";
+
   async function loadData() {
     try {
       dbStatus.textContent = "Conectando...";
-      dbStatus.className = "status-badge loading";
+      dbStatus.className = STATUS_LOADING;
       if (!supabase) throw new Error("Supabase client not initialized");
 
       const { data, error } = await supabase
@@ -513,7 +529,7 @@ const fallbackEnlaces = [
         initCitySelect();
         handleFilter();
         dbStatus.textContent = "En Vivo";
-        dbStatus.className = "status-badge live";
+        dbStatus.className = STATUS_LIVE;
       } else {
         dbStatus.textContent = "Offline (Local)";
         dbStatus.className = "status-badge offline";
@@ -521,7 +537,7 @@ const fallbackEnlaces = [
     } catch (err) {
       console.error("Supabase connection failed, using offline fallback:", err);
       dbStatus.textContent = "Offline (Local)";
-      dbStatus.className = "status-badge offline";
+      dbStatus.className = STATUS_OFFLINE;
       initCitySelect();
       handleFilter();
     }
@@ -547,17 +563,19 @@ const fallbackEnlaces = [
       if (data && data.length > 0) {
         necPreviewCount.textContent = data.length.toString();
         necPreviewList.innerHTML = data.map((n: any) => {
-          const isAfectado = ZONAS_AFECTADAS.includes(n.estado);
-          const needPreview = n.que_necesitan.length > 80 ? n.que_necesitan.substring(0, 80) + '...' : n.que_necesitan;
+          const needRaw = n.que_necesitan || '';
+          const needPreview = escapeHtml(needRaw.length > 80 ? needRaw.substring(0, 80) + '...' : needRaw);
+          const lugar = escapeHtml(n.lugar);
+          const ubic = escapeHtml(`${n.ciudad}, ${n.estado}`);
           return `
-            <a href="/necesidades" class="necesidad-mini-card">
-              <div class="necesidad-mini-icon">
+            <a href="/necesidades" class="flex gap-2.5 py-2.5 border-b border-[#F1F5F9] last:border-0 no-underline text-text transition-opacity duration-150 hover:opacity-80">
+              <div class="w-7 h-7 shrink-0 bg-[#FEF2F2] text-red rounded-lg flex items-center justify-center">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
               </div>
-              <div class="necesidad-mini-body">
-                <h4>${n.lugar}</h4>
-                <p><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:sub;margin-right:2px" aria-hidden="true" focusable="false"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg> ${n.ciudad}, ${n.estado}</p>
-                <p class="necesidad-mini-need">${needPreview}</p>
+              <div class="flex-1 min-w-0">
+                <h4 class="text-sm font-semibold text-text mb-0.5 truncate">${lugar}</h4>
+                <p class="text-xs text-muted truncate flex items-center gap-1"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="shrink-0" aria-hidden="true" focusable="false"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg> ${ubic}</p>
+                <p class="text-xs text-red-dark font-medium truncate">${needPreview}</p>
               </div>
             </a>
           `;
@@ -580,11 +598,13 @@ const fallbackEnlaces = [
   const debouncedFilter = debounce(handleFilter, 250);
 
   // Listeners for Zone Filters
-  document.querySelectorAll('.zone-btn').forEach(btn => {
+  const zoneBtns = document.querySelectorAll('#zonesFilter button');
+  zoneBtns.forEach(btn => {
     btn.addEventListener('click', (e) => {
-      document.querySelectorAll('.zone-btn').forEach(b => b.classList.remove('active'));
-      (e.currentTarget as HTMLButtonElement).classList.add('active');
-      currentZoneFilter = (e.currentTarget as HTMLButtonElement).getAttribute('data-filter') || 'all';
+      const target = e.currentTarget as HTMLButtonElement;
+      zoneBtns.forEach(b => b.setAttribute('aria-pressed', 'false'));
+      target.setAttribute('aria-pressed', 'true');
+      currentZoneFilter = target.getAttribute('data-filter') || 'all';
       handleFilter();
     });
   });

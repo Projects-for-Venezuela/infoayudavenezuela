@@ -1,45 +1,48 @@
 ---
-import "../../styles/refugios.css";
-import "../../styles/index.css";
 import Layout from "../../layouts/Layout.astro";
 import AlertBox from "../../components/AlertBox.astro";
 import EmergenciaCTA from "../../components/EmergenciaCTA.astro";
 ---
 
 <Layout title="Buscar Personas en Refugios" showHero={false}>
-  <header class="ref-hero">
-    <div class="ref-hero-bg">
-      <div class="ref-hero-content">
-        <span class="ref-hero-badge" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3);">BÚSQUEDA</span>
-        <h1><span>Buscar</span> Personas</h1>
-        <p>Localiza a familiares o conocidos en refugios registrados — <strong>datos verificados</strong></p>
-      </div>
+  <header class="relative -mt-4 md:-mt-6 mb-6 w-screen ml-[calc(-50vw+50%)] overflow-hidden bg-gradient-to-br from-[#1E3A5F] via-[#1D4ED8] to-[#3B82F6] text-white">
+    <div class="pointer-events-none absolute inset-0 bg-[repeating-linear-gradient(45deg,transparent,transparent_20px,rgba(255,255,255,0.03)_20px,rgba(255,255,255,0.03)_40px)]" aria-hidden="true"></div>
+    <div class="relative max-w-[640px] mx-auto text-center px-5 py-10 sm:py-12">
+      <span class="inline-block bg-white/20 border border-white/25 text-white text-[0.7rem] font-extrabold uppercase tracking-[0.06em] px-3 py-1 rounded-full mb-4">Búsqueda</span>
+      <h1 class="text-2xl sm:text-[1.9rem] font-extrabold tracking-tight leading-tight text-balance mb-2">
+        <span class="text-[#93C5FD]">Buscar</span> Personas
+      </h1>
+      <p class="text-sm sm:text-[0.9rem] text-white/85 max-w-[480px] mx-auto leading-relaxed text-balance">
+        Localiza a familiares o conocidos en refugios registrados — <strong class="text-white font-semibold">datos verificados</strong>
+      </p>
     </div>
   </header>
 
-  <div class="ref-alert">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-    <span><strong>¿No encuentras a alguien?</strong> Si conoces su ubicación actual, puedes <a href="/refugios" style="color: #1E40AF; font-weight: 600; text-decoration: underline;">reportarlo en el refugio correspondiente</a>.</span>
+  <div class="flex items-center gap-2.5 mb-5 px-4 py-3 rounded-xl bg-[#EFF6FF] border border-[#BFDBFE] text-[0.84rem] text-[#1E40AF] leading-relaxed">
+    <svg class="shrink-0" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <span><strong class="font-semibold">¿No encuentras a alguien?</strong> Si conoces su ubicación actual, puedes <a href="/refugios" class="font-semibold underline">reportarlo en el refugio correspondiente</a>.</span>
   </div>
 
   <AlertBox />
-  <div class="search-filters">
-    <div class="search-box" style="flex: 1;">
-      <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-      <input type="text" id="searchPersonInput" placeholder="Buscar por nombre, apellido o cédula de identidad..." />
+
+  <div class="mb-5">
+    <div class="relative">
+      <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#9CA3AF] pointer-events-none" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      <label for="searchPersonInput" class="sr-only">Buscar persona por nombre o cédula</label>
+      <input type="text" id="searchPersonInput" placeholder="Buscar por nombre, apellido o cédula de identidad..." class="w-full h-[46px] pl-11 pr-4 text-[0.9rem] bg-white border-[1.5px] border-border rounded-card outline-none transition-[border-color,box-shadow] duration-200 focus:border-blue focus:shadow-[0_0_0_3px_rgba(0,36,125,0.08)]" />
     </div>
   </div>
 
-  <div class="section-header">
-    <h2 id="gridTitle">Resultados de la búsqueda</h2>
-    <span id="resultsCount" class="results-count" style="display: none;"></span>
-    <span id="searchStatus" class="status-badge live" style="margin-left: auto; display: none;"></span>
+  <div class="flex items-center gap-2 mb-3 pb-2 border-b border-border">
+    <h2 id="gridTitle" class="text-[0.95rem] font-bold text-text tracking-tight">Resultados de la búsqueda</h2>
+    <span id="resultsCount" class="text-[0.72rem] font-semibold text-muted bg-[#F1F5F9] px-2 py-0.5 rounded-full border border-border tabular-nums" style="display: none;"></span>
+    <span id="searchStatus" class="ml-auto text-xs font-bold px-2 py-0.5 rounded-full uppercase tracking-wide inline-flex items-center gap-1 bg-[#DCFCE7] text-[#15803D] border border-[#BBF7D0]" style="display: none;"></span>
   </div>
 
-  <div class="grid" id="mainGrid">
-    <div class="no-results" style="grid-column: 1 / -1; padding: 3rem 1rem; text-align: center; color: var(--muted); display: flex; flex-direction: column; align-items: center; justify-content: center;">
-      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto 1rem; color: #cbd5e1;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-      <span>Escribe un nombre o cédula en el buscador de arriba para comenzar.</span>
+  <div class="grid gap-4 grid-cols-[repeat(auto-fill,minmax(260px,1fr))] items-start mb-8" id="mainGrid">
+    <div class="col-span-full flex flex-col items-center justify-center text-center py-12 px-4 text-muted">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="mb-4 text-[#CBD5E1]" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      <span class="text-sm text-pretty">Escribe un nombre o cédula en el buscador de arriba para comenzar.</span>
     </div>
   </div>
 
@@ -48,74 +51,71 @@ import EmergenciaCTA from "../../components/EmergenciaCTA.astro";
 
 <script>
   import { supabase } from "../../lib/supabase";
+  import { escapeHtml } from "../../lib/escape";
 
   const searchPersonInput = document.getElementById('searchPersonInput') as HTMLInputElement;
   const mainGrid = document.getElementById('mainGrid') as HTMLElement;
   const gridTitle = document.getElementById('gridTitle') as HTMLElement;
   const resultsCount = document.getElementById('resultsCount') as HTMLElement;
   const searchStatus = document.getElementById('searchStatus') as HTMLElement;
-  const dbStatus = document.getElementById('dbStatus') as HTMLElement;
 
-  async function init() {
-    try {
-      if (!supabase) throw new Error("Supabase no disponible");
-      // Check connection
-      const { error } = await supabase.from('refugiados').select('id').limit(1);
-      if (error) throw error;
-      
-      if (dbStatus) {
-        dbStatus.textContent = "En Vivo";
-        dbStatus.className = "status-badge live";
-      }
-    } catch (err) {
-      console.error(err);
-      if (dbStatus) {
-        dbStatus.textContent = "Error";
-        dbStatus.className = "status-badge offline";
-      }
-    }
+  const GRID_RESULTS = "grid gap-4 grid-cols-[repeat(auto-fill,minmax(280px,1fr))] items-start mb-8";
+  const GRID_EMPTY = "grid gap-4 grid-cols-[repeat(auto-fill,minmax(260px,1fr))] items-start mb-8";
+  const SS_BASE = "ml-auto text-xs font-bold px-2 py-0.5 rounded-full uppercase tracking-wide inline-flex items-center gap-1";
+  const SS = {
+    loading: `${SS_BASE} bg-[#E2E8F0] text-[#64748B]`,
+    live: `${SS_BASE} bg-[#DCFCE7] text-[#15803D] border border-[#BBF7D0]`,
+    offline: `${SS_BASE} bg-[#FEF3C7] text-[#D97706] border border-[#FDE68A]`,
+  };
+  const LBL = "text-[0.68rem] font-semibold text-muted uppercase tracking-wide min-w-[64px] shrink-0 pt-0.5";
+  const VAL = "text-sm text-text flex-1 leading-relaxed min-w-0 wrap-break-word";
+
+  function emptyState(msg: string) {
+    return `<div class="col-span-full flex flex-col items-center justify-center text-center py-12 px-4 text-muted"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="mb-4 text-[#CBD5E1]" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg><span class="text-sm text-pretty">${msg}</span></div>`;
   }
-
-  init();
 
   function renderPersonas(personas: any[]) {
     gridTitle.textContent = "Resultados encontrados";
     resultsCount.textContent = `${personas.length} persona${personas.length !== 1 ? 's' : ''}`;
     resultsCount.style.display = "inline-block";
-    mainGrid.className = "grid-centros"; // Reuse centro cards layout
+    mainGrid.className = GRID_RESULTS;
 
     if (personas.length === 0) {
-      mainGrid.innerHTML = '<div class="no-results" style="grid-column: 1 / -1; padding: 3rem 1rem; text-align: center; color: var(--muted); display: flex; flex-direction: column; align-items: center; justify-content: center;"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto 1rem; color: #cbd5e1;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg><span>No se encontraron personas con ese nombre o cédula.</span></div>';
+      mainGrid.innerHTML = emptyState("No se encontraron personas con ese nombre o cédula.");
       return;
     }
 
     mainGrid.innerHTML = personas.map((p: any) => {
-      const refugio = p.refugios || {};
+      const safeNombre = escapeHtml(p.nombre);
+      const safeCedula = escapeHtml(p.cedula);
+      const safePrimaria = escapeHtml(p.ubicacion_primaria);
+      const safeSecundaria = escapeHtml(p.ubicacion_secundaria);
+      const safeTelefono = escapeHtml(p.telefono);
+      const safeDetalleLabel = escapeHtml(p.detalle_1_label);
+      const safeDetalleValue = escapeHtml(p.detalle_1_value);
+      const safeBadge = escapeHtml(p.badge_label);
+      const badgeColor = p.badge_color;
+      const badgeText = badgeColor === '#FFCC00' ? '#1A1D23' : 'white';
+      const primariaLabel = p.tipo === 'Desaparecido' ? 'Últ. Ubicación' : p.tipo === 'Paciente' ? 'Hospital' : 'Refugio';
+      const secundariaLabel = p.tipo === 'Paciente' ? 'Ciudad' : 'Ubicación';
+
       return `
-        <div class="card centro-card">
-          <div class="card-head-centro">
-            <div class="card-icon" style="background: var(--blue);">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle>
-              </svg>
+        <div class="relative flex flex-col bg-white border border-border rounded-xl overflow-hidden transition-[box-shadow,border-color] duration-150 hover:shadow-md hover:border-[#C7CDD8]">
+          <span class="absolute top-3 right-3 text-[0.6rem] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full" style="background:${badgeColor};color:${badgeText};">${safeBadge}</span>
+          <div class="flex items-center gap-2.5 pt-3.5 px-4 pr-24">
+            <div class="w-9 h-9 rounded-lg flex items-center justify-center shrink-0" style="background:${badgeColor};">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="${badgeText}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
             </div>
-            <div class="card-title-area">
-              <h3>${p.nombre_completo}</h3>
-              ${p.cedula ? `<span class="card-loc-meta" style="font-weight: 500;">V-${p.cedula}</span>` : ''}
+            <div class="flex flex-col flex-1 min-w-0">
+              <h3 class="text-sm font-bold tracking-tight text-text leading-snug">${safeNombre}</h3>
+              ${p.cedula ? `<span class="text-xs text-muted font-medium tabular-nums">V-${safeCedula}</span>` : ''}
             </div>
           </div>
-          <div class="card-body-centro">
-            <div class="row">
-              <span class="row-label">Refugio</span>
-              <div class="row-value font-medium" style="color: var(--blue); font-weight: 600;">${refugio.nombre || 'Desconocido'}</div>
-            </div>
-            ${refugio.ciudad || refugio.estado ? `
-            <div class="row">
-              <span class="row-label">Ubicación</span>
-              <div class="row-value">${refugio.ciudad ? refugio.ciudad + ', ' : ''}${refugio.estado || ''}</div>
-            </div>` : ''}
-            ${p.telefono ? `<div class="row"><span class="row-label">Teléfono</span><div class="row-value">${p.telefono}</div></div>` : ''}
-            ${p.estado_salud ? `<div class="row"><span class="row-label">Salud</span><div class="row-value">${p.estado_salud}</div></div>` : ''}
+          <div class="px-4 pt-2.5 pb-3.5 flex flex-col gap-1.5">
+            <div class="flex gap-2 items-start"><span class="${LBL}">${primariaLabel}</span><div class="text-sm text-blue font-semibold flex-1 leading-relaxed min-w-0 wrap-break-word">${safePrimaria}</div></div>
+            ${p.ubicacion_secundaria ? `<div class="flex gap-2 items-start"><span class="${LBL}">${secundariaLabel}</span><div class="${VAL}">${safeSecundaria}</div></div>` : ''}
+            ${p.telefono ? `<div class="flex gap-2 items-start"><span class="${LBL}">Contacto</span><div class="${VAL}">${safeTelefono}</div></div>` : ''}
+            ${p.detalle_1_value ? `<div class="flex gap-2 items-start"><span class="${LBL}">${safeDetalleLabel}</span><div class="${VAL}">${safeDetalleValue}</div></div>` : ''}
           </div>
         </div>
       `;
@@ -125,12 +125,8 @@ import EmergenciaCTA from "../../components/EmergenciaCTA.astro";
   async function performSearch() {
     const q = searchPersonInput.value.trim();
     if (!q || q.length < 3) {
-      mainGrid.innerHTML = `
-        <div class="no-results" style="grid-column: 1 / -1; padding: 3rem 1rem; text-align: center; color: var(--muted); display: flex; flex-direction: column; align-items: center; justify-content: center;">
-          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto 1rem; color: #cbd5e1;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-          <span>Ingresa al menos 3 caracteres para buscar.</span>
-        </div>
-      `;
+      mainGrid.className = GRID_EMPTY;
+      mainGrid.innerHTML = emptyState("Ingresa al menos 3 caracteres para buscar.");
       gridTitle.textContent = "Resultados de la búsqueda";
       resultsCount.style.display = "none";
       searchStatus.style.display = "none";
@@ -139,32 +135,88 @@ import EmergenciaCTA from "../../components/EmergenciaCTA.astro";
 
     try {
       searchStatus.textContent = "Buscando...";
-      searchStatus.className = "status-badge loading";
-      searchStatus.style.display = "inline-block";
+      searchStatus.className = SS.loading;
+      searchStatus.style.display = "inline-flex";
 
       if (!supabase) throw new Error("Supabase no disponible");
 
-      const { data, error } = await supabase
-        .from('refugiados')
-        .select('*, refugios(nombre, ciudad, estado)')
-        .eq('verificado', true)
-        .or(`nombre_completo.ilike.%${q}%,cedula.ilike.%${q}%`)
-        .limit(50);
+      const [refugiadosRes, desaparecidosRes, pacientesRes] = await Promise.all([
+        supabase
+          .from('refugiados')
+          .select('*, refugios(nombre, ciudad, estado)')
+          .eq('verificado', true)
+          .or(`nombre_completo.ilike.%${q}%,cedula.ilike.%${q}%`)
+          .limit(20),
+        supabase
+          .from('desaparecidos')
+          .select('*')
+          .eq('verificado', true)
+          .or(`nombre_completo.ilike.%${q}%,cedula.ilike.%${q}%`)
+          .limit(20),
+        supabase
+          .from('pacientes')
+          .select('*')
+          .eq('verificado', true)
+          .or(`nombre_paciente.ilike.%${q}%,cedula.ilike.%${q}%`)
+          .limit(20)
+      ]);
 
-      if (error) throw error;
+      if (refugiadosRes.error) throw refugiadosRes.error;
+      if (desaparecidosRes.error) throw desaparecidosRes.error;
+      if (pacientesRes.error) throw pacientesRes.error;
+
+      const unifiedPersonas = [
+        ...(refugiadosRes.data || []).map((p: any) => ({
+          tipo: 'Refugiado',
+          nombre: p.nombre_completo,
+          cedula: p.cedula,
+          ubicacion_primaria: p.refugios?.nombre || 'Desconocido',
+          ubicacion_secundaria: p.refugios?.ciudad ? `${p.refugios.ciudad}, ${p.refugios.estado || ''}` : p.refugios?.estado,
+          telefono: p.telefono,
+          detalle_1_label: 'Salud',
+          detalle_1_value: p.estado_salud,
+          badge_label: 'En Refugio',
+          badge_color: '#00247D'
+        })),
+        ...(desaparecidosRes.data || []).map((p: any) => ({
+          tipo: 'Desaparecido',
+          nombre: p.nombre_completo,
+          cedula: p.cedula,
+          ubicacion_primaria: p.ultima_ubicacion || 'Desconocida',
+          ubicacion_secundaria: null,
+          telefono: p.fuente,
+          detalle_1_label: 'Descripción',
+          detalle_1_value: p.descripcion,
+          badge_label: p.status || 'Buscando',
+          badge_color: p.status?.toLowerCase() === 'encontrado' ? '#15803D' : '#CF142B'
+        })),
+        ...(pacientesRes.data || []).map((p: any) => ({
+          tipo: 'Paciente',
+          nombre: p.nombre_paciente,
+          cedula: p.cedula,
+          ubicacion_primaria: p.hospital || 'Desconocido',
+          ubicacion_secundaria: p.ciudad ? `${p.ciudad}, ${p.estado || ''}` : p.estado,
+          telefono: p.contacto,
+          detalle_1_label: 'Necesitan',
+          detalle_1_value: p.necesitan,
+          badge_label: p.estatus || 'Paciente',
+          badge_color: '#FFCC00'
+        }))
+      ];
 
       searchStatus.style.display = "none";
-      renderPersonas(data || []);
+      renderPersonas(unifiedPersonas);
 
     } catch (err) {
       console.error(err);
       searchStatus.textContent = "Error";
-      searchStatus.className = "status-badge offline";
-      mainGrid.innerHTML = '<div class="no-results" style="grid-column: 1 / -1; padding: 3rem 1rem; text-align: center; color: var(--muted); display: flex; flex-direction: column; align-items: center; justify-content: center;"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto 1rem; color: #cbd5e1;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg><span>Hubo un error al buscar personas.</span></div>';
+      searchStatus.className = SS.offline;
+      searchStatus.style.display = "inline-flex";
+      mainGrid.className = GRID_EMPTY;
+      mainGrid.innerHTML = emptyState("Hubo un error al buscar personas.");
     }
   }
 
-  // Debounce function
   function debounce<T extends (...args: any[]) => void>(fn: T, ms: number): (...args: Parameters<T>) => void {
     let t: ReturnType<typeof setTimeout> | null = null;
     return (...args: Parameters<T>) => {
@@ -176,5 +228,4 @@ import EmergenciaCTA from "../../components/EmergenciaCTA.astro";
   const debouncedSearch = debounce(performSearch, 400);
 
   searchPersonInput.addEventListener('input', debouncedSearch);
-
 </script>
