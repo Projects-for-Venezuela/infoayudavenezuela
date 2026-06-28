@@ -1,27 +1,24 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import EmergenciaCTA from "../components/EmergenciaCTA.astro";
-import "../styles/agradecimientos.css";
 ---
 
 <Layout title="Agradecimientos" description="Listado de personas y organizaciones que han aportado y colaborado con InfoAyuda Venezuela.">
-  <div class="agradecimientos-container">
-    <header class="agradecimientos-header">
-      <h1>Agradecimientos</h1>
-      <p>
+  <div class="max-w-[900px] mx-auto">
+    <header class="text-center mb-12">
+      <h1 class="text-blue text-[1.8rem] sm:text-[2.2rem] font-extrabold tracking-tight text-balance mb-2">Agradecimientos</h1>
+      <p class="text-muted text-base sm:text-[1.1rem] max-w-[600px] mx-auto leading-relaxed text-pretty">
         Esta plataforma es posible gracias al esfuerzo, colaboración y compromiso de muchas personas. A continuación, reconocemos a quienes han aportado de forma significativa.
       </p>
     </header>
 
-    <div id="agradecimientosStatus" class="status-badge loading" style="text-align: center; margin-bottom: 2rem; display: block;">
+    <div id="agradecimientosStatus" class="mx-auto w-fit inline-flex items-center gap-1 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide mb-8 bg-[#E2E8F0] text-[#64748B]">
       Cargando agradecimientos...
     </div>
 
-    <div id="agradecimientosContainer" class="agradecimientos-list">
-      <!-- Categorías se renderizarán aquí -->
-    </div>
+    <div id="agradecimientosContainer" class="flex flex-col gap-8"></div>
 
-    <div style="margin-top: 4rem;">
+    <div class="mt-16">
       <EmergenciaCTA />
     </div>
   </div>
@@ -29,10 +26,16 @@ import "../styles/agradecimientos.css";
 
 <script>
   import { supabase } from "../lib/supabase";
-  import { escapeHtml } from "../lib/escape";
+  import { escapeHtml, safeUrl } from "../lib/escape";
 
   const container = document.getElementById('agradecimientosContainer') as HTMLElement;
   const statusEl = document.getElementById('agradecimientosStatus') as HTMLElement;
+
+  const ST_BASE = "mx-auto w-fit inline-flex items-center gap-1 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide mb-8";
+  const ST = {
+    loading: `${ST_BASE} bg-[#E2E8F0] text-[#64748B]`,
+    offline: `${ST_BASE} bg-[#FEF3C7] text-[#D97706] border border-[#FDE68A]`,
+  };
 
   async function loadData() {
     try {
@@ -50,18 +53,18 @@ import "../styles/agradecimientos.css";
         renderAgradecimientos(data);
       } else {
         statusEl.textContent = "Aún no hay agradecimientos registrados.";
-        statusEl.className = "status-badge offline";
+        statusEl.className = ST.offline;
       }
     } catch (err) {
       console.error("Error cargando agradecimientos:", err);
       statusEl.textContent = "Error al cargar la información.";
-      statusEl.className = "status-badge offline";
+      statusEl.className = ST.offline;
     }
   }
 
   function renderAgradecimientos(list: any[]) {
     const grupos = new Map<string, any[]>();
-    
+
     const ordenCategorias = [
       "Desarrollo",
       "Soporte Técnico",
@@ -97,12 +100,12 @@ import "../styles/agradecimientos.css";
   }
 
   function getCategoryIcon(cat: string) {
-    if (cat === 'Desarrollo') return '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>';
-    if (cat === 'Soporte Técnico') return '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>';
-    if (cat === 'Difusión y Comunicación') return '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>';
-    if (cat === 'Recopilación de Datos') return '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>';
-    if (cat === 'Ideas y Mejoras') return '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>';
-    return '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>';
+    if (cat === 'Desarrollo') return '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>';
+    if (cat === 'Soporte Técnico') return '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>';
+    if (cat === 'Difusión y Comunicación') return '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>';
+    if (cat === 'Recopilación de Datos') return '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>';
+    if (cat === 'Ideas y Mejoras') return '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>';
+    return '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>';
   }
 
   function getCategoryColor(cat: string) {
@@ -111,34 +114,35 @@ import "../styles/agradecimientos.css";
     if (cat === 'Difusión y Comunicación') return '#db2777';
     if (cat === 'Recopilación de Datos') return '#16a34a';
     if (cat === 'Ideas y Mejoras') return '#ca8a04';
-    return 'var(--blue)';
+    return '#00247D';
   }
 
   function renderCategoria(nombreCategoria: string, items: any[]) {
     const icon = getCategoryIcon(nombreCategoria);
     const color = getCategoryColor(nombreCategoria);
-    
+
     let html = `
-      <section class="agradecimiento-category" style="--cat-color: ${color};">
-        <div class="category-header">
-          <div class="category-icon" style="color: ${color}; background: ${color}15;">
+      <section class="bg-white rounded-card p-6 sm:p-8 border border-border shadow-[0_4px_6px_-1px_rgba(0,0,0,0.05),0_2px_4px_-2px_rgba(0,0,0,0.05)]" style="--cat-color: ${color};">
+        <div class="flex items-center gap-3 border-b-2 border-[#F3F4F6] pb-4 mb-6">
+          <div class="flex items-center justify-center p-2 rounded-lg" style="color: ${color}; background: ${color}15;">
             ${icon}
           </div>
-          <h2 class="category-title">${escapeHtml(nombreCategoria)}</h2>
+          <h2 class="text-[1.5rem] font-bold text-text tracking-tight">${escapeHtml(nombreCategoria)}</h2>
         </div>
-        <ul class="agradecimientos-grid">
+        <ul class="list-none p-0 m-0 flex flex-wrap gap-3">
     `;
 
     items.forEach(a => {
-      const enlaceHtml = a.enlace 
-        ? `<a href="${escapeHtml(a.enlace)}" target="_blank" rel="noopener noreferrer" class="agradecimiento-link">
+      const url = safeUrl(a.enlace);
+      const enlaceHtml = url
+        ? `<a href="${escapeHtml(url)}" target="_blank" rel="noopener noreferrer" class="px-[1.1rem] py-2 font-semibold text-text text-[0.95rem] inline-flex items-center gap-1.5 no-underline transition-colors duration-200 group-hover:text-[var(--cat-color)]">
              ${escapeHtml(a.nombre)}
-             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+             <svg class="text-[var(--cat-color)] transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
            </a>`
-        : `<span class="agradecimiento-text">${escapeHtml(a.nombre)}</span>`;
-      
+        : `<span class="px-[1.1rem] py-2 font-semibold text-text text-[0.95rem] inline-flex items-center">${escapeHtml(a.nombre)}</span>`;
+
       html += `
-        <li class="agradecimiento-item">
+        <li class="group inline-flex items-center bg-white rounded-full border-[1.5px] border-border shadow-[0_2px_4px_rgba(0,0,0,0.02)] transition-[transform,border-color,box-shadow] duration-200 hover:-translate-y-0.5 hover:border-[var(--cat-color)] hover:shadow-[0_6px_12px_rgba(0,0,0,0.06)]">
           ${enlaceHtml}
         </li>
       `;

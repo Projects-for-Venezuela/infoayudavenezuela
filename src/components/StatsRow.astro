@@ -8,17 +8,17 @@ export interface Props {
 const { totalCentros, totalEstados, totalCiudades } = Astro.props;
 ---
 
-<div class="stats-row">
-  <div class="stat">
-    <span class="stat-num" id="statCentros">{totalCentros}</span>
-    <span class="stat-lbl">Centros de Acopio</span>
+<div class="grid grid-cols-3 gap-2.5 mb-5">
+  <div class="bg-blue/5 border border-blue/20 rounded-xl px-2 py-4 text-center shadow-[0_1px_2px_rgba(16,24,40,0.04)] transition-colors duration-200 hover:border-blue/40">
+    <span class="block text-[1.75rem] sm:text-3xl font-extrabold text-blue leading-none mb-1.5 tabular-nums" id="statCentros">{totalCentros}</span>
+    <span class="text-[0.64rem] font-bold uppercase tracking-wide text-blue-dark/70">Centros de Acopio</span>
   </div>
-  <div class="stat">
-    <span class="stat-num" id="statEstados">{totalEstados}</span>
-    <span class="stat-lbl">Estados</span>
+  <div class="bg-white border border-border rounded-xl px-2 py-4 text-center shadow-[0_1px_2px_rgba(16,24,40,0.04)] transition-colors duration-200 hover:border-[#C7CDD8]">
+    <span class="block text-2xl sm:text-3xl font-bold text-text leading-none mb-1.5 tabular-nums" id="statEstados">{totalEstados}</span>
+    <span class="text-[0.64rem] font-bold uppercase tracking-wide text-muted">Estados</span>
   </div>
-  <div class="stat">
-    <span class="stat-num" id="statCiudades">{totalCiudades}</span>
-    <span class="stat-lbl">Ciudades</span>
+  <div class="bg-white border border-border rounded-xl px-2 py-4 text-center shadow-[0_1px_2px_rgba(16,24,40,0.04)] transition-colors duration-200 hover:border-[#C7CDD8]">
+    <span class="block text-2xl sm:text-3xl font-bold text-text leading-none mb-1.5 tabular-nums" id="statCiudades">{totalCiudades}</span>
+    <span class="text-[0.64rem] font-bold uppercase tracking-wide text-muted">Ciudades</span>
   </div>
 </div>

@@ -1,74 +1,71 @@
 ---
-import "../../styles/refugios.css";
-import "../../styles/index.css";
 import Layout from "../../layouts/Layout.astro";
 import AlertBox from "../../components/AlertBox.astro";
 import SearchFilters from "../../components/SearchFilters.astro";
 import EmergenciaCTA from "../../components/EmergenciaCTA.astro";
 import SugerirRefugioModal from "../../components/SugerirRefugioModal.astro";
 import ReportarRefugiadoModal from "../../components/ReportarRefugiadoModal.astro";
-import { estados, flagUrl, ZONAS_AFECTADAS, sortEstados, resolveEstado } from "../../data/centros";
-
-const estadosOrdenados = [...estados].filter(e => resolveEstado(e.estado) === e.estado).sort(sortEstados);
-const estadosNacionales = estadosOrdenados.filter(e => e.estado !== 'Internacional');
 ---
 
 <Layout title="Refugios" showHero={false}>
-  <header class="ref-hero">
-    <div class="ref-hero-bg">
-      <div class="ref-hero-content">
-        <span class="ref-hero-badge">SEGURO</span>
-        <h1><span>Refugios</span> Verificados</h1>
-        <p>Encuentra refugios y espacios seguros habilitados para las personas afectadas — <strong>actualizado por la comunidad</strong></p>
-      </div>
+  <header class="relative -mt-4 md:-mt-6 mb-6 w-screen ml-[calc(-50vw+50%)] overflow-hidden bg-gradient-to-br from-[#1E3A5F] via-[#1D4ED8] to-[#3B82F6] text-white">
+    <div class="pointer-events-none absolute inset-0 bg-[repeating-linear-gradient(45deg,transparent,transparent_20px,rgba(255,255,255,0.03)_20px,rgba(255,255,255,0.03)_40px)]" aria-hidden="true"></div>
+    <div class="relative max-w-[640px] mx-auto text-center px-5 py-10 sm:py-12">
+      <span class="inline-block bg-white/20 border border-white/25 text-white text-[0.7rem] font-extrabold uppercase tracking-[0.06em] px-3 py-1 rounded-full mb-4">Seguro</span>
+      <h1 class="text-2xl sm:text-[1.9rem] font-extrabold tracking-tight leading-tight text-balance mb-2">
+        <span class="text-[#93C5FD]">Refugios</span> Verificados
+      </h1>
+      <p class="text-sm sm:text-[0.9rem] text-white/85 max-w-[480px] mx-auto leading-relaxed text-balance">
+        Encuentra refugios y espacios seguros habilitados para las personas afectadas — <strong class="text-white font-semibold">actualizado por la comunidad</strong>
+      </p>
     </div>
   </header>
 
-  <div class="ref-alert">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><path d="M9 22V12h6v10"/></svg>
-    <span><strong>Si estás en una zona afectada,</strong> localiza el refugio más cercano. Si conoces un refugio activo, <button id="btnSugerirRefugio" class="nav-sugerir" style="background: transparent; color: #1E40AF; padding: 0; text-decoration: underline; display: inline; cursor: pointer; border: none; font-size: inherit;">sugiere agregarlo aquí</button>.</span>
+  <div class="flex items-center gap-2.5 mb-5 px-4 py-3 rounded-xl bg-[#EFF6FF] border border-[#BFDBFE] text-[0.84rem] text-[#1E40AF] leading-relaxed">
+    <svg class="shrink-0" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><path d="M9 22V12h6v10"/></svg>
+    <span><strong class="font-semibold">Si estás en una zona afectada,</strong> localiza el refugio más cercano. Si conoces un refugio activo, <button id="btnSugerirRefugio" type="button" class="bg-transparent border-0 p-0 text-[#1E40AF] underline cursor-pointer font-semibold">sugiere agregarlo aquí</button>.</span>
   </div>
 
   <AlertBox />
 
-  <div class="ref-stats">
-    <div class="ref-stat">
-      <span class="ref-stat-num" id="statRefugios">0</span>
-      <span class="ref-stat-lbl">Refugios Activos</span>
+  <div class="grid grid-cols-2 gap-3 mb-5">
+    <div class="bg-white border border-border rounded-xl p-3.5 text-center">
+      <span class="block text-[1.6rem] font-extrabold text-[#1D4ED8] leading-tight tabular-nums" id="statRefugios">0</span>
+      <span class="block text-[0.72rem] text-muted font-semibold uppercase tracking-wide mt-0.5">Refugios Activos</span>
     </div>
-    <div class="ref-stat">
-      <span class="ref-stat-num" id="statCiudades">0</span>
-      <span class="ref-stat-lbl">Ciudades con Refugios</span>
+    <div class="bg-white border border-border rounded-xl p-3.5 text-center">
+      <span class="block text-[1.6rem] font-extrabold text-[#1D4ED8] leading-tight tabular-nums" id="statCiudades">0</span>
+      <span class="block text-[0.72rem] text-muted font-semibold uppercase tracking-wide mt-0.5">Ciudades con Refugios</span>
     </div>
   </div>
 
-  <div class="section-header" style="margin-bottom: 1rem; align-items: flex-start; flex-direction: column; gap: 0.5rem;">
-    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.5rem;">
-      <a href="/buscar-personas" class="btn btn-secondary" style="font-size: 0.9rem; padding: 0.4rem 0.8rem; height: auto;">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: text-bottom; margin-right: 4px;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg> Buscar Personas
-      </a>
-      <button id="btnReportarRefugiado" class="btn btn-primary" style="font-size: 0.9rem; padding: 0.4rem 0.8rem; height: auto;">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: text-bottom; margin-right: 4px;"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg> Registrar Persona en Refugio
-      </button>
-    </div>
+  <div class="flex gap-2 flex-wrap mb-4">
+    <a href="/buscar-personas" class="inline-flex items-center gap-1.5 px-3.5 py-2 min-h-11 rounded-lg text-[0.85rem] font-semibold bg-white text-text border border-border no-underline transition-colors duration-150 hover:bg-[#F1F5F9] hover:border-[#CBD5E1]">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      Buscar Personas
+    </a>
+    <button id="btnReportarRefugiado" type="button" class="inline-flex items-center gap-1.5 px-3.5 py-2 min-h-11 rounded-lg text-[0.85rem] font-semibold bg-blue text-white border border-transparent cursor-pointer transition-colors duration-150 hover:bg-blue-dark">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
+      Registrar Persona en Refugio
+    </button>
   </div>
 
   <SearchFilters />
 
-  <div class="ref-section-header">
-    <h2 id="gridTitle">Estados con refugios</h2>
-    <span id="resultsCount" class="results-count" style="display: none;"></span>
-    <span id="dbStatus" class="status-badge loading" style="margin-left: auto;">Cargando...</span>
+  <div class="flex items-center gap-2 mb-3 pb-2 border-b border-border">
+    <h2 id="gridTitle" class="text-[0.95rem] font-bold text-text tracking-tight">Estados con refugios</h2>
+    <span id="resultsCount" class="text-[0.72rem] font-semibold text-muted bg-[#F1F5F9] px-2 py-0.5 rounded-full border border-border tabular-nums" style="display: none;"></span>
+    <span id="dbStatus" class="ml-auto text-xs font-bold px-2 py-0.5 rounded-full uppercase tracking-wide inline-flex items-center gap-1 bg-[#E2E8F0] text-[#64748B]">Cargando...</span>
   </div>
 
-  <div class="grid" id="mainGrid">
-    <div class="no-results">Cargando refugios desde la base de datos...</div>
+  <div class="grid gap-4 grid-cols-[repeat(auto-fill,minmax(260px,1fr))] items-start mb-8" id="mainGrid">
+    <div class="col-span-full bg-white border border-border rounded-xl p-10 text-center text-muted text-sm">Cargando refugios desde la base de datos...</div>
   </div>
 
   <EmergenciaCTA />
 
-  <div class="ref-footer">
-    <a href="/">&larr; Volver al inicio</a>
+  <div class="mt-6 text-center">
+    <a href="/" class="inline-flex items-center gap-1.5 text-sm font-medium text-muted no-underline px-4 py-2 rounded-lg transition-colors duration-150 hover:bg-[#F1F5F9] hover:text-text">&larr; Volver al inicio</a>
   </div>
 
   <SugerirRefugioModal />
@@ -78,6 +75,7 @@ const estadosNacionales = estadosOrdenados.filter(e => e.estado !== 'Internacion
 <script>
   import { supabase } from "../../lib/supabase";
   import { ZONAS_AFECTADAS } from "../../data/centros";
+  import { escapeHtml, escapeArray } from "../../lib/escape";
 
   let refugios: any[] = [];
 
@@ -90,6 +88,21 @@ const estadosNacionales = estadosOrdenados.filter(e => e.estado !== 'Internacion
   const dbStatus = document.getElementById('dbStatus') as HTMLElement;
   const statRefugios = document.getElementById('statRefugios') as HTMLElement;
   const statCiudades = document.getElementById('statCiudades') as HTMLElement;
+
+  const GRID_ESTADOS = "grid gap-4 grid-cols-[repeat(auto-fill,minmax(260px,1fr))] items-start mb-8";
+  const GRID_REFUGIOS = "grid gap-4 grid-cols-[repeat(auto-fill,minmax(300px,1fr))] items-start mb-8";
+  const NO_RESULTS = "col-span-full bg-white border border-border rounded-xl p-10 text-center text-muted text-sm";
+  const SB_BASE = "ml-auto text-xs font-bold px-2 py-0.5 rounded-full uppercase tracking-wide inline-flex items-center gap-1";
+  const SB = {
+    loading: `${SB_BASE} bg-[#E2E8F0] text-[#64748B]`,
+    live: `${SB_BASE} bg-[#DCFCE7] text-[#15803D] border border-[#BBF7D0]`,
+    offline: `${SB_BASE} bg-[#FEF3C7] text-[#D97706] border border-[#FDE68A]`,
+  };
+  const LBL = "text-[0.68rem] font-semibold text-muted uppercase tracking-wide min-w-[64px] shrink-0 pt-0.5";
+  const VAL = "text-sm text-text flex-1 leading-relaxed min-w-0 wrap-break-word";
+  const TAG_YELLOW = "inline-block text-xs px-2.5 py-1 rounded-full border font-medium bg-[#FFFBEB] text-amber border-[#FDE68A]";
+  const TAG_RED = "inline-block text-xs px-2.5 py-1 rounded-full border font-medium bg-[#FEF2F2] text-red border-[#FECACA]";
+  const row = (label: string, value: string) => `<div class="flex gap-2 items-start"><span class="${LBL}">${label}</span><div class="${VAL}">${value}</div></div>`;
 
   function initCitySelect() {
     const citiesSet = new Set(refugios.map((c: any) => c.ciudad));
@@ -136,114 +149,64 @@ const estadosNacionales = estadosOrdenados.filter(e => e.estado !== 'Internacion
     }
   }
 
-  function renderEstados() {
-    gridTitle.textContent = "Estados con refugios";
-    resultsCount.style.display = "none";
-    mainGrid.className = "grid";
-
-    const agrupado = refugios.reduce((acc: any[], item: any) => {
-      let e = acc.find((x: any) => x.estado === item.estado);
-      if (!e) { e = { estado: item.estado, ciudades: [] }; acc.push(e); }
-      let c = e.ciudades.find((x: any) => x.ciudad === item.ciudad);
-      if (!c) { c = { ciudad: item.ciudad, refugiosCount: 0 }; e.ciudades.push(c); }
-      c.refugiosCount++;
-      return acc;
-    }, []);
-
-    let estadosAyudaMap = new Map<string, string>(); // estado -> nivel_ayuda
-    (window as any).estadosAyudaMap = estadosAyudaMap; // Store globally for access across functions
-
-    const nacionales = agrupado.filter((e: any) => e.estado !== 'Internacional');
-
-    nacionales.sort((a: any, b: any) => {
-      const dbStatusA = (window as any).estadosAyudaMap?.get(a.estado);
-      const dbStatusB = (window as any).estadosAyudaMap?.get(b.estado);
-      const aAfectado = dbStatusA === 'critico' || (!dbStatusA && ZONAS_AFECTADAS.includes(a.estado));
-      const bAfectado = dbStatusB === 'critico' || (!dbStatusB && ZONAS_AFECTADAS.includes(b.estado));
-      if (aAfectado && !bAfectado) return -1;
-      if (!aAfectado && bAfectado) return 1;
-      return a.estado.localeCompare(b.estado);
-    });
-
-    if (agrupado.length === 0) {
-      mainGrid.innerHTML = '<div class="no-results">No se encontraron refugios activos en este momento.</div>';
-      return;
-    }
-
-    let html = nacionales.map((e: any) => {
-      const count = e.ciudades.reduce((sum: number, c: any) => sum + c.refugiosCount, 0);
-      const citiesList = e.ciudades.map((c: any) => c.ciudad).join(", ");
-      
-      const dbStatus = (window as any).estadosAyudaMap?.get(e.estado);
-      const isAfectadoLegacy = ZONAS_AFECTADAS.includes(e.estado);
-      const status = dbStatus || (isAfectadoLegacy ? 'critico' : null);
-      const isAfectado = status === 'critico';
-      
-      const sanitizedName = ({ "Distrito Capital": "Distrito_Capital" } as Record<string, string>)[e.estado] || e.estado.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ /g, "_");
-
-      return `
-        <div class="card state-card ${isAfectado ? 'card-prioritized' : ''}" style="cursor: default;">
-          <div class="card-img">
-            <img src="/flags/${sanitizedName}.svg" alt="Bandera de ${e.estado}" loading="lazy" onerror="this.style.display='none';" />
-            ${status === 'critico' ? '<span class="badge-prioritized" style="background: var(--red); color: white;">🚨 Zona Crítica</span>' : ''}
-            ${status === 'en_camino' ? '<span class="badge-prioritized" style="background: var(--yellow); color: var(--blue-dark);">🚚 Ayuda en camino</span>' : ''}
-          </div>
-          <div class="card-body">
-            <div class="card-top"><h3>${e.estado}</h3><span class="card-badge">${count}</span></div>
-            <p class="card-cities">${citiesList}</p>
-          </div>
-        </div>
-      `;
-    }).join("");
-
-    mainGrid.innerHTML = html;
-  }
-
   function renderRefugios(filtered: any[]) {
     gridTitle.textContent = "Refugios encontrados";
     resultsCount.textContent = `${filtered.length} resultado${filtered.length !== 1 ? 's' : ''}`;
     resultsCount.style.display = "inline-block";
-    mainGrid.className = "grid-centros"; // Usamos la misma clase css
+    mainGrid.className = GRID_REFUGIOS;
 
     if (filtered.length === 0) {
-      mainGrid.innerHTML = '<div class="no-results">No se encontraron refugios que coincidan con los criterios.</div>';
+      mainGrid.innerHTML = `<div class="${NO_RESULTS}">No se encontraron refugios que coincidan con los criterios.</div>`;
       return;
     }
 
+    const estadosAyudaMap: Map<string, string> = (window as any).estadosAyudaMap || new Map();
+
     mainGrid.innerHTML = filtered.map((c: any) => {
-      const dbStatus = (window as any).estadosAyudaMap?.get(c.estado);
+      const dbStatus = estadosAyudaMap.get(c.estado);
       const status = dbStatus || (ZONAS_AFECTADAS.includes(c.estado) ? 'critico' : null);
       const isAfectado = status === 'critico';
-      
-      const aceptaHtml = c.acepta?.length
-        ? `<div class="row"><span class="row-label">Aceptan</span><div class="row-value"><div class="tag-group">${c.acepta.map((a: string) => `<span class="tag tag-yellow">${a}</span>`).join("")}</div></div></div>`
+
+      const safeNombre = escapeHtml(c.nombre);
+      const safeCiudad = escapeHtml(c.ciudad);
+      const safeEstado = escapeHtml(c.estado);
+      const safeDireccion = escapeHtml(c.direccion);
+      const safeContacto = escapeHtml(c.contacto);
+      const safeCapacidad = escapeHtml(c.capacidad);
+      const safeAcepta = escapeArray(c.acepta);
+      const safeNecesitan = escapeArray(c.necesitan);
+
+      const aceptaHtml = safeAcepta.length
+        ? row('Aceptan', `<div class="flex flex-wrap gap-1">${safeAcepta.map((a: string) => `<span class="${TAG_YELLOW}">${a}</span>`).join("")}</div>`)
         : '';
-      const necesitanHtml = c.necesitan?.length
-        ? `<div class="row"><span class="row-label">Urgente</span><div class="row-value"><div class="tag-group">${c.necesitan.map((n: string) => `<span class="tag tag-red">${n}</span>`).join("")}</div></div></div>`
+      const necesitanHtml = safeNecesitan.length
+        ? row('Urgente', `<div class="flex flex-wrap gap-1">${safeNecesitan.map((n: string) => `<span class="${TAG_RED}">${n}</span>`).join("")}</div>`)
         : '';
 
+      const badges: string[] = [];
+      if (status === 'critico') badges.push('<span class="inline-flex items-center gap-1 bg-red text-white text-[0.6rem] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded shrink-0"><svg width="8" height="8" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="10"/></svg>Crítico</span>');
+      else if (status === 'en_camino') badges.push('<span class="inline-flex items-center gap-1 bg-yellow text-blue-dark text-[0.6rem] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded shrink-0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>En camino</span>');
+      if (c.tipo === 'privado') badges.push('<span class="inline-flex items-center gap-1 bg-[#DBEAFE] text-[#1E40AF] border border-[#BFDBFE] text-[0.6rem] font-bold uppercase tracking-wide px-1.5 py-0.5 rounded shrink-0"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Casa Particular</span>');
+      const badgesHtml = badges.length ? `<div class="flex flex-col items-end gap-1 shrink-0">${badges.join("")}</div>` : '';
+
+      const iconBg = isAfectado ? 'bg-red' : 'bg-blue';
+
       return `
-        <div class="card centro-card ${isAfectado ? 'card-prioritized' : ''}">
-          <div class="card-head-centro">
-            <div class="card-icon" style="background: ${isAfectado ? 'var(--red)' : 'var(--blue)'};">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline>
-              </svg>
+        <div class="flex flex-col bg-white border ${isAfectado ? 'border-[#FCA5A5] bg-[#FFFAFA]' : 'border-border'} rounded-xl overflow-hidden transition-[box-shadow,border-color] duration-150 hover:shadow-md hover:border-[#C7CDD8]">
+          <div class="flex items-center gap-2.5 pt-3.5 px-4">
+            <div class="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${iconBg}">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
             </div>
-            <div class="card-title-area">
-              <h3>${c.nombre}</h3>
-              <span class="card-loc-meta">${c.ciudad}, ${c.estado}</span>
+            <div class="flex flex-col flex-1 min-w-0">
+              <h3 class="text-sm font-bold tracking-tight text-text leading-snug">${safeNombre}</h3>
+              <span class="text-xs text-muted font-medium truncate">${safeCiudad}, ${safeEstado}</span>
             </div>
-            <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
-              ${status === 'critico' ? '<span class="badge-prioritized-mini" style="background: var(--red); color: white;">🚨 Crítico</span>' : ''}
-              ${status === 'en_camino' ? '<span class="badge-prioritized-mini" style="background: var(--yellow); color: var(--blue-dark);">🚚 En camino</span>' : ''}
-              ${c.tipo === 'privado' ? '<span class="badge-prioritized-mini" style="background-color: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe;">🏠 Casa Particular</span>' : ''}
-            </div>
+            ${badgesHtml}
           </div>
-          <div class="card-body-centro">
-            ${c.direccion ? `<div class="row"><span class="row-label">Dirección</span><div class="row-value">${c.direccion}</div></div>` : ''}
-            ${c.contacto ? `<div class="row"><span class="row-label">Contacto</span><div class="row-value">${c.contacto}</div></div>` : ''}
-            ${c.capacidad ? `<div class="row"><span class="row-label">Capacidad</span><div class="row-value">${c.capacidad}</div></div>` : ''}
+          <div class="px-4 pt-2.5 pb-3.5 flex flex-col gap-1.5">
+            ${c.direccion ? row('Dirección', safeDireccion) : ''}
+            ${c.contacto ? row('Contacto', safeContacto) : ''}
+            ${c.capacidad ? row('Capacidad', safeCapacidad) : ''}
             ${aceptaHtml}${necesitanHtml}
           </div>
         </div>
@@ -255,11 +218,9 @@ const estadosNacionales = estadosOrdenados.filter(e => e.estado !== 'Internacion
     const q = searchInput.value.toLowerCase().trim();
     const city = citySelect.value;
     const type = typeSelect ? typeSelect.value : "";
-    if (!q && !city && !type) { 
-        // Si no hay filtro, mostramos todos los refugios listados o agrupados por estado
-        // Pero el diseño pide mostrar todos los refugios como tarjetas directamente es mejor para los refugios.
-        renderRefugios(refugios);
-        return; 
+    if (!q && !city && !type) {
+      renderRefugios(refugios);
+      return;
     }
 
     let filtered = refugios.filter((c: any) => {
@@ -286,7 +247,7 @@ const estadosNacionales = estadosOrdenados.filter(e => e.estado !== 'Internacion
   async function loadData() {
     try {
       dbStatus.textContent = "Conectando...";
-      dbStatus.className = "status-badge loading";
+      dbStatus.className = SB.loading;
       if (!supabase) throw new Error("Supabase client not initialized");
 
       const { data, error } = await supabase.from('refugios').select('*').eq('verificado', true);
@@ -296,7 +257,7 @@ const estadosNacionales = estadosOrdenados.filter(e => e.estado !== 'Internacion
         const { data: statusData, error: statusError } = await supabase
           .from('estados_ayuda')
           .select('*');
-          
+
         if (!statusError && statusData) {
           const map = new Map<string, string>();
           statusData.forEach(s => map.set(s.estado, s.nivel_ayuda));
@@ -318,13 +279,13 @@ const estadosNacionales = estadosOrdenados.filter(e => e.estado !== 'Internacion
         initCitySelect();
         handleFilter();
         dbStatus.textContent = "En Vivo";
-        dbStatus.className = "status-badge live";
+        dbStatus.className = SB.live;
       }
     } catch (err) {
       console.error("Supabase connection failed:", err);
       dbStatus.textContent = "Error";
-      dbStatus.className = "status-badge offline";
-      mainGrid.innerHTML = '<div class="no-results">Hubo un error cargando los refugios.</div>';
+      dbStatus.className = SB.offline;
+      mainGrid.innerHTML = `<div class="${NO_RESULTS}">Hubo un error cargando los refugios.</div>`;
     }
   }
 

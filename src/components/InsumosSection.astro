@@ -2,12 +2,13 @@
 import { insumos } from "../data/centros";
 ---
 
-<div class="section-card" style="margin-top: 1.5rem;">
-  <h3 class="section-title">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: sub; margin-right: 4px;" aria-hidden="true" focusable="false"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 002 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-    Insumos que se están recibiendo</h3>
-  <div class="tags">
-    {insumos.map((i) => <span class="tag">{i}</span>)}
+<section class="bg-white border border-border rounded-xl p-4 sm:p-5 mb-4 mt-6 shadow-sm">
+  <h3 class="flex items-center gap-2 text-[0.95rem] font-bold tracking-tight text-text mb-3">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue" aria-hidden="true" focusable="false"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 002 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+    Insumos que se están recibiendo
+  </h3>
+  <div class="flex flex-wrap gap-1.5">
+    {insumos.map((i) => <span class="text-xs px-2.5 py-1 rounded-full border font-medium bg-[#FFFBEB] text-amber border-[#FDE68A]">{i}</span>)}
   </div>
-  <a href="/insumos" class="necesidad-cta" style="margin-top: 0.75rem;">Ver guía completa de insumos &rarr;</a>
-</div>
+  <a href="/insumos" class="inline-flex items-center justify-center gap-1 w-full mt-4 px-4 py-2.5 rounded-lg text-sm font-semibold text-blue border-2 border-border no-underline min-h-11 transition-colors duration-150 hover:bg-[#F8F9FB] hover:border-blue">Ver guía completa de insumos &rarr;</a>
+</section>

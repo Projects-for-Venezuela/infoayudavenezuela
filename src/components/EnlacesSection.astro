@@ -1,5 +1,4 @@
 ---
-import "../styles/enlaces.css";
 import { safeUrl } from "../lib/escape";
 
 export interface Props {
@@ -9,27 +8,30 @@ export interface Props {
 const { enlaces } = Astro.props;
 ---
 
-<div class="section-card" style="margin-top: 1.5rem;">
-  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
-    <h3 class="section-title" style="margin-bottom: 0;"><span aria-hidden="true">🔗</span> Sitios Web y Enlaces de Ayuda</h3>
-    <button id="btnSugerirEnlace" class="btn-sugerir-enlace" type="button" aria-label="Sugerir nuevo enlace de ayuda">+ Sugerir Sitio Web</button>
+<section class="bg-white border border-border rounded-xl p-4 sm:p-5 mb-4 mt-6 shadow-sm">
+  <div class="flex justify-between items-center mb-4 flex-wrap gap-2">
+    <h3 class="flex items-center gap-2 text-[0.95rem] font-bold tracking-tight text-text">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue" aria-hidden="true" focusable="false"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+      Sitios Web y Enlaces de Ayuda
+    </h3>
+    <button id="btnSugerirEnlace" type="button" aria-label="Sugerir nuevo enlace de ayuda" class="inline-flex items-center gap-1 bg-white text-blue border border-border px-3 py-2 rounded-lg text-xs font-semibold cursor-pointer min-h-11 transition-colors duration-150 hover:bg-[#F8F9FB] hover:border-blue">+ Sugerir Sitio Web</button>
   </div>
-  <div class="enlaces-grid" id="enlacesGrid">
+  <div id="enlacesGrid" class="grid gap-3 grid-cols-[repeat(auto-fill,minmax(240px,1fr))]">
     {enlaces.map((enlace) => (
-      <div class="enlace-card">
-        <div class="enlace-header">
-          <span class="enlace-cat">{enlace.categoria}</span>
+      <div data-card class="flex flex-col justify-between gap-2 bg-[#F8F9FB] border border-border rounded-lg p-4">
+        <div class="flex justify-between">
+          <span class="text-[0.65rem] font-bold text-blue bg-blue/10 px-1.5 py-0.5 rounded uppercase">{enlace.categoria}</span>
         </div>
-        <h4>{enlace.titulo}</h4>
-        <p>{enlace.descripcion}</p>
-        <a href={safeUrl(enlace.url) || '#'} target="_blank" rel="noopener noreferrer" class="enlace-btn">
+        <h4 class="text-sm font-semibold text-text text-balance">{enlace.titulo}</h4>
+        <p class="text-xs text-muted leading-relaxed grow text-pretty">{enlace.descripcion}</p>
+        <a href={safeUrl(enlace.url) || '#'} target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center bg-white text-blue border border-blue text-xs font-semibold no-underline px-3 py-2 rounded-md min-h-11 mt-1 transition-colors duration-150 hover:bg-blue hover:text-white">
           Visitar Sitio Web &rarr;
         </a>
       </div>
     ))}
   </div>
-  <button id="btnVerMasEnlaces" class="btn-ver-mas" style="display: none;">Ver más &darr;</button>
-</div>
+  <button id="btnVerMasEnlaces" class="inline-flex items-center justify-center gap-1.5 w-full mt-4 p-2 rounded-lg text-sm font-semibold text-blue cursor-pointer min-h-11 transition-colors duration-150 hover:bg-[#F8F9FB] hover:text-blue-dark" style="display: none;">Ver más &darr;</button>
+</section>
 
 <div id="enlacesFallbackData" data-enlaces={JSON.stringify(enlaces)} style="display: none;"></div>
 
@@ -43,27 +45,29 @@ const { enlaces } = Astro.props;
   let enlaces: any[] = [...fallbackData];
   const enlacesGrid = document.getElementById('enlacesGrid') as HTMLElement;
 
-  function renderEnlaces() {
-    if (!enlacesGrid) return;
-    const total = enlaces.length;
-    enlacesGrid.innerHTML = enlaces.map((e: any) => {
-      const safeCategoria = escapeHtml(e.categoria);
-      const safeTitulo = escapeHtml(e.titulo);
-      const safeDescripcion = escapeHtml(e.descripcion);
-      const safeHref = safeUrl(e.url) || '#';
-      return `
-      <div class="enlace-card">
-        <div class="enlace-header">
-          <span class="enlace-cat">${safeCategoria}</span>
+  function cardHtml(e: any) {
+    const safeCategoria = escapeHtml(e.categoria);
+    const safeTitulo = escapeHtml(e.titulo);
+    const safeDescripcion = escapeHtml(e.descripcion);
+    const safeHref = safeUrl(e.url) || '#';
+    return `
+      <div data-card class="flex flex-col justify-between gap-2 bg-[#F8F9FB] border border-border rounded-lg p-4">
+        <div class="flex justify-between">
+          <span class="text-[0.65rem] font-bold text-blue bg-blue/10 px-1.5 py-0.5 rounded uppercase">${safeCategoria}</span>
         </div>
-        <h4>${safeTitulo}</h4>
-        <p>${safeDescripcion}</p>
-        <a href="${safeHref}" target="_blank" rel="noopener noreferrer" class="enlace-btn">
+        <h4 class="text-sm font-semibold text-text text-balance">${safeTitulo}</h4>
+        <p class="text-xs text-muted leading-relaxed grow text-pretty">${safeDescripcion}</p>
+        <a href="${safeHref}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center bg-white text-blue border border-blue text-xs font-semibold no-underline px-3 py-2 rounded-md min-h-11 mt-1 transition-colors duration-150 hover:bg-blue hover:text-white">
           Visitar Sitio Web &rarr;
         </a>
       </div>
     `;
-    }).join("");
+  }
+
+  function renderEnlaces() {
+    if (!enlacesGrid) return;
+    const total = enlaces.length;
+    enlacesGrid.innerHTML = enlaces.map(cardHtml).join("");
 
     const btnVerMas = document.getElementById('btnVerMasEnlaces') as HTMLButtonElement;
     if (total <= 4) {
@@ -75,7 +79,7 @@ const { enlaces } = Astro.props;
     const cols = getComputedStyle(enlacesGrid).gridTemplateColumns.split(' ').length;
     const maxVisible = cols * 2;
 
-    const cards = enlacesGrid.querySelectorAll('.enlace-card');
+    const cards = enlacesGrid.querySelectorAll('[data-card]');
     cards.forEach((card, i) => {
       if (i >= maxVisible) card.classList.add('hidden');
     });
@@ -88,13 +92,13 @@ const { enlaces } = Astro.props;
   const btnVerMas = document.getElementById('btnVerMasEnlaces') as HTMLButtonElement;
   if (btnVerMas) {
     btnVerMas.addEventListener('click', () => {
-      const hiddenCards = enlacesGrid.querySelectorAll('.enlace-card.hidden');
+      const hiddenCards = enlacesGrid.querySelectorAll('[data-card].hidden');
       if (hiddenCards.length > 0) {
         hiddenCards.forEach(c => c.classList.remove('hidden'));
         btnVerMas.textContent = 'Ver menos ↑';
       } else {
         const maxVisible = parseInt(enlacesGrid.dataset.maxVisible || '4');
-        const cards = enlacesGrid.querySelectorAll('.enlace-card');
+        const cards = enlacesGrid.querySelectorAll('[data-card]');
         cards.forEach((card, i) => {
           if (i >= maxVisible) card.classList.add('hidden');
         });

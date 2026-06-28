@@ -1,0 +1,59 @@
+---
+const MOCK_TOTAL = 0;
+const MOCK_MISSING = 0;
+const MOCK_FOUND = 0;
+---
+
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 mb-5">
+  <div class="bg-blue/5 border border-blue/20 rounded-xl px-2 py-4 text-center shadow-[0_1px_2px_rgba(16,24,40,0.04)] transition-colors duration-200 hover:border-blue/40">
+    <span class="block text-[1.75rem] sm:text-3xl font-extrabold text-blue leading-none mb-1.5 tabular-nums" id="statPersonasTotal">{MOCK_TOTAL}</span>
+    <span class="text-[0.64rem] font-bold uppercase tracking-wide text-blue-dark/70">Reportados</span>
+  </div>
+  <div class="bg-red/5 border border-red/20 rounded-xl px-2 py-4 text-center shadow-[0_1px_2px_rgba(16,24,40,0.04)] transition-colors duration-200 hover:border-red/40">
+    <span class="block text-[1.75rem] sm:text-3xl font-extrabold text-red leading-none mb-1.5 tabular-nums" id="statPersonasMissing">{MOCK_MISSING}</span>
+    <span class="text-[0.64rem] font-bold uppercase tracking-wide text-red-dark/70">Desaparecidos</span>
+  </div>
+  <div class="bg-green/5 border border-green/20 rounded-xl px-2 py-4 text-center shadow-[0_1px_2px_rgba(16,24,40,0.04)] transition-colors duration-200 hover:border-green/40">
+    <span class="block text-[1.75rem] sm:text-3xl font-extrabold text-green leading-none mb-1.5 tabular-nums" id="statPersonasFound">{MOCK_FOUND}</span>
+    <span class="text-[0.64rem] font-bold uppercase tracking-wide text-blue-dark/70">Encontrados</span>
+  </div>
+</div>
+
+<script>
+  import { supabase } from "../lib/supabase";
+
+  const statTotal = document.getElementById("statPersonasTotal");
+  const statMissing = document.getElementById("statPersonasMissing");
+  const statFound = document.getElementById("statPersonasFound");
+
+  async function loadPersonasStats() {
+    if (!supabase || !statTotal || !statMissing || !statFound) return;
+
+    try {
+      const { count: totalCount, error: e1 } = await supabase
+        .from("desaparecidos")
+        .select("*", { count: "exact", head: true });
+
+      const { count: missingCount, error: e2 } = await supabase
+        .from("desaparecidos")
+        .select("*", { count: "exact", head: true })
+        .eq("status", "missing");
+
+      const { count: foundCount, error: e3 } = await supabase
+        .from("desaparecidos")
+        .select("*", { count: "exact", head: true })
+        .eq("status", "found");
+
+      if (e1 || e2 || e3) throw (e1 || e2 || e3);
+
+      statTotal.textContent = String(totalCount || 0);
+      statMissing.textContent = String(missingCount || 0);
+      statFound.textContent = String(foundCount || 0);
+    } catch (err) {
+      console.error("Error cargando stats de personas:", err);
+    }
+  }
+
+  loadPersonasStats();
+  setInterval(loadPersonasStats, 300000); // 5min
+</script>

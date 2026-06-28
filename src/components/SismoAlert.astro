@@ -1,0 +1,144 @@
+---
+---
+<div
+  id="sismoAlert"
+  class="hidden opacity-0 -translate-y-2 transition-[opacity,transform] duration-300 ease-out
+         data-[visible=true]:opacity-100 data-[visible=true]:translate-y-0 motion-reduce:transition-none
+         items-center overflow-hidden rounded-full h-[50px] pr-2 mb-10
+         bg-gradient-to-r from-red to-red-dark text-white
+         shadow-lg shadow-red/30"
+  role="status"
+  aria-live="polite"
+  hidden
+>
+  <div class="flex flex-col items-center justify-center shrink-0 w-[50px] h-[50px] bg-black/20 rounded-full">
+    <span id="sismoAlertMag" class="font-extrabold tabular-nums leading-none text-lg"></span>
+    <span class="text-[8px] font-semibold uppercase tracking-[0.1em] text-white/75">Mw</span>
+  </div>
+
+  <div class="hidden sm:flex items-center gap-2 shrink-0 pl-3.5 pr-4" aria-hidden="true">
+    <span class="relative flex w-2.5 h-2.5">
+      <span class="absolute inline-flex w-full h-full rounded-full bg-white opacity-75 animate-ping motion-reduce:animate-none"></span>
+      <span class="relative inline-flex w-2.5 h-2.5 rounded-full bg-white"></span>
+    </span>
+    <span class="text-[10px] font-bold uppercase tracking-[0.14em] text-white/80 whitespace-nowrap">Sismo</span>
+  </div>
+
+  <div class="flex-1 flex items-center gap-3 min-w-0 pl-3.5 sm:pl-0">
+    <span id="sismoAlertText" class="text-[13px] font-semibold truncate"></span>
+    <span id="sismoAlertPills" class="hidden md:inline shrink-0 text-[12px] font-medium text-white/85 whitespace-nowrap"></span>
+  </div>
+
+  <div class="hidden sm:flex items-center gap-1.5 shrink-0 pl-3.5 pr-1.5 border-l border-white/20">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>
+    </svg>
+    <span id="sismoAlertTime" class="text-[12px] font-semibold whitespace-nowrap"></span>
+  </div>
+
+  <a
+    id="sismoAlertLink"
+    class="flex items-center gap-1.5 shrink-0 ml-2 sm:ml-3.5 px-3 sm:px-3.5 py-2
+           bg-white/15 hover:bg-white/25 rounded-full text-white no-underline whitespace-nowrap
+           text-[12px] font-semibold transition-colors duration-200 motion-reduce:transition-none"
+  >
+    USGS
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M7 17 17 7M17 7H8M17 7v9"/>
+    </svg>
+  </a>
+
+  <button
+    id="sismoAlertClose"
+    type="button"
+    class="grid place-items-center shrink-0 w-11 h-11 ml-1
+           bg-transparent hover:bg-white/20 border-0 rounded-full cursor-pointer text-white
+           transition-colors duration-200 motion-reduce:transition-none"
+    aria-label="Cerrar aviso de sismo"
+  >
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2.4" stroke-linecap="round" aria-hidden="true">
+      <path d="M6 6l12 12M18 6 6 18"/>
+    </svg>
+  </button>
+</div>
+
+<script>
+  import { safeUrl } from "../lib/escape.js";
+
+  const DISMISS_KEY = "sismoAlertDismissed";
+
+  function relativeTime(ms: number): string {
+    const diff = Date.now() - ms;
+    if (diff < 0) return "ahora";
+    const min = Math.round(diff / 60000);
+    if (min < 1) return "hace instantes";
+    if (min < 60) return `hace ${min} min`;
+    const h = Math.round(min / 60);
+    if (h < 24) return `hace ${h} h`;
+    return `hace ${Math.round(h / 24)} d`;
+  }
+
+  function initSismoAlert() {
+    const box = document.getElementById("sismoAlert") as HTMLElement | null;
+    const link = document.getElementById("sismoAlertLink") as HTMLAnchorElement | null;
+    const mag = document.getElementById("sismoAlertMag") as HTMLElement | null;
+    const text = document.getElementById("sismoAlertText") as HTMLElement | null;
+    const pills = document.getElementById("sismoAlertPills") as HTMLElement | null;
+    const time = document.getElementById("sismoAlertTime") as HTMLElement | null;
+    const closeBtn = document.getElementById("sismoAlertClose") as HTMLButtonElement | null;
+    if (!box || !link || !mag || !text || !pills || !time || !closeBtn) return;
+
+    if (sessionStorage.getItem(DISMISS_KEY) === "1") return;
+
+    fetch("/api/sismos.json")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (!data || !data.max || data.max.mag <= 4.0) return;
+        const href = safeUrl(data.max.url);
+        if (!href) return;
+
+        mag.textContent = data.max.mag.toFixed(1);
+        text.textContent = data.max.place || "cerca de Venezuela";
+
+        const parts: string[] = [];
+        if (typeof data.max.depth === "number") {
+          parts.push(`${Math.round(data.max.depth)} km prof.`);
+        }
+        if (typeof data.max.time === "number") {
+          const local = new Date(data.max.time).toLocaleTimeString("es-VE", {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+          parts.push(`${local} local`);
+          time.textContent = relativeTime(data.max.time);
+        }
+        if (parts.length) pills.textContent = `· ${parts.join(" · ")}`;
+
+        link.setAttribute("href", href);
+        link.setAttribute("target", "_blank");
+        link.setAttribute("rel", "noopener noreferrer");
+
+        box.hidden = false;
+        box.classList.remove("hidden");
+        box.classList.add("flex");
+        requestAnimationFrame(() => box.setAttribute("data-visible", "true"));
+      })
+      .catch(() => {});
+
+    closeBtn.addEventListener("click", () => {
+      box.removeAttribute("data-visible");
+      box.hidden = true;
+      box.classList.add("hidden");
+      sessionStorage.setItem(DISMISS_KEY, "1");
+    });
+  }
+
+  if ("requestIdleCallback" in window) {
+    requestIdleCallback(initSismoAlert);
+  } else {
+    setTimeout(initSismoAlert, 200);
+  }
+</script>

@@ -1,101 +1,100 @@
-<dialog id="sugerirRefugioDialog" class="modal-dialog" aria-labelledby="sugerirRefugioDialogTitle">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h2 id="sugerirRefugioDialogTitle">Sugerir Refugio</h2>
-      <button id="closeRefugioDialogBtn" class="close-btn" aria-label="Cerrar modal">&times;</button>
+<dialog id="sugerirRefugioDialog" aria-labelledby="sugerirRefugioDialogTitle" class="m-auto w-[90%] max-w-[550px] p-0 border-0 rounded-card bg-white overflow-hidden outline-none shadow-[0_20px_25px_-5px_rgba(0,0,0,0.1),0_10px_10px_-5px_rgba(0,0,0,0.04)] backdrop:bg-[rgba(15,23,42,0.65)] backdrop:backdrop-blur-xs backdrop:animate-[fadeIn_0.2s_ease-out]">
+  <div class="p-5 sm:p-6 max-h-[90vh] overflow-y-auto">
+    <div class="flex justify-between items-center mb-4 pb-3 border-b border-border">
+      <h2 id="sugerirRefugioDialogTitle" class="text-[1.2rem] font-bold text-blue-dark tracking-tight">Sugerir Refugio</h2>
+      <button id="closeRefugioDialogBtn" type="button" aria-label="Cerrar modal" class="flex items-center justify-center min-w-11 min-h-11 -mr-2 bg-transparent border-0 text-2xl leading-none text-muted cursor-pointer transition-colors duration-150 hover:text-red">&times;</button>
     </div>
-    <form id="sugerirRefugioForm" class="modal-form">
-      <p class="form-help">Ingresa los datos del refugio. Se publicará en vivo una vez sea verificado.</p>
 
+    <form id="sugerirRefugioForm" class="flex flex-col gap-3">
+      <p class="text-[0.78rem] text-muted -mb-0.5 text-pretty">Ingresa los datos del refugio. Se publicará en vivo una vez sea verificado.</p>
 
-      <div class="form-group">
-        <label for="formRefugioEstado">Estado *</label>
-        <select id="formRefugioEstado" required>
-          <option value="">Selecciona un estado</option>
-          <option value="Distrito Capital">Distrito Capital</option>
-          <option value="Miranda">Miranda</option>
-          <option value="La Guaira">La Guaira</option>
-          <option value="Aragua">Aragua</option>
-          <option value="Carabobo">Carabobo</option>
-          <option value="Lara">Lara</option>
-          <option value="Sucre">Sucre</option>
-          <option value="Nueva Esparta">Nueva Esparta</option>
-          <option value="Anzoátegui">Anzoátegui</option>
-          <option value="Bolívar">Bolívar</option>
-          <option value="Barinas">Barinas</option>
-          <option value="Monagas">Monagas</option>
-          <option value="Yaracuy">Yaracuy</option>
-          <option value="Zulia">Zulia</option>
-          <option value="Mérida">Mérida</option>
-          <option value="Táchira">Táchira</option>
-          <option value="Trujillo">Trujillo</option>
-          <option value="Falcón">Falcón</option>
-          <option value="Cojedes">Cojedes</option>
-          <option value="Portuguesa">Portuguesa</option>
-          <option value="Guárico">Guárico</option>
-          <option value="Apure">Apure</option>
-          <option value="Delta Amacuro">Delta Amacuro</option>
-          <option value="Amazonas">Amazonas</option>
-        </select>
-      </div>
-
-
-
-      <div class="form-group">
-        <label for="formRefugioTipo">Tipo de Ayuda / Refugio *</label>
-        <select id="formRefugioTipo" required>
-          <option value="oficial">Refugio Masivo / Centro Oficial</option>
-          <option value="privado">Casa Particular / Privada</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label for="formRefugioCiudad">Ciudad *</label>
-        <input type="text" id="formRefugioCiudad" placeholder="Ej. Barquisimeto, Altamira" required maxlength="60" />
-      </div>
-
-      <div class="form-group">
-        <label for="formRefugioNombre">Nombre del Refugio *</label>
-        <input type="text" id="formRefugioNombre" placeholder="Ej. Polideportivo o Escuela Municipal" required />
-      </div>
-
-      <div class="form-group">
-        <label for="formRefugioDireccion">Dirección Completa</label>
-        <textarea id="formRefugioDireccion" rows="2" placeholder="Dirección exacta del refugio..."></textarea>
-      </div>
-
-      <div class="form-row">
-        <div class="form-group">
-          <label for="formRefugioContacto">Contacto / Teléfono</label>
-          <input type="text" id="formRefugioContacto" placeholder="Ej. 0424-1234567" />
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div class="flex flex-col gap-1">
+          <label for="formRefugioEstado" class="text-[0.78rem] font-semibold text-text">Estado *</label>
+          <select id="formRefugioEstado" required class="w-full px-3 py-2.5 text-[0.85rem] bg-white border-[1.5px] border-border rounded-lg outline-none cursor-pointer transition-colors duration-200 focus:border-blue">
+            <option value="">Selecciona un estado</option>
+            <option value="Distrito Capital">Distrito Capital</option>
+            <option value="Miranda">Miranda</option>
+            <option value="La Guaira">La Guaira</option>
+            <option value="Aragua">Aragua</option>
+            <option value="Carabobo">Carabobo</option>
+            <option value="Lara">Lara</option>
+            <option value="Sucre">Sucre</option>
+            <option value="Nueva Esparta">Nueva Esparta</option>
+            <option value="Anzoátegui">Anzoátegui</option>
+            <option value="Bolívar">Bolívar</option>
+            <option value="Barinas">Barinas</option>
+            <option value="Monagas">Monagas</option>
+            <option value="Yaracuy">Yaracuy</option>
+            <option value="Zulia">Zulia</option>
+            <option value="Mérida">Mérida</option>
+            <option value="Táchira">Táchira</option>
+            <option value="Trujillo">Trujillo</option>
+            <option value="Falcón">Falcón</option>
+            <option value="Cojedes">Cojedes</option>
+            <option value="Portuguesa">Portuguesa</option>
+            <option value="Guárico">Guárico</option>
+            <option value="Apure">Apure</option>
+            <option value="Delta Amacuro">Delta Amacuro</option>
+            <option value="Amazonas">Amazonas</option>
+          </select>
         </div>
-        <div class="form-group">
-          <label for="formRefugioCapacidad">Capacidad Aproximada</label>
-          <input type="text" id="formRefugioCapacidad" placeholder="Ej. 50 personas, 20 familias" />
+        <div class="flex flex-col gap-1">
+          <label for="formRefugioTipo" class="text-[0.78rem] font-semibold text-text">Tipo de Ayuda / Refugio *</label>
+          <select id="formRefugioTipo" required class="w-full px-3 py-2.5 text-[0.85rem] bg-white border-[1.5px] border-border rounded-lg outline-none cursor-pointer transition-colors duration-200 focus:border-blue">
+            <option value="oficial">Refugio Masivo / Centro Oficial</option>
+            <option value="privado">Casa Particular / Privada</option>
+          </select>
         </div>
       </div>
 
-      <div class="form-group">
-        <label for="formRefugioAcepta">¿Qué insumos / donaciones aceptan? (Opcional)</label>
-        <input type="text" id="formRefugioAcepta" placeholder="Ej. Colchones, Agua, Ropa" />
+      <div class="flex flex-col gap-1">
+        <label for="formRefugioCiudad" class="text-[0.78rem] font-semibold text-text">Ciudad *</label>
+        <input type="text" id="formRefugioCiudad" placeholder="Ej. Barquisimeto, Altamira" required maxlength="60" class="w-full px-3 py-2.5 text-[0.85rem] bg-white border-[1.5px] border-border rounded-lg outline-none transition-colors duration-200 focus:border-blue" />
       </div>
 
-      <div class="form-group">
-        <label for="formRefugioNecesitan">¿Qué necesitan URGENTE? (Opcional)</label>
-        <input type="text" id="formRefugioNecesitan" placeholder="Ej. Fórmulas, Pañales, Medicinas" />
+      <div class="flex flex-col gap-1">
+        <label for="formRefugioNombre" class="text-[0.78rem] font-semibold text-text">Nombre del Refugio *</label>
+        <input type="text" id="formRefugioNombre" placeholder="Ej. Polideportivo o Escuela Municipal" required class="w-full px-3 py-2.5 text-[0.85rem] bg-white border-[1.5px] border-border rounded-lg outline-none transition-colors duration-200 focus:border-blue" />
       </div>
 
-      <div class="form-actions">
-        <button type="button" id="cancelRefugioFormBtn" class="btn btn-secondary">Cancelar</button>
-        <button type="submit" id="submitRefugioFormBtn" class="btn btn-primary">Enviar Sugerencia</button>
+      <div class="flex flex-col gap-1">
+        <label for="formRefugioDireccion" class="text-[0.78rem] font-semibold text-text">Dirección Completa</label>
+        <textarea id="formRefugioDireccion" rows="2" placeholder="Dirección exacta del refugio..." class="w-full px-3 py-2 text-[0.85rem] bg-white border-[1.5px] border-border rounded-lg outline-none transition-colors duration-200 resize-y focus:border-blue"></textarea>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div class="flex flex-col gap-1">
+          <label for="formRefugioContacto" class="text-[0.78rem] font-semibold text-text">Contacto / Teléfono</label>
+          <input type="text" id="formRefugioContacto" placeholder="Ej. 0424-1234567" class="w-full px-3 py-2.5 text-[0.85rem] bg-white border-[1.5px] border-border rounded-lg outline-none transition-colors duration-200 focus:border-blue" />
+        </div>
+        <div class="flex flex-col gap-1">
+          <label for="formRefugioCapacidad" class="text-[0.78rem] font-semibold text-text">Capacidad Aproximada</label>
+          <input type="text" id="formRefugioCapacidad" placeholder="Ej. 50 personas, 20 familias" class="w-full px-3 py-2.5 text-[0.85rem] bg-white border-[1.5px] border-border rounded-lg outline-none transition-colors duration-200 focus:border-blue" />
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="formRefugioAcepta" class="text-[0.78rem] font-semibold text-text">¿Qué insumos / donaciones aceptan? <span class="font-normal text-muted">(opcional)</span></label>
+        <input type="text" id="formRefugioAcepta" placeholder="Ej. Colchones, Agua, Ropa" class="w-full px-3 py-2.5 text-[0.85rem] bg-white border-[1.5px] border-border rounded-lg outline-none transition-colors duration-200 focus:border-blue" />
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="formRefugioNecesitan" class="text-[0.78rem] font-semibold text-text">¿Qué necesitan URGENTE? <span class="font-normal text-muted">(opcional)</span></label>
+        <input type="text" id="formRefugioNecesitan" placeholder="Ej. Fórmulas, Pañales, Medicinas" class="w-full px-3 py-2.5 text-[0.85rem] bg-white border-[1.5px] border-border rounded-lg outline-none transition-colors duration-200 focus:border-blue" />
+      </div>
+
+      <div class="flex justify-end gap-2 mt-2 pt-4 border-t border-border">
+        <button type="button" id="cancelRefugioFormBtn" class="min-h-11 px-5 py-2 rounded-lg text-[0.85rem] font-semibold cursor-pointer bg-white text-text border border-border transition-colors duration-150 hover:bg-[#F1F5F9] hover:border-[#CBD5E1]">Cancelar</button>
+        <button type="submit" id="submitRefugioFormBtn" class="min-h-11 px-5 py-2 rounded-lg text-[0.85rem] font-semibold cursor-pointer bg-blue text-white border border-transparent transition-colors duration-150 hover:bg-blue-dark">Enviar Sugerencia</button>
       </div>
     </form>
 
-    <div id="formRefugioSuccessMessage" class="form-success-msg" style="display: none;">
-      <div class="success-icon">✓</div>
-      <h3>¡Sugerencia Enviada!</h3>
-      <p>Muchas gracias por tu valioso aporte para ayudar a los afectados. Los datos han sido registrados de forma segura y se publicarán tan pronto sean verificados por un moderador.</p>
-      <button id="successRefugioCloseBtn" class="btn btn-primary">Entendido</button>
+    <div id="formRefugioSuccessMessage" class="flex-col items-center text-center py-8 px-4 gap-3" style="display: none;">
+      <div class="w-12 h-12 rounded-full bg-[#DCFCE7] text-[#15803D] flex items-center justify-center text-2xl font-bold">✓</div>
+      <h3 class="text-[1.2rem] font-bold text-[#15803D] tracking-tight">¡Sugerencia Enviada!</h3>
+      <p class="text-[0.86rem] text-muted leading-relaxed mb-2 text-pretty">Muchas gracias por tu valioso aporte para ayudar a los afectados. Los datos han sido registrados de forma segura y se publicarán tan pronto sean verificados por un moderador.</p>
+      <button id="successRefugioCloseBtn" class="min-h-11 px-5 py-2 rounded-lg text-[0.85rem] font-semibold cursor-pointer bg-blue text-white border border-transparent transition-colors duration-150 hover:bg-blue-dark">Entendido</button>
     </div>
   </div>
 </dialog>
@@ -118,8 +117,6 @@
       sugerirRefugioDialog.showModal();
     });
   }
-
-
 
   const closeRefugioForm = () => { sugerirRefugioDialog.close(); };
   if (closeRefugioDialogBtn) closeRefugioDialogBtn.addEventListener('click', closeRefugioForm);
@@ -155,7 +152,7 @@
       const necesitan = necesitan_raw ? necesitan_raw.split(',').map(s => s.trim()).filter(Boolean) : [];
 
       if (!supabase) {
-        alert('El sistema est\u00E1 operando en modo local/sin conexi\u00F3n.');
+        alert('El sistema está operando en modo local/sin conexión.');
         submitBtn.textContent = originalText;
         submitBtn.disabled = false;
         return;
