@@ -8,59 +8,74 @@ import { categorias, consejos } from "../data/insumos";
   canonical="https://infoayudavenezuela.vercel.app/insumos"
   showHero={false}
 >
-  <header class="ins-hero">
-    <div class="ins-hero-bg">
-      <div class="ins-hero-content">
-        <span class="ins-hero-badge">GUÍA</span>
-        <h1>Insumos <span>Necesarios</span></h1>
-        <p>Todo lo que puedes donar para ayudar a los afectados — <strong>medicinas, alimentos, herramientas, higiene y más</strong></p>
-      </div>
+  <header class="relative -mt-4 md:-mt-6 mb-6 w-screen ml-[calc(-50vw+50%)] overflow-hidden bg-gradient-to-br from-[#065F46] via-[#059669] to-[#10B981] text-white">
+    <div class="pointer-events-none absolute inset-0 bg-[repeating-linear-gradient(45deg,transparent,transparent_20px,rgba(255,255,255,0.04)_20px,rgba(255,255,255,0.04)_40px)]" aria-hidden="true"></div>
+    <div class="relative max-w-[640px] mx-auto text-center px-5 py-10 sm:py-12">
+      <span class="inline-block bg-white/20 border border-white/25 text-white text-[0.7rem] font-extrabold uppercase tracking-[0.06em] px-3 py-1 rounded-full mb-4">Guía</span>
+      <h1 class="text-2xl sm:text-[1.9rem] font-extrabold tracking-tight leading-tight text-balance mb-2">
+        Insumos <span class="text-[#6EE7B7]">Necesarios</span>
+      </h1>
+      <p class="text-sm sm:text-[0.9rem] text-white/85 max-w-[480px] mx-auto leading-relaxed text-balance">
+        Todo lo que puedes donar para ayudar a los afectados — <strong class="text-white font-semibold">medicinas, alimentos, herramientas, higiene y más</strong>
+      </p>
     </div>
   </header>
 
-  <div class="ins-alert">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+  <div class="flex items-center gap-2.5 bg-[#FEF3C7] border border-[#FDE68A] rounded-xl px-4 py-3 mb-5 text-sm text-[#92400E]">
+    <svg class="shrink-0" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
     <span><strong>Importante:</strong> Verifica con tu centro de acopio más cercano qué insumos están recibiendo actualmente antes de movilizarte.</span>
   </div>
 
-  <div class="ins-grid">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-start mb-6">
     {categorias.map((cat) => (
-      <section class="ins-categoria">
-        <div class="ins-cat-head" style={`background:${cat.color};`}>
-          <span class="ins-cat-icon">{cat.icono}</span>
-          <h2>{cat.nombre}</h2>
-          <span class="ins-cat-count">{cat.items.length}</span>
-        </div>
-        <div class="ins-cat-body">
+      <details data-acc class="group bg-white rounded-xl border border-border overflow-hidden shadow-[0_1px_2px_rgba(16,24,40,0.04)]" open>
+        <summary class="flex items-center gap-2.5 px-4 py-3 text-white cursor-pointer md:cursor-default md:pointer-events-none select-none list-none [&::-webkit-details-marker]:hidden" style={`background:${cat.color};`}>
+          <span class="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center shrink-0 text-base">{cat.icono}</span>
+          <h2 class="flex-1 text-[0.95rem] font-bold tracking-tight">{cat.nombre}</h2>
+          <span class="text-xs font-bold bg-white/20 px-2 py-0.5 rounded-full tabular-nums">{cat.items.length}</span>
+          <svg class="shrink-0 text-white/80 transition-transform duration-200 group-open:rotate-180 md:hidden" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><polyline points="6 9 12 15 18 9"/></svg>
+        </summary>
+        <div class="p-3 flex flex-col gap-2 group-open:animate-[accordion-down_.2s_ease-out]">
           {cat.items.map((item) => (
-            <div class="ins-item">
-              <span class="ins-item-bullet" style={`background:${cat.color};`}></span>
-              <div class="ins-item-info">
-                <span class="ins-item-nombre">{item.nombre}</span>
-                <span class="ins-item-desc">{item.descripcion}</span>
+            <div class="flex items-start gap-2.5 px-3 py-2.5 rounded-lg bg-[#FAFBFC] border border-border transition-colors duration-200 hover:border-[#C7CDD8] hover:bg-white">
+              <span class="w-2 h-2 rounded-full shrink-0 mt-1.5" style={`background:${cat.color};`}></span>
+              <div class="flex-1 min-w-0">
+                <span class="block text-sm font-bold text-text mb-0.5">{item.nombre}</span>
+                <span class="block text-xs text-muted leading-relaxed text-pretty">{item.descripcion}</span>
               </div>
             </div>
           ))}
         </div>
-      </section>
+      </details>
     ))}
   </div>
 
-  <div class="ins-consejos">
-    <h3>
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0018 8 6 6 0 006 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 008.91 14"/></svg>
-      Consejos para donar</h3>
-    <div class="ins-consejos-list">
+  <div class="bg-white rounded-xl border border-border p-5 mb-6 shadow-[0_1px_2px_rgba(16,24,40,0.04)]">
+    <h3 class="flex items-center gap-2 text-[0.95rem] font-bold tracking-tight mb-3">
+      <svg class="text-blue shrink-0" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0018 8 6 6 0 006 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 008.91 14"/></svg>
+      Consejos para donar
+    </h3>
+    <div class="flex flex-col gap-2.5">
       {consejos.map((c, i) => (
-        <div class="ins-consejo">
-          <span class="ins-consejo-num">{i + 1}</span>
-          <span>{c}</span>
+        <div class="flex items-start gap-2.5 text-sm text-text leading-relaxed">
+          <span class="w-[22px] h-[22px] shrink-0 bg-blue text-white rounded-full flex items-center justify-center text-xs font-bold tabular-nums mt-0.5">{i + 1}</span>
+          <span class="text-pretty">{c}</span>
         </div>
       ))}
     </div>
   </div>
 
-  <div class="ins-footer">
-    <a href="/">&larr; Volver al inicio</a>
+  <div class="mt-6 text-center">
+    <a href="/" class="inline-flex items-center gap-1.5 text-sm font-medium text-muted no-underline px-4 py-2 rounded-lg transition-colors duration-150 hover:bg-[#F1F5F9] hover:text-text">&larr; Volver al inicio</a>
   </div>
 </Layout>
+
+<script>
+  const mq = window.matchMedia("(max-width: 767px)");
+  const accs = document.querySelectorAll("details[data-acc]");
+  function syncAcc() {
+    accs.forEach((d) => { (d as HTMLDetailsElement).open = !mq.matches; });
+  }
+  mq.addEventListener("change", syncAcc);
+  syncAcc();
+</script>
