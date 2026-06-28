@@ -1,7 +1,8 @@
 ---
 import "../styles/emergencia.css";
 import Layout from "../layouts/Layout.astro";
-import { numeros_nacionales, caracas } from "../data/emergencia";
+import { numeros_nacionales as fallbackNacionales, caracas as fallbackCaracas } from "../data/emergencia";
+import { supabase } from "../lib/supabase.js";
 
 const catMeta = {
   bomberos: { label: "Bomberos", icon: "fire", color: "#CF142B" },
@@ -9,6 +10,38 @@ const catMeta = {
   rescate: { label: "Rescate", icon: "ambulance", color: "#059669" },
   policia: { label: "Policía", icon: "police", color: "#1F2937" },
 };
+
+let numeros_nacionales = fallbackNacionales;
+let caracas = fallbackCaracas;
+
+try {
+  if (supabase) {
+    const { data, error } = await supabase
+      .from("numeros_emergencia")
+      .select("categoria,subcategoria,nombre,numero,orden")
+      .order("orden");
+    if (error) throw error;
+    if (data && data.length > 0) {
+      const bySub = (sub: string) =>
+        data
+          .filter((r: any) => r.categoria === "caracas" && r.subcategoria === sub)
+          .sort((a: any, b: any) => a.orden - b.orden);
+      numeros_nacionales = data
+        .filter((r: any) => r.categoria === "nacional")
+        .sort((a: any, b: any) => a.orden - b.orden)
+        .map((r: any) => ({ servicio: r.nombre, numero: r.numero }));
+      caracas = {
+        bomberos: bySub("bomberos").map((r: any) => ({ nombre: r.nombre, telefono: r.numero })),
+        proteccion_civil: bySub("proteccion_civil").map((r: any) => ({ nombre: r.nombre, telefono: r.numero })),
+        rescate: bySub("rescate").map((r: any) => ({ nombre: r.nombre, telefono: r.numero })),
+        policia: bySub("policia").map((r: any) => ({ nombre: r.nombre, telefono: r.numero })),
+        radio_informacion: bySub("radio_informacion").map((r: any) => r.nombre),
+      };
+    }
+  }
+} catch (err) {
+  console.warn("emergencia: Supabase no disponible, usando fallback local.", err);
+}
 ---
 
 <Layout title="Números de Emergencia"

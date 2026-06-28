@@ -176,8 +176,6 @@ import ReportarNecesidadModal from "./ReportarNecesidadModal.astro";
         successMsg.style.display = 'none';
         form.reset();
         if (typeof clearNecErrors === 'function') clearNecErrors();
-        document.getElementById('necFormPaisGroup')!.style.display = 'none';
-        (document.getElementById('necFormPais') as HTMLInputElement).required = false;
         dialog.showModal();
       }
     });
@@ -390,8 +388,6 @@ import ReportarNecesidadModal from "./ReportarNecesidadModal.astro";
       necFormSuccessMessage.style.display = 'none';
       reportarNecesidadForm.reset();
       clearNecErrors();
-      document.getElementById('necFormPaisGroup')!.style.display = 'none';
-      (document.getElementById('necFormPais') as HTMLInputElement).required = false;
       reportarNecesidadDialog.showModal();
     });
   }
