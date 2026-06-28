@@ -462,8 +462,11 @@ import ReportarNecesidadModal from "./ReportarNecesidadModal.astro";
       submitBtn.disabled = true;
 
       try {
+        const categoriasStr = categorias.length > 0 ? `[Categorías: ${categorias.join(', ')}]\n\n` : '';
+        const finalQueNecesitan = categoriasStr + que_necesitan;
+        
         const { error } = await supabase.from('necesidades_urgentes').insert({
-          estado, ciudad, lugar, direccion, que_necesitan, contacto, categorias, verificado: false
+          estado, ciudad, lugar, direccion, que_necesitan: finalQueNecesitan, contacto, verificado: false
         });
         if (error) throw error;
         reportarNecesidadForm.style.display = 'none';
