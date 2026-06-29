@@ -3,18 +3,16 @@ import Layout from "../layouts/Layout.astro";
 import EmergenciaCTA from "../components/EmergenciaCTA.astro";
 ---
 
-<Layout title="Necesidades Urgentes"
-  description="Necesidades urgentes reportadas por los afectados por el sismo del 24 de junio de 2026 en Venezuela: agua, alimentos, medicinas e insumos prioritarios. Reporta o atiende una necesidad."
-  showHero={false}>
+<Layout title="Donación de Sangre" showHero={false}>
   <header class="relative -mt-4 md:-mt-6 mb-6 w-screen ml-[calc(-50vw+50%)] overflow-hidden bg-gradient-to-br from-red-dark via-[#991B1B] to-red text-white">
     <div class="pointer-events-none absolute inset-0 bg-[repeating-linear-gradient(45deg,transparent,transparent_20px,rgba(255,255,255,0.04)_20px,rgba(255,255,255,0.04)_40px)]" aria-hidden="true"></div>
     <div class="relative max-w-[640px] mx-auto text-center px-5 py-10 sm:py-12">
-      <span class="inline-block bg-white/20 border border-white/25 text-white text-[0.7rem] font-extrabold uppercase tracking-[0.06em] px-3 py-1 rounded-full mb-4">Alerta</span>
+      <span class="inline-block bg-white/20 border border-white/25 text-white text-[0.7rem] font-extrabold uppercase tracking-[0.06em] px-3 py-1 rounded-full mb-4">Módulo de Salud</span>
       <h1 class="text-2xl sm:text-[1.9rem] font-extrabold tracking-tight leading-tight text-balance mb-2">
-        Necesidades <span class="text-[#FCA5A5]">Urgentes</span>
+        Donación de <span class="text-[#FCA5A5]">Sangre</span>
       </h1>
       <p class="text-sm sm:text-[0.9rem] text-white/85 max-w-[480px] mx-auto leading-relaxed text-balance">
-        Lugares, refugios y comunidades que requieren asistencia inmediata — <strong class="text-white font-semibold">reportado por la comunidad</strong>
+        Directorio oficial de hospitales y bancos de sangre que requieren donantes, con información actualizada de los tipos requeridos.
       </p>
     </div>
   </header>
@@ -22,8 +20,8 @@ import EmergenciaCTA from "../components/EmergenciaCTA.astro";
   <div class="flex flex-col sm:flex-row gap-2.5 sm:items-center mb-4">
     <div class="relative flex-1 min-w-0">
       <svg class="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#9CA3AF] pointer-events-none" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="8"></circle><path d="M21 21l-4.35-4.35"></path></svg>
-      <label for="necSearchInput" class="sr-only">Buscar necesidades</label>
-      <input type="text" id="necSearchInput" placeholder="Buscar por lugar, ciudad o necesidad..." class="w-full h-11 pl-11 pr-4 text-sm bg-white border-[1.5px] border-border rounded-[10px] outline-none transition-[border-color,box-shadow] duration-200 focus:border-red focus:shadow-[0_0_0_3px_rgba(207,20,43,0.1)]" />
+      <label for="necSearchInput" class="sr-only">Buscar centros</label>
+      <input type="text" id="necSearchInput" placeholder="Buscar por hospital, ciudad o tipo de sangre..." class="w-full h-11 pl-11 pr-4 text-sm bg-white border-[1.5px] border-border rounded-[10px] outline-none transition-[border-color,box-shadow] duration-200 focus:border-red focus:shadow-[0_0_0_3px_rgba(207,20,43,0.1)]" />
     </div>
     <label for="necEstadoFilter" class="sr-only">Filtrar por estado</label>
     <select id="necEstadoFilter" class="h-11 px-3.5 text-[0.85rem] bg-white border-[1.5px] border-border rounded-[10px] outline-none cursor-pointer transition-[border-color,box-shadow] duration-200 focus:border-red focus:shadow-[0_0_0_3px_rgba(207,20,43,0.1)] sm:min-w-[180px]">
@@ -39,12 +37,7 @@ import EmergenciaCTA from "../components/EmergenciaCTA.astro";
     </button>
   </div>
 
-  <button id="homeReportarBtn" type="button" class="flex items-center justify-center gap-2 w-full min-h-12 px-4 py-3 mb-4 text-[0.85rem] font-bold bg-[#FEF2F2] text-[#991B1B] border-2 border-[#FECACA] rounded-[10px] cursor-pointer select-none transition-[background-color,border-color,transform,box-shadow] duration-150 hover:bg-[#FEE2E2] hover:border-[#FCA5A5] hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(220,38,38,0.2)] active:scale-[0.98]">
-    <svg class="shrink-0" width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-    Reportar una necesidad urgente
-  </button>
-
-  <div id="necStatus" role="status" aria-live="polite" class="inline-flex items-center gap-1.5 text-[0.78rem] font-semibold px-3 py-1.5 rounded-lg mb-4 bg-[#E2E8F0] text-[#475569]">Cargando necesidades...</div>
+  <div id="necStatus" role="status" aria-live="polite" class="inline-flex items-center gap-1.5 text-[0.78rem] font-semibold px-3 py-1.5 rounded-lg mb-4 bg-[#E2E8F0] text-[#475569]">Cargando centros...</div>
 
   <div id="necesidadesContainer" class="grid grid-cols-1 sm:grid-cols-[repeat(auto-fill,minmax(320px,1fr))] gap-4 mb-6">
     <div class="col-span-full bg-white border border-border rounded-xl p-10 text-center text-muted text-sm">Cargando datos...</div>
@@ -82,41 +75,46 @@ import EmergenciaCTA from "../components/EmergenciaCTA.astro";
 
   function renderNecesidades(list: any[]) {
     if (list.length === 0) {
-      container.innerHTML = `<div class="${NO_RESULTS}">No hay necesidades urgentes reportadas aún. Si conoces un lugar que necesita ayuda, usa el botón "Reportar" para reportarlo.</div>`;
+      container.innerHTML = `<div class="${NO_RESULTS}">No hay centros de donación registrados en este momento.</div>`;
       return;
     }
 
     container.innerHTML = list.map((n: any) => {
-      const dbStatus = estadosAyudaMap.get(n.estado);
-      const isAfectado = dbStatus === 'critico' || (!dbStatus && ZONAS_AFECTADAS.includes(n.estado));
-      const cardCls = isAfectado
-        ? "relative flex flex-col bg-[#FFF5F5] rounded-xl border border-[#FCA5A5] border-l-[5px] border-l-[#DC2626] overflow-hidden transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-0.5 hover:border-[#F87171] hover:shadow-[0_8px_24px_rgba(239,68,68,0.1)]"
-        : "relative flex flex-col bg-white rounded-xl border border-border border-l-[5px] border-l-red overflow-hidden transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-0.5 hover:border-[#C7CDD8] hover:shadow-[0_8px_24px_rgba(16,24,40,0.06)]";
+      const cardCls = "relative flex flex-col bg-white rounded-xl border border-border overflow-hidden transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-0.5 hover:border-[#C7CDD8] hover:shadow-[0_8px_24px_rgba(16,24,40,0.06)]";
+      
+      const reqBadges = (n.tipos_requeridos || []).map((t: string) => `<span class="inline-flex items-center justify-center px-2 py-0.5 rounded text-xs font-bold bg-[#FEF2F2] text-[#DC2626] border border-[#FECACA] shadow-sm">${escapeHtml(t)}</span>`).join('');
+      const noReqBadges = (n.tipos_no_urgentes || []).map((t: string) => `<span class="inline-flex items-center justify-center px-2 py-0.5 rounded text-xs font-bold bg-[#F1F5F9] text-[#64748B] border border-[#E2E8F0]">${escapeHtml(t)}</span>`).join('');
+      
       return `
         <article class="${cardCls}">
-          <div class="flex items-center gap-3 pt-4 px-4">
+          <div class="flex items-center gap-3 pt-4 px-4 pb-3 border-b border-border/50 bg-[#FAFAFA]">
             <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-red to-[#B91C1C] text-white flex items-center justify-center shrink-0 shadow-[0_2px_8px_rgba(207,20,43,0.2)]">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
             </div>
             <div class="flex flex-col flex-1 min-w-0">
-              <h3 class="text-[0.95rem] font-bold text-text leading-snug tracking-tight mb-0.5 text-balance">${escapeHtml(n.lugar)}</h3>
+              <h3 class="text-[0.95rem] font-bold text-text leading-snug tracking-tight mb-0.5 text-balance">${escapeHtml(n.nombre_centro)}</h3>
               <span class="flex items-center gap-1 text-[0.74rem] text-muted font-medium truncate">
                 <svg class="shrink-0" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
                 ${escapeHtml(n.ciudad)}, ${escapeHtml(n.estado)}
               </span>
             </div>
-            <span class="shrink-0 text-[0.68rem] font-extrabold uppercase tracking-wide text-white px-2 py-1 rounded-md bg-gradient-to-br from-red to-[#B91C1C] shadow-[0_2px_6px_rgba(207,20,43,0.3)] animate-[nec-pulse_1.8s_ease-in-out_infinite]">Urgente</span>
           </div>
           <div class="flex flex-col gap-3 px-4 pt-3 pb-4">
+            ${reqBadges ? `
             <div class="flex flex-col gap-1.5">
-              <span class="inline-flex items-center gap-1 text-[0.68rem] font-bold text-red-dark uppercase tracking-wide">
-                <svg class="shrink-0" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                Necesitan
-              </span>
-              <p class="text-sm leading-relaxed font-medium text-[#7F1D1D] bg-[#FEF2F2] border border-[#FECACA] rounded-lg px-3 py-2.5 text-pretty">${escapeHtml(n.que_necesitan)}</p>
-            </div>
-            ${n.direccion ? `<div class="flex gap-2 items-baseline"><span class="shrink-0 w-16 text-[0.66rem] font-bold text-muted uppercase tracking-wide">Dirección</span><span class="flex-1 text-[0.82rem] text-text leading-relaxed text-pretty">${escapeHtml(n.direccion)}</span></div>` : ''}
-            ${n.contacto ? `<div class="flex gap-2 items-baseline"><span class="shrink-0 w-16 text-[0.66rem] font-bold text-muted uppercase tracking-wide">Contacto</span><span class="flex-1 text-[0.82rem] text-text leading-relaxed text-pretty">${escapeHtml(n.contacto)}</span></div>` : ''}
+              <span class="text-[0.7rem] font-bold text-text uppercase tracking-wide">Se necesita urgente:</span>
+              <div class="flex flex-wrap gap-1.5">${reqBadges}</div>
+            </div>` : ''}
+            
+            ${noReqBadges ? `
+            <div class="flex flex-col gap-1.5">
+              <span class="text-[0.7rem] font-bold text-muted uppercase tracking-wide">No urgente por el momento:</span>
+              <div class="flex flex-wrap gap-1.5">${noReqBadges}</div>
+            </div>` : ''}
+            
+            ${n.requisitos_adicionales ? `<div class="flex flex-col gap-1 pt-1"><span class="text-[0.66rem] font-bold text-muted uppercase tracking-wide">Requisitos:</span><p class="text-[0.82rem] text-text leading-relaxed text-pretty">${escapeHtml(n.requisitos_adicionales)}</p></div>` : ''}
+            ${n.direccion ? `<div class="flex flex-col gap-1 pt-1"><span class="text-[0.66rem] font-bold text-muted uppercase tracking-wide">Dirección:</span><span class="text-[0.82rem] text-text leading-relaxed text-pretty">${escapeHtml(n.direccion)}</span></div>` : ''}
+            ${n.contacto ? `<div class="flex flex-col gap-1 pt-1"><span class="text-[0.66rem] font-bold text-muted uppercase tracking-wide">Contacto:</span><span class="text-[0.82rem] text-text leading-relaxed text-pretty">${escapeHtml(n.contacto)}</span></div>` : ''}
           </div>
         </article>
       `;
@@ -130,21 +128,15 @@ import EmergenciaCTA from "../components/EmergenciaCTA.astro";
     let filtered = necesidades.filter((n: any) => {
       if (estado && n.estado !== estado) return false;
       if (q) {
-        return n.lugar.toLowerCase().includes(q)
+        return n.nombre_centro.toLowerCase().includes(q)
           || n.ciudad.toLowerCase().includes(q)
           || n.estado.toLowerCase().includes(q)
-          || n.que_necesitan.toLowerCase().includes(q);
+          || (n.tipos_requeridos && n.tipos_requeridos.some((t:string) => t.toLowerCase().includes(q)));
       }
       return true;
     });
 
     filtered.sort((a: any, b: any) => {
-      const dbStatusA = estadosAyudaMap.get(a.estado);
-      const dbStatusB = estadosAyudaMap.get(b.estado);
-      const aAfectado = dbStatusA === 'critico' || (!dbStatusA && ZONAS_AFECTADAS.includes(a.estado));
-      const bAfectado = dbStatusB === 'critico' || (!dbStatusB && ZONAS_AFECTADAS.includes(b.estado));
-      if (aAfectado && !bAfectado) return -1;
-      if (!aAfectado && bAfectado) return 1;
       return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
     });
 
@@ -159,38 +151,30 @@ import EmergenciaCTA from "../components/EmergenciaCTA.astro";
       if (!supabase) throw new Error("Supabase client not initialized");
 
       const { data, error } = await supabase
-        .from('necesidades_urgentes')
+        .from('centros_donacion_sangre')
         .select('*')
-        .eq('verificado', true)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
 
-      const { data: statusData, error: statusError } = await supabase
-        .from('estados_ayuda')
-        .select('*');
 
-      if (!statusError && statusData) {
-        estadosAyudaMap.clear();
-        statusData.forEach(s => estadosAyudaMap.set(s.estado, s.nivel_ayuda));
-      }
 
       if (data && data.length > 0) {
         necesidades = data;
-        statusEl.textContent = `${data.length} necesidad${data.length !== 1 ? 'es' : ''} reportada${data.length !== 1 ? 's' : ''}`;
+        statusEl.textContent = `${data.length} centro${data.length !== 1 ? 's' : ''} registrado${data.length !== 1 ? 's' : ''}`;
         statusEl.className = STATUS.live;
       } else {
         necesidades = [];
-        statusEl.textContent = "Sin necesidades reportadas";
+        statusEl.textContent = "Sin centros registrados";
         statusEl.className = STATUS.offline;
       }
 
       handleFilter();
     } catch (err) {
-      console.error("Error cargando necesidades:", err);
+      console.error("Error cargando centros de donación:", err);
       statusEl.textContent = "Error al cargar";
       statusEl.className = STATUS.offline;
-      container.innerHTML = `<div class="${NO_RESULTS}">No se pudieron cargar las necesidades. Verifica tu conexión e intenta de nuevo.</div>`;
+      container.innerHTML = `<div class="${NO_RESULTS}">No se pudieron cargar los centros de donación. Verifica tu conexión e intenta de nuevo.</div>`;
     }
   }
 

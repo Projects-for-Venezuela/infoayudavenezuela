@@ -1,0 +1,17 @@
+---
+import Layout from "../layouts/Layout.astro";
+import DonacionesSection from "../components/DonacionesSection.astro";
+---
+
+<Layout
+  title="Dónde Donar"
+  description="Organizaciones con respuesta activa al sismo en Venezuela. Dona con seguridad: cada enlace lleva al sitio oficial. Filtra por enfoque y por país para donar desde donde estés."
+  canonical="https://infoayudavenezuela.site/donaciones"
+  showHero={false}
+>
+  <DonacionesSection />
+
+  <div class="mt-6 text-center">
+    <a href="/" class="inline-flex items-center gap-1.5 text-sm font-medium text-muted no-underline px-4 py-2 rounded-lg transition-colors duration-150 hover:bg-[#F1F5F9] hover:text-text">&larr; Volver al inicio</a>
+  </div>
+</Layout>

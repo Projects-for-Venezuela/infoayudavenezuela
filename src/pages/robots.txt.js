@@ -1,5 +1,7 @@
+import { SITE_URL } from "../lib/site.js";
+
 export async function GET() {
-  const siteUrl = "https://infoayudavenezuela.vercel.app";
+  const siteUrl = SITE_URL;
   const body = `User-agent: *
 Allow: /
 
