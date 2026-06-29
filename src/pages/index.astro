@@ -9,7 +9,7 @@ import InsumosSection from "../components/InsumosSection.astro";
 import DonacionSangreSection from "../components/DonacionSangreSection.astro";
 import RefugiosSection from "../components/RefugiosSection.astro";
 import EmergenciaCTA from "../components/EmergenciaCTA.astro";
-import PersonasStatsRow from "../components/PersonasStatsRow.astro";
+import PersonasStats from "../components/PersonasStats.astro";
 import { estados, flagUrl, ZONAS_AFECTADAS, sortEstados, resolveEstado } from "../data/centros";
 
 const fallbackCentros = estados.flatMap((e: any) => 
@@ -57,7 +57,6 @@ const fallbackEnlaces = [
 
 <Layout title="Inicio"
   description="Directorio de centros de acopio verificados en Venezuela. Encuentra dónde donar agua, alimentos, medicinas e insumos para los afectados por el sismo del 24 de junio de 2026. Cobertura nacional e internacional."
-  canonical="https://infoayudavenezuela.vercel.app/"
 >
   <div id="fallbackData" 
        data-centros={JSON.stringify(fallbackCentros)} 
@@ -70,7 +69,7 @@ const fallbackEnlaces = [
 
   <StatsRow {totalCentros} {totalEstados} {totalCiudades} />
 
-  <PersonasStatsRow/>
+  <PersonasStats />
 
   <button id="homeReportarBtn" type="button" class="flex items-center justify-center gap-2 w-full mb-3 px-5 py-3.5 rounded-xl text-sm font-bold bg-[#FEF2F2] text-[#991B1B] border-2 border-[#FECACA] cursor-pointer min-h-12 select-none transition-[background-color,border-color,box-shadow] duration-150 hover:bg-[#FEE2E2] hover:border-[#FCA5A5] hover:shadow-md">
     <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
@@ -183,7 +182,7 @@ const fallbackEnlaces = [
 </Layout>
 
 <script>
-  import { supabase } from "../lib/supabase";
+  import { getSupabase } from "../lib/supabase";
   import { ZONAS_AFECTADAS, sortCentros } from "../data/centros";
   import { escapeHtml, escapeArray, safeUrl } from "../lib/escape";
 
@@ -515,6 +514,7 @@ const fallbackEnlaces = [
     try {
       dbStatus.textContent = "Conectando...";
       dbStatus.className = STATUS_LOADING;
+      const supabase = await getSupabase();
       if (!supabase) throw new Error("Supabase client not initialized");
 
       const { data, error } = await supabase
@@ -559,6 +559,7 @@ const fallbackEnlaces = [
 
   async function loadNecesidadesPreview() {
     try {
+      const supabase = await getSupabase();
       if (!supabase) return;
       const { data, error } = await supabase
         .from('necesidades_urgentes')
@@ -623,10 +624,18 @@ const fallbackEnlaces = [
 
   initCitySelect();
   handleFilter();
-  loadData();
-  loadNecesidadesPreview();
-  // Refresh every 5 minutes (300000 ms)
-  setInterval(loadData, 300000);
-  setInterval(loadNecesidadesPreview, 300000);
+
+  const onIdle = (cb: () => void) =>
+    "requestIdleCallback" in window
+      ? (window as any).requestIdleCallback(cb, { timeout: 2000 })
+      : setTimeout(cb, 200);
+
+  onIdle(() => {
+    loadData();
+    loadNecesidadesPreview();
+    // Refresh every 5 minutes (300000 ms)
+    setInterval(loadData, 300000);
+    setInterval(loadNecesidadesPreview, 300000);
+  });
 </script>
 

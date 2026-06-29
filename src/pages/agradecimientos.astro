@@ -25,7 +25,7 @@ import EmergenciaCTA from "../components/EmergenciaCTA.astro";
 </Layout>
 
 <script>
-  import { supabase } from "../lib/supabase";
+  import { getSupabase } from "../lib/supabase";
   import { escapeHtml, safeUrl } from "../lib/escape";
 
   const container = document.getElementById('agradecimientosContainer') as HTMLElement;
@@ -39,6 +39,7 @@ import EmergenciaCTA from "../components/EmergenciaCTA.astro";
 
   async function loadData() {
     try {
+      const supabase = await getSupabase();
       if (!supabase) throw new Error("Supabase client not initialized");
 
       const { data, error } = await supabase
@@ -156,5 +157,7 @@ import EmergenciaCTA from "../components/EmergenciaCTA.astro";
     return html;
   }
 
-  loadData();
+  ("requestIdleCallback" in window
+    ? (window as any).requestIdleCallback(loadData, { timeout: 2000 })
+    : setTimeout(loadData, 200));
 </script>

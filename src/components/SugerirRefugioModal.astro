@@ -99,7 +99,7 @@
   </div>
 </dialog>
 <script>
-  import { supabase } from "../lib/supabase";
+  import { getSupabase } from "../lib/supabase";
 
   const sugerirRefugioDialog = document.getElementById('sugerirRefugioDialog') as HTMLDialogElement;
   const btnSugerirRefugio = document.getElementById('btnSugerirRefugio') as HTMLButtonElement;
@@ -124,8 +124,7 @@
   if (successRefugioCloseBtn) successRefugioCloseBtn.addEventListener('click', closeRefugioForm);
 
   sugerirRefugioDialog.addEventListener('click', (e) => {
-    const r = sugerirRefugioDialog.getBoundingClientRect();
-    if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) {
+    if (e.target === sugerirRefugioDialog) {
       sugerirRefugioDialog.close();
     }
   });
@@ -151,6 +150,7 @@
       const acepta = acepta_raw ? acepta_raw.split(',').map(s => s.trim()).filter(Boolean) : [];
       const necesitan = necesitan_raw ? necesitan_raw.split(',').map(s => s.trim()).filter(Boolean) : [];
 
+      const supabase = await getSupabase();
       if (!supabase) {
         alert('El sistema está operando en modo local/sin conexión.');
         submitBtn.textContent = originalText;

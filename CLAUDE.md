@@ -14,9 +14,10 @@
 |------|------------|-----------|
 | Framework | Astro 7 (static output, adapter Vercel) | No migrar a Next.js, Remix, SvelteKit |
 | Backend de datos | Supabase (Postgres + JS client `@supabase/supabase-js`) | No cambiar a MongoDB, Firebase, o Prisma |
-| Estilos | Tailwind CSS v4 (vía `@tailwindcss/vite`, CSS-first config en `src/styles/global.css`) — migración incremental desde CSS modular | No introducir styled-components, CSS Modules, Stitches, vanilla-extract |
+| Estilos | **Tailwind CSS v4** (vía `@tailwindcss/vite`, config CSS-first con `@theme` en `src/styles/global.css`). **Migración COMPLETADA**: los componentes usan clases utilitarias inline; ya no existe CSS modular por dominio | No introducir styled-components, CSS Modules, Stitches, vanilla-extract; no regresar a archivos `.css` por componente |
 | Iconos | SVG inline (Lucide-style, `stroke-width="2"`), sin librerías | No mezclar Heroicons + Phosphor + Lucide; no usar emoji como icono de feature |
-| JS del cliente | Vanilla JS en `<script>` dentro de `.astro`, sin build step | No introducir React, Vue, Svelte, Alpine, Stimulus |
+| JS del cliente | Vanilla **TypeScript estrictamente tipado** en `<script>` dentro de `.astro`, sin build step adicional | No introducir React, Vue, Svelte, Alpine, Stimulus; no usar `any` salvo en límites de datos externos acotados |
+| Endpoints de datos | Astro API Routes (`src/pages/api/*.ts`, `export const prerender = false`) — patrón objetivo para desacoplar llamadas a APIs externas y a Supabase del `.astro` | No acoplar fetch de terceros con secretos en `<script>` cliente; no duplicar lógica de fetch entre páginas cuando puede vivir en un endpoint |
 | Package manager | pnpm ( existe `pnpm-lock.yaml` y `pnpm-workspace.yaml`) | No usar npm ni yarn para instalar; nunca mezclar lockfiles |
 | Despliegue | Vercel (`@astrojs/vercel`) | No cambiar a Netlify, Cloudflare Pages sin aprobación explícita |
 
@@ -44,7 +45,7 @@ No existe suite de pruebas automatizadas ni linter configurado — el build de A
 ### 3.1 Estilo general
 
 - **Indentación:** 2 espacios. Sin tabs.
-- **Comillas:** Doble (`"`) para strings en JS, simple (`'`) en CSS.
+- **Comillas:** Doble (`"`) para strings en JS/TS y atributos `class` de Tailwind, simple (`'`) en el CSS de `global.css`.
 - **Punto y coma:** Sí, al final de cada sentencia JS.
 - **Trailing comma:** Sí, en objetos y arrays multilínea.
 - **Longitud de línea:** 100 caracteres máximo (aprox.). No es un muro, pero justifica excepciones.
@@ -53,34 +54,37 @@ No existe suite de pruebas automatizadas ni linter configurado — el build de A
 
 ### 3.2 Componentes Astro (`.astro`)
 
-- Frontmatter: `---` con imports al inicio, lógica después, y se exporta Props interface tipada cuando recibe props.
+- Frontmatter: `---` con imports al inicio, lógica después, y se **exporta una `interface Props` tipada** cuando el componente recibe props (ver `Layout.astro`). Nada de props sin tipar.
 - Un componente por archivo. El nombre del archivo coincide con el nombre del componente (PascalCase).
-- **No se inlinean estilos en `<style>` dentro de los componentes.** Los estilos viven en `src/styles/*.css` y se importan: `import "../styles/foo.css";`.
+- **Estilos con clases utilitarias de Tailwind inline en el markup.** No se crean archivos `.css` por componente ni bloques `<style>` salvo casos puntuales ya existentes (ej. `ChatWidget.astro`); preferir siempre utilidades. El único CSS global es `src/styles/global.css` (tokens `@theme`, resets base, `keyframes`), importado una sola vez en `Layout.astro`.
+- **Tokens antes que literales.** Usar las clases derivadas de los tokens del `@theme` (`bg-blue`, `text-yellow`, `border-border`, `rounded-card`…) en lugar de valores arbitrarios `[#hex]`. Solo se usa la sintaxis arbitraria `[...]` cuando no exista token para ese rol (ver §4.1 y §5).
 - HTML semántico: `nav`, `main`, `header`, `footer`, `section`, `article`, `dialog` antes que `div`.
 
-### 3.3 CSS — reglas estrictas
+### 3.3 Tailwind CSS v4 — reglas estrictas
 
-1. **Un archivo CSS por UI domain** (`navbar.css`, `hero.css`, `index.css`, etc.). No se crea un único CSS gigante; no se inlinean estilos globales en componentes.
-2. **Variables CSS en `:root`** dentro de `global.css`. **NunCA** introducir colores nuevos como literales hex si ya existe una variable para ese rol (ver §5).
-3. **Mobile-first.** Breakpoints con `@media (max-width: Npx)` donde N sea 480 / 640 / 768. El proyecto usa este patrón — manténgo.
-4. **`transition: all` está prohibido.** Listar propiedades específicas: `transition: transform .2s, box-shadow .2s, border-color .2s`.
-5. **Animaciones GPU-only.** Solo `transform` y `opacity` se animan. `width`, `height`, `top`, `left`, `margin`, `padding` no se animan.
-6. **`prefers-reduced-motion` se respeta.** Todo el código de animación/transición está cubierto por el reset global en `global.css`. Animaciones nuevas deben probar que no lo rompen. Animaciones pulsadas infinitas (ej. `nec-pulse`) deben incluirse en el reset.
-7. **`:focus-visible` siempre visible.** Hay un estilo global en `global.css` (`outline: 3px solid var(--focus-ring)`). Nunca sobre.escribir con `outline: none` sin un reemplazo visible.
-8. **`env(safe-area-inset-*)` se respeta** en fixed elements (ya hecho en `.nav-bottom` y `.nav-more-sheet`). Mantener.
-9. **No `!important`** excepto en casos renderizados en JS donde la especificidad no alcanza (ver `.card-prioritized` en `index.css` — caso justificado y existente). Nuevos `!important` requieren justificación.
-10. **Hover gating:** Las animaciones `:hover` que involucren `transform` (scale, translateY) en mobile se envuelven en `@media (hover: hover) and (pointer: fine)` cuando sean costosas o produzcan flicker. Ya se hizo en `.card:hover .card-img img`. Mantener el patrón.
+1. **Estilos como clases utilitarias inline en el markup.** No se crean archivos `.css` por dominio ni se reintroduce CSS modular. Lo único que vive en CSS es lo que Tailwind no expresa bien: tokens `@theme`, resets base globales y `@keyframes` — y todo eso ya está en `src/styles/global.css`.
+2. **Tokens en `@theme`, no literales.** Los colores, radios y la fuente se definen como variables `@theme` en `global.css` (`--color-blue`, `--radius-card`, etc.) y se consumen como clases (`bg-blue`, `rounded-card`). **NUNCA** introducir un color nuevo como `[#hex]` arbitrario si ya existe un token para ese rol (ver §5). Color nuevo legítimo → primero se añade el token al `@theme`.
+3. **Mobile-first con los prefijos de breakpoint de Tailwind.** Base = móvil; se escala hacia arriba con `sm:` / `md:` / `lg:`. No usar `max-*:` para emular el viejo `@media (max-width)` salvo necesidad puntual. Mantener la coherencia con los componentes existentes (ver `Hero.astro`).
+4. **`transition-all` está prohibido.** Acotar a las propiedades que cambian: `transition-colors`, `transition-transform`, o `transition-[background-color,transform,box-shadow]`. El patrón ya existe en `Hero.astro`.
+5. **Animaciones GPU-only.** Solo `transform` y `opacity` se animan (`translate`, `scale`, `rotate`, `opacity`). No animar `width`, `height`, `top`, `left`, `margin`, `padding`.
+6. **`prefers-reduced-motion` se respeta.** El reset global en `global.css` ya neutraliza animaciones/transiciones bajo `(prefers-reduced-motion: reduce)`. Toda animación nueva (`@keyframes` o utilidad) no debe escapar a ese reset; las pulsadas infinitas (ej. `nec-pulse`, `animate-spin`) deben quedar cubiertas.
+7. **`:focus-visible` siempre visible.** El estilo global en `global.css` aplica `outline: 3px solid var(--color-yellow)`. Nunca usar `outline-none` / `focus:outline-none` sin un reemplazo visible (`focus-visible:ring-*` equivalente).
+8. **`env(safe-area-inset-*)` se respeta** en elementos `fixed` (bottom nav, sheets). Mantener al portar/crear elementos fijos.
+9. **No `!important` (`!`-prefijo en Tailwind)** salvo cuando la especificidad no alcanza en contenido renderizado por JS (caso justificado y puntual). Nuevos usos requieren justificación.
+10. **Hover gating:** las animaciones `hover:` con `transform` (scale, translateY) costosas o que produzcan flicker en móvil se condicionan a punteros finos (`@media (hover: hover) and (pointer: fine)` o la variante equivalente). Mantener el patrón.
 
-### 3.4 JavaScript del cliente
+### 3.4 JavaScript / TypeScript — estrictamente tipado y acotado
 
-1. **Vanilla JS dentro de `<script>` en el `.astro`.** No se importan frameworks a menos que la feature lo requiere y siempre bajo la autorizacion del usuario.
-2. **TypeScript descansado** en frontmatter (`.astro` soporta TS). En cliente, se tipa con `as HTMLInputElement` casts — mantener el estilo del archivo que se edita.
-3. **Defensive DOM queries:** `const el = document.getElementById('foo') as HTMLElement;` + `if (!el) return;`. El proyecto tiene este patrón — no romperlo. NUNCA usar `!` non-null assertion en runtime query sin guard.
-4. **Debounce en handlers de input.** El search usa `debounce(..., 250)` — mantener o mejorar; nunca eliminar.
-5. **`requestIdleCallback` / visibilidad de pestaña** se prefiere sobre `setInterval` pare refrescos en background. Si se tocan los `setInterval` existentes (5 min para reload), priorizar no batería.
-6. **No `alert()` para validación de formularios.** El proyecto los usa heredadamente en formularios de sugerir. La mejora hacia validación inline + `aria-invalid` + `aria-describedby` es un objetivo técnico pendiente — hacerlo gradualmente sin romper el flujo existente.
-7. **HTML escaping:** Todo contenido dinámico del cliente debe pasar por `escapeHtml` / `escapeArray` / `safeUrl` (en `src/lib/escape.ts`). Nunca interpolar string crudo en `innerHTML`.
-8. **No `eval` / `Function()` / `new Function`.** Jamás.
+1. **Vanilla TS dentro de `<script>` en el `.astro`.** No se importan frameworks salvo que la feature lo requiera y siempre bajo autorización del usuario.
+2. **Tipado estricto, sin `any` suelto.** Tanto el frontmatter (`.astro` soporta TS) como los `<script>` del cliente se tipan. `any` solo se admite **acotado al límite de datos externos** (respuesta cruda de Supabase/USGS antes de mapearla) y se reduce de inmediato a un shape tipado — ver el `.map((f: any) => ({...}))` en `api/sismos.json.ts`. No propagar `any` aguas abajo.
+3. **Tipar las respuestas de API/Supabase.** Cada fetch define la forma de lo que devuelve (interface/`type` local o helper de endpoint) antes de consumirla en el template o en el cliente; nada de objetos sin forma cruzando capas.
+4. **Una función, una responsabilidad concreta.** Funciones pequeñas y acotadas a una tarea (mapear, validar, escapar, renderizar). No mezclar fetch + parseo + render en una sola función monolítica; separar para que cada pieza sea testeable y tipable.
+5. **Defensive DOM queries:** `const el = document.getElementById("foo") as HTMLElement; if (!el) return;`. El proyecto tiene este patrón — no romperlo. NUNCA usar `!` (non-null assertion) sobre una query de runtime sin guard previo.
+6. **Debounce en handlers de input.** El search usa `debounce(..., 250)` — mantener o mejorar; nunca eliminar.
+7. **`requestIdleCallback` / visibilidad de pestaña** se prefiere sobre `setInterval` para refrescos en background. Si se tocan los `setInterval` existentes (5 min para reload), priorizar batería.
+8. **No `alert()` para validación de formularios.** Heredado en los formularios de sugerir. La mejora hacia validación inline + `aria-invalid` + `aria-describedby` es objetivo pendiente — hacerlo gradualmente sin romper el flujo existente.
+9. **HTML escaping:** todo contenido dinámico del cliente pasa por `escapeHtml` / `escapeArray` / `safeUrl` (en `src/lib/escape.js`). Nunca interpolar string crudo en `innerHTML`.
+10. **No `eval` / `Function()` / `new Function`.** Jamás.
 
 ### 3.5 Accesibilidad — piso no negociable
 
@@ -91,8 +95,22 @@ No existe suite de pruebas automatizadas ni linter configurado — el build de A
 - **`role="status"` + `aria-live="polite"`** en estados de carga (`.alert-box` ya cumple). Mantener.
 - **`<dialog>` nativo** para modales (ya hecho). Esc cierra modales y bottom sheet (handler global en `Navbar.astro`). Mantener.
 - **Skip-to-content link** presente (`Layout.astro` — `class="skip-link"`). Mantener.
-- **Color nunca es el único indicador de estado.** Status badges combinan background + texto + border. Mantener.
-- **Contraste:** şirin. Texto sobre `var(--blue)` (#00247D) usa blanco ✅. Texto amarillo `var(--yellow)` sobre azul ✅. No reducir contraste en nuevas combinaciones.
+- **Color nunca es el único indicador de estado.** Los status badges combinan background + texto + border. Mantener.
+- **Contraste WCAG AA mínimo** (4.5:1 texto normal, 3:1 texto grande/UI). Texto sobre `bg-blue` (#00247D) usa blanco ✅; amarillo `text-yellow` sobre azul ✅. No reducir contraste en combinaciones nuevas; verificar antes de introducir cualquier par color/fondo.
+- **Jerarquía de headings sin saltos.** Un solo `<h1>` por página, sin saltar niveles (`h2`→`h4`). Es a la vez accesibilidad y SEO.
+- **`lang` correcto** (`<html lang="es-VE">` en `Layout.astro`). Mantener; si se añade contenido en otro idioma, marcarlo con `lang` local.
+- **Teclado primero.** Todo lo accionable es alcanzable y operable con teclado; orden de tabulación lógico; foco visible (ver §3.3.7). Esc cierra modales/sheets.
+
+### 3.6 SEO — estándar del proyecto
+
+1. **Toda página usa `Layout.astro` y pasa `title` y `description` propios.** El `Layout` ya emite `<title>`, `meta description`, `canonical`, Open Graph, Twitter Card y JSON-LD — no duplicar esas etiquetas a mano en las páginas; alimentar el `Layout` con props.
+2. **`canonical` correcto.** Por defecto se deriva de `Astro.url.pathname`; pasar `canonical` explícito solo cuando la URL canónica difiera (paginación, parámetros).
+3. **Open Graph / Twitter completos** en cada página (título, descripción, `og:image` 1200×630). Si una página necesita imagen social propia, pasarla por prop; no romper las dimensiones.
+4. **Datos estructurados (JSON-LD `schema.org`)** donde aporten: `WebSite` (ya en `Layout`), y tipos específicos por página cuando aplique (`ItemList` para directorios, `NewsArticle` para noticias, `Organization`). Validar el JSON-LD antes de entregar.
+5. **`sitemap.xml` y `robots.txt`** se generan en `src/pages/sitemap.xml.js` y `src/pages/robots.txt.js`. Al añadir una ruta pública nueva, asegurarse de que entra al sitemap; rutas no indexables van con `noindex`.
+6. **URLs semánticas y estables en español** (`/refugios`, `/buscar-personas`). No cambiar slugs existentes sin redirección; las URLs son parte del SEO ya ganado.
+7. **`alt` descriptivo** en imágenes con valor informativo; `alt=""` en decorativas. Es SEO y accesibilidad a la vez.
+8. **Texto real, no imágenes de texto.** El contenido crítico (centros, números de emergencia) se renderiza como HTML server-side (SSG) para ser indexable y funcionar offline.
 
 ---
 
@@ -102,28 +120,33 @@ El proyecto tiene **identidad visual definida** — bandera venezolana (amarillo
 
 ### 4.1 Sistema de color — no se introducen nuevos acentos
 
-| Token | Valor | Uso permitido |
-|-------|-------|---------------|
-| `--blue` | `#00247D` | Navbar, hero gradient, links, primary CTA, focus ring de inputs |
-| `--blue-dark` | `#001845` | Hover de primary, modal header text, hero gradient final |
-| `--red` | `#CF142B` | Emergencia, badges de prioridad, CTA emergencia, bandera, heart footer |
-| `--red-dark` | `#A00F22` | Hover de red, gradient emergencia |
-| `--yellow` | `#FFCC00` | Hero accent, botón "Sugerir", bandera, footer brand |
-| `--gold` | `#D4A800` | Border de botón yellow |
-| `--bg` | `#F4F5F7` | Background de body |
-| `--card` | `#FFFFFF` | Surface de card |
-| `--text` | `#1A1D23` | Texto primario |
-| `--muted` | `#6B7280` | Texto secundario |
-| `--border` | `#E2E6ED` | Borders |
-| `--radius` | `12px` | Radius de cards/sections |
-| `--focus-ring` | `var(--yellow)` | outline de focus-visible global |
+Definidos como variables `@theme` en `src/styles/global.css`; cada uno genera su clase Tailwind (`--color-blue` → `bg-blue`/`text-blue`/`border-blue`).
+
+| Token `@theme` | Valor | Clase | Uso permitido |
+|----------------|-------|-------|---------------|
+| `--color-blue` | `#00247D` | `*-blue` | Navbar, hero gradient, links, primary CTA, focus ring de inputs |
+| `--color-blue-dark` | `#001845` | `*-blue-dark` | Hover de primary, modal header text, hero gradient final |
+| `--color-red` | `#CF142B` | `*-red` | Emergencia, badges de prioridad, CTA emergencia, bandera, heart footer |
+| `--color-red-dark` | `#A00F22` | `*-red-dark` | Hover de red, gradient emergencia |
+| `--color-yellow` | `#FFCC00` | `*-yellow` | Hero accent, botón "Sugerir", bandera, footer brand |
+| `--color-gold` | `#D4A800` | `*-gold` | Border de botón yellow |
+| `--color-bg` | `#F4F5F7` | `*-bg` | Background de body |
+| `--color-card` | `#FFFFFF` | `*-card` | Surface de card |
+| `--color-text` | `#1A1D23` | `*-text` | Texto primario |
+| `--color-muted` | `#6B7280` | `*-muted` | Texto secundario |
+| `--color-border` | `#E2E6ED` | `*-border` | Borders |
+| `--color-focus` | `#FFCC00` | — | outline de focus-visible global |
+| `--color-amber` | `#854d0e` | `*-amber` | Texto de estado warning |
+| `--color-green` | `#166534` | `*-green` | Texto de estado success |
+| `--radius-card` | `12px` | `rounded-card` | Radius de cards/sections |
+| `--radius-pill` | `9999px` | `rounded-pill` | Pills/badges |
 
 **Reglas:**
-1. **No introducir nuevos hex literales.** Todo color nuevo se añade como variable en `:root` de `global.css` con nombre semántico.
+1. **No introducir hex literales arbitrarios (`[#hex]`).** Todo color nuevo se añade primero como token `@theme` en `global.css` con nombre semántico y luego se usa por su clase. La sintaxis arbitraria `[...]` solo es aceptable para opacidades/posiciones puntuales sin token (ver gradientes del `Hero.astro`).
 2. **Los 3 acentos de la bandera (azul/amarillo/rojo) son intencionales** — el proyecto es de emergencia nacional venezolana, no es "AI slop de muchos colores". Mantener la coherencia cultural.
 3. **No introducir dark mode** sin aprobación explícita del usuario. El proyecto es light-only por decisión de legibilidad en móviles de gama baja.
 4. **No gradientes nuevos** salvo los existentes en hero y CTA emergencia (expresión de urgencia/bandera). No glassmorphism, no blobs, no mesh backgrounds.
-5. **Semantic states** (success `#DCFCE7`/`#15803D`, warning `#FEF3C7`/`#92400E`, error `#FEF2F2`/`#991B1B`) ya existen inline — consolidarlos en tokens si se modifican, no duplicar.
+5. **Estados semánticos** (success/warning/error) usan los tokens `--color-green` / `--color-amber` y los fondos suaves correspondientes. Si se añade un estado nuevo, se tokeniza en `@theme`, no se duplica un hex inline.
 
 ### 4.2 Tipografía
 
@@ -136,7 +159,7 @@ El proyecto tiene **identidad visual definida** — bandera venezolana (amarillo
 
 - **`main { max-width: 1000px }`** — ancho de contenido principal. No ampliar sin razón.
 - **Padding responsive:** `1.5rem 1.25rem` (desktop) / `1rem 0.75rem` (mobile). Mantener.
-- **Grids fluidas:** `repeat(auto-fill, minmax(NNNpx, 1fr))`. Mantener el patrón `auto-fill` sobre breakpoints fijos para grid de tarjetas.
+- **Grids fluidas:** grid auto-ajustable (`grid-cols-[repeat(auto-fill,minmax(NNNpx,1fr))]` en Tailwind) sobre breakpoints fijos para las tarjetas. Mantener el patrón `auto-fill`.
 - **No introducir container queries** salvo que se demuestre necesidad — el proyecto usa media queries y está bien.
 
 ### 4.4 Iconografía — consistencia
@@ -152,7 +175,7 @@ El proyecto tiene **identidad visual definida** — bandera venezolana (amarillo
 
 1. **Carga en 2G/3G es prioridad.** No se añaden bundles JS > 50KB. No se importan fuentes web. No se añaden polyfills innecesarios.
 2. **`loading="lazy"`** en imágenes no críticas (banderas). `width`/`height` o `aspect-ratio` en imágenes para prevenir CLS.
-3. **CSS modular por componente** — solo se carga el CSS de la página actual. Mantener los imports en el frontmatter de cada página.
+3. **CSS mínimo vía Tailwind.** Tailwind v4 hace tree-shaking y solo emite las utilidades usadas; el bundle de estilos se mantiene pequeño. No reintroducir CSS por página ni hojas externas. Mantener la importación única de `global.css` en `Layout.astro`.
 4. **Fallback offline** con datos embebidos en `data-*` attributes — el proyecto funciona sin Supabase. Toda mejora de datos debe respetar el fallback (nUNCA romper el render estático del server-side).
 5. **`setInterval` de reload** (5 min) se respeta — puede mejorarse con `requestIdleCallback` o `document.visibilityState`, pero no se elimina.
 6. **No `backdrop-filter: blur()` excepto en modales.** El modal ya lo usa; no añadir en cards/héroes (costoso en Android gama baja).
@@ -161,7 +184,7 @@ El proyecto tiene **identidad visual definida** — bandera venezolana (amarillo
 
 ## 6. Reglas de seguridad — no se negocia
 
-1. **Escape de HTML en todo contenido dinámico del cliente.** Usar `escapeHtml`, `escapeArray`, `safeUrl` de `src/lib/escape.ts`. No interpolar strings crudos en `innerHTML`.
+1. **Escape de HTML en todo contenido dinámico del cliente.** Usar `escapeHtml`, `escapeArray`, `safeUrl` de `src/lib/escape.js`. No interpolar strings crudos en `innerHTML`.
 2. **No `dangerouslySetInnerHTML`** (no aplica — es Astro, no React), pero equivalente: no inyectar JSON.stringify en HTML sin contexto adecuado.
 3. **Validación client-side** en formularios (longitud, patrón HTML, no-HTML-injection). Los `alert()` actuales son defensivos — mantenerlos mientras no haya reemplazo inline.
 4. **Supabase RLS (Row-Level Security)** debe estar configurada para inserts públicos como `verificado: false`. No se cambia esto sin aprobación.
@@ -187,14 +210,15 @@ El agente puede proponer y ejecutar mejoras que **no rompen nada** y que se alin
 - **Accesibilidad WCAG AA:** focusVisible, aria-labels, labels, roles, teclado. Ya se ha trabajado — continuar con formularios (validación inline, `aria-invalid`, `aria-describedby`).
 - **Rendimiento:** `tabular-nums` en métricas, `text-wrap: balance/pretty`, `aspect-ratio` en imágenes, `requestIdleCallback` para reloads, `fetchpriority` en imágenes críticas.
 - **Robustez:** Defensive TypeScript, error boundaries en cliente, fallbacks de red con `navigator.onLine`, mensaje de offline visible.
-- **SEO:** `canonical`, `og:`, JSON-LD (ya presentes). Mantener y ampliar para páginas que no los tengan.
+- **SEO:** `canonical`, `og:`, JSON-LD (ya presentes). Mantener y ampliar para páginas que no los tengan; tipos `schema.org` específicos por página.
+- **Arquitectura de datos:** migrar progresivamente las llamadas a APIs externas/Supabase desde el frontmatter y los `<script>` cliente hacia endpoints de Astro (`src/pages/api/*.ts`), siguiendo §13. Mejora tipado, cacheo y desacople, sin romper el fallback offline.
 - **UX copy:** Textos claros y concisos, sin jerga. Errores accionables (no "algo salió mal" — decir qué falló y qué hacer).
 - **Dark mode:** Oportunamente, como feature opt-in con `prefers-color-scheme` + toggle. No es prioridad — solo cuando el usuario lo pida.
 
 ### Lo que NO se hace sin aprobación
 
 - Rediseños visuales (cambio de paleta, tipografía, layout grid).
-- Cambiar el stack tecnológico (framework, DB, CSS approach).
+- Cambiar el stack tecnológico (framework, DB, approach de estilos/Tailwind).
 - Eliminar funcionalidad existente por "estética" o "modernización".
 - Introducir dependencias npm nuevas.
 - Cambiar el alcance del contenido (quitar secciones, páginas).
@@ -222,10 +246,13 @@ src/
 ├── components/       # Componentes Astro (Navbar, Hero, Footer, modales, secciones)
 ├── data/             # Datos estáticos de fallback (acopio.json, centros.js, emergencia.js)
 ├── layouts/          # Layout.astro — estructura base con Navbar + Hero + main + Footer
-├── lib/              # Utilidades (supabase.js, escape.ts)
-├── pages/            # Rutas: index, emergencia, estado/[estado], insumos, necesidades, noticias, refugios, sobre-nosotros
+├── lib/              # Utilidades (supabase.js, escape.js)
+├── pages/            # Rutas + endpoints. Páginas: index, emergencia, estado/[estado], insumos,
+│   │                 #   necesidades, noticias, refugios, buscar-personas, sobre-nosotros, agradecimientos
+│   ├── api/          # Astro API Routes (endpoints .ts, prerender=false). Ej: sismos.json.ts
+│   ├── sitemap.xml.js, robots.txt.js   # SEO generado
 ├── scripts/          # Seeds de Supabase (seed-supabase.js, seed-numeros-emergencia.js)
-└── styles/           # CSS modular por UI (un archivo por dominio visual)
+└── styles/           # Solo global.css (tokens @theme de Tailwind + resets base + keyframes)
 public/
 └── flags/*.webp      # Banderas de estados venezolanos
 .agents/skills/       # Skills de ui-craft, audit, heuristic, colorize — CARGAR cuando aplique
@@ -263,6 +290,30 @@ Tablas existentes (Postgres + RLS):
 **Patrón de cutover a Supabase (fetch en build + fallback):** una página SSG puede leer de Supabase en build time y caer al data file local si la BD falla o viene vacía, sin cambiar el template ni romper el modo offline. Implementado en `emergencia.astro` (importa el JSON como `fallback*`, consulta en el frontmatter dentro de `try/catch`). Es el patrón a seguir para futuras migraciones de data files a Supabase.
 
 **Service role key:** secreta. SOLO por variable de entorno al correr seeds; nunca en `.env` commiteado, código, ni historial compartido. Si se expone, rotarla en Supabase → Settings → API.
+
+---
+
+## 13. Arquitectura de datos — migración a endpoints de Astro (objetivo activo)
+
+**Estado actual:** muchas páginas llaman a Supabase y a APIs externas directamente, en dos lugares:
+- En el **frontmatter** de `.astro` en build time (SSG), con `try/catch` + fallback al data file local (patrón cutover de §12; ej. `emergencia.astro`).
+- En `<script>` **del cliente** (ej. `buscar-personas/index.astro`, `agradecimientos.astro`) usando el cliente `supabase` del navegador con la anon key.
+
+**Objetivo:** desacoplar las llamadas a APIs de los archivos `.astro` moviéndolas a **Astro API Routes** (`src/pages/api/*.ts`), como ya se hace en `api/sismos.json.ts`. Las páginas y los `<script>` cliente consumen esos endpoints en vez de hablar con la fuente de datos directamente.
+
+**Por qué:**
+- **Tipado y reuso:** la forma de los datos se define y valida una vez en el endpoint, no se repite en cada página.
+- **Cacheo en el edge:** los endpoints fijan `cache-control` (`s-maxage`, `stale-while-revalidate`) como en `sismos.json.ts`, aliviando origen y mejorando latencia móvil.
+- **Desacople y secretos:** la lógica de fetch deja de vivir en el template; secretos/keys server-side no quedan expuestos en el cliente.
+- **Resiliencia:** el endpoint centraliza `AbortController` + timeout + `try/catch` y devuelve un shape vacío seguro ante fallo (nunca rompe el render).
+
+**Reglas para endpoints nuevos:**
+1. **Ubicación y firma:** `src/pages/api/<recurso>.json.ts`, `export const prerender = false`, handler `export const GET: APIRoute` (u otro verbo). Tipar entrada y salida.
+2. **Resiliencia obligatoria:** `AbortController` con timeout (≈5 s), `try/catch`, y **respuesta de fallback vacía y válida** ante error (ej. `{ count: 0, ... }`) — nunca lanzar al cliente. Replicar el patrón de `sismos.json.ts`.
+3. **Cacheo explícito:** definir `cache-control` acorde a la frescura del dato.
+4. **No romper el fallback offline ni la SSG.** Para datos que se renderizan server-side y deben funcionar sin red, mantener el patrón cutover de §12 (lectura en build + data file local); los endpoints son para datos dinámicos/refresco en cliente, no para reemplazar el render estático crítico.
+5. **Migración incremental, sin big-bang.** Migrar una llamada/página a la vez, verificando `pnpm build` y el comportamiento offline tras cada paso. No reescribir todas las páginas de golpe.
+6. **`any` solo en el borde.** La respuesta cruda de la fuente puede tiparse `any` momentáneamente dentro del endpoint, pero se mapea de inmediato a un shape tipado que es lo único que sale del endpoint (ver §3.4.2).
 
 ---
 
