@@ -124,8 +124,7 @@
   if (successRefugioCloseBtn) successRefugioCloseBtn.addEventListener('click', closeRefugioForm);
 
   sugerirRefugioDialog.addEventListener('click', (e) => {
-    const r = sugerirRefugioDialog.getBoundingClientRect();
-    if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) {
+    if (e.target === sugerirRefugioDialog) {
       sugerirRefugioDialog.close();
     }
   });
