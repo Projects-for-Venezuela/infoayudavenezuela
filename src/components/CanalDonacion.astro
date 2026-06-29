@@ -1,0 +1,46 @@
+---
+export interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<section class:list={["bg-white border border-border rounded-xl p-4 sm:p-5 mb-4 shadow-[0_1px_2px_rgba(16,24,40,0.05)]", className]}>
+  <header class="flex items-center gap-3 mb-4 pb-3.5 border-b border-border">
+    <span class="inline-flex items-center justify-center w-11 h-11 shrink-0 rounded-xl bg-yellow shadow-[0_2px_6px_rgba(212,168,0,0.3)]">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00247D" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+    </span>
+    <div class="flex flex-col gap-1">
+      <h2 class="m-0 text-[1.25rem] font-extrabold tracking-tight leading-tight text-blue text-balance">Canales de Apoyo y Donación</h2>
+      <span class="block w-[42px] h-1 rounded-full bg-yellow"></span>
+    </div>
+  </header>
+
+  <p class="m-0 mb-4 text-[0.88rem] leading-relaxed text-muted text-pretty">En momentos de crisis, la solidaridad organizada es nuestra mayor fuerza. Para asegurar que tu aporte llegue de manera directa y transparente a quienes más lo necesitan tras la emergencia, hemos centralizado los canales de ayuda oficiales.</p>
+
+  <article class="flex flex-col gap-3 bg-[#F8F9FB] border border-border rounded-lg p-4">
+    <div class="flex flex-wrap gap-1.5">
+      <span class="inline-flex items-center px-2.5 py-[3px] rounded-md bg-[#ECF1FB] text-blue text-[0.66rem] font-bold tracking-wide uppercase">Plataforma oficial</span>
+      <span class="inline-flex items-center gap-1 px-2.5 py-[3px] rounded-full bg-[#ECFDF3] border border-[#A7E8C2] text-green text-[0.7rem] font-semibold">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>
+        Verificado
+      </span>
+    </div>
+
+    <h3 class="m-0 text-base font-bold leading-tight text-text text-balance">Plataforma Yummy</h3>
+
+    <p class="m-0 text-[0.85rem] leading-relaxed text-muted text-pretty">Estamos colaborando con el equipo de Yummy, bajo la gestión de su CEO Vicente Zavarce, para canalizar los recursos destinados a los afectados por el terremoto.</p>
+
+    <p class="m-0 text-[0.82rem] leading-relaxed text-[#4B5563] italic text-pretty">Esta iniciativa ha sido recomendada por la streamer venezolana @fairlygab para garantizar la seguridad y efectividad en la entrega de suministros.</p>
+
+    <div class="flex mt-1">
+      <a href="https://dona.yummyrides.com/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-2 min-h-12 px-5 py-2.5 rounded-lg bg-blue text-white text-[0.9rem] font-bold no-underline cursor-pointer transition-colors duration-150 hover:bg-blue-dark">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></svg>
+        Realizar donación oficial aquí
+      </a>
+    </div>
+  </article>
+
+  <p class="m-0 mt-4 text-[0.78rem] text-muted text-center text-pretty">Cualquier aporte, por pequeño que sea, marca la diferencia. Gracias por tu compromiso con Venezuela.</p>
+</section>
