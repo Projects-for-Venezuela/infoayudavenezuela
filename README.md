@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./public/banner.jpg" alt="Info Ayuda Venezuela" style="max-width: 600px; width: 90%;">
+  <img src="./public/banner.jpeg" alt="Info Ayuda Venezuela" style="max-width: 600px; width: 90%;">
 </p>
 
 <p align="center">
