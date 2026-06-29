@@ -1,14 +1,8 @@
 ---
 import Layout from "../layouts/Layout.astro";
 
-const devs = [
-  { name: "Enyell Duarte", phone: "+58 412-3557704", email: "enyelldev@gmail.com" },
-  { name: "Adel Gannem", phone: "+58 424-5785645", email: "adelganndev@gmail.com" },
-  { name: "Fabrizio Franco", phone: "+58 426-7239855", email: "fabrizio.software.dev@gmail.com" },
-  { name: "Kevin Villegas Perez", phone: "+57 3173552802", email: "villegasdeveloper@outlook.es" },
-  { name: "Adrian Rangel", phone: "+58 416-7753045", email: "adrijar21@gmail.com" },
-  { name: "Gabriel Hernandez", phone: "+56 975134383", email: "gbhr115@gmail.com" },
-];
+const emailContacto = "infoayudavenezuela@gmail.com";
+
 ---
 
 <Layout title="Acerca de"
@@ -45,28 +39,15 @@ const devs = [
           Quiénes están detrás
         </h2>
         <p class="leading-relaxed text-[#4B5563] text-base mt-2 text-pretty">
-          Somos un equipo de desarrolladores radicados en Venezuela. Al vivir de cerca el impacto de la emergencia, decidimos aportar creando esta herramienta tecnológica para facilitar la logística comunitaria.
+          Somos un grupo de programadores de Venezuela que, al vivir de cerca el impacto de la emergencia, decidimos aportar creando esta herramienta tecnológica para facilitar la logística comunitaria.
         </p>
 
         <div class="mt-7">
-          <h3 class="mb-3 pb-2 text-base font-semibold text-[#374151] border-b border-[#E5E7EB]">Contacto / Soporte Técnico</h3>
-          <div class="flex flex-col gap-3">
-            {devs.map(dev => (
-              <div class="flex flex-col gap-1 py-2 sm:flex-row sm:items-center sm:justify-between">
-                <span class="font-bold text-[#111827]">{dev.name}</span>
-                <div class="flex gap-4 flex-wrap">
-                  <a href={`tel:${dev.phone.replace(/ /g, '')}`} class="inline-flex items-center gap-1.5 text-[0.85rem] text-blue no-underline hover:underline">
-                    <svg class="shrink-0" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-                    {dev.phone}
-                  </a>
-                  <a href={`mailto:${dev.email}`} class="inline-flex items-center gap-1.5 text-[0.85rem] text-blue no-underline hover:underline break-all">
-                    <svg class="shrink-0" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg>
-                    {dev.email}
-                  </a>
-                </div>
-              </div>
-            ))}
-          </div>
+          <h3 class="mb-3 pb-2 text-base font-semibold text-[#374151] border-b border-[#E5E7EB]">Contacto</h3>
+          <a href={`mailto:${emailContacto}`} class="inline-flex items-center gap-1.5 text-[0.85rem] text-blue no-underline hover:underline">
+            <svg class="shrink-0" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 5L2 7"/></svg>
+            {emailContacto}
+          </a>
         </div>
       </div>
 
