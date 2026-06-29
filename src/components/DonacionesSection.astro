@@ -100,8 +100,8 @@ const paisBase = "inline-flex items-center min-h-11 px-[13px] rounded-full borde
   <p id="donacionesCount" aria-live="polite" class="mt-1 mb-3.5 text-[0.78rem] text-muted tabular-nums">{orgs.length} organizaciones</p>
 
   <div id="donacionesGrid" class="grid gap-3 grid-cols-[repeat(auto-fill,minmax(min(100%,280px),1fr))]">
-    {orgs.map((o) => (
-      <article data-card data-enfoque={o.enfoque} data-pais={o.pais} data-exterior={o.donable_exterior ? "1" : "0"} class="flex flex-col gap-2.5 bg-[#F8F9FB] border border-border rounded-lg p-4">
+    {orgs.map((o, i) => (
+      <article data-card data-enfoque={o.enfoque} data-pais={o.pais} data-exterior={o.donable_exterior ? "1" : "0"} class:list={["flex flex-col gap-2.5 bg-[#F8F9FB] border border-border rounded-lg p-4", i >= 8 && "hidden"]}>
         <div class="flex flex-wrap gap-1.5">
           <span class="inline-flex items-center px-2.5 py-[3px] rounded-md bg-[#ECF1FB] text-blue text-[0.66rem] font-bold tracking-wide uppercase">{o.tipo}</span>
           <span class="inline-flex items-center gap-1 px-2.5 py-[3px] rounded-md bg-white border border-border text-[#374151] text-[0.66rem] font-semibold">
@@ -158,6 +158,10 @@ const paisBase = "inline-flex items-center min-h-11 px-[13px] rounded-full borde
     <p class="m-0 text-[0.9rem] font-semibold text-[#374151]">No hay organizaciones con estos filtros.</p>
     <p class="mt-1 mb-0 text-[0.82rem]">Prueba con otro enfoque o país.</p>
   </div>
+
+  <noscript>
+    <style>#donacionesGrid [data-card]{display:flex !important;}</style>
+  </noscript>
 
   <div id="donacionesSentinel" hidden aria-hidden="true" class="h-px w-full"></div>
 
@@ -271,6 +275,8 @@ const paisBase = "inline-flex items-center min-h-11 px-[13px] rounded-full borde
       });
     }
 
+    const ssrCards = Array.from(grid.querySelectorAll("[data-card]")) as HTMLElement[];
+    let ssrMode = ssrCards.length > 0;
     let filtered: any[] = [];
     let shown = 0;
 
@@ -280,15 +286,8 @@ const paisBase = "inline-flex items-center min-h-11 px-[13px] rounded-full borde
         }, { rootMargin: "240px" })
       : null;
 
-    function appendBatch() {
-      if (io && sentinel) io.unobserve(sentinel);
-      const next = filtered.slice(shown, shown + BATCH);
-      if (next.length) {
-        grid.insertAdjacentHTML("beforeend", next.map(cardHtml).join(""));
-        shown += next.length;
-        bindCopy();
-      }
-      const more = shown < filtered.length;
+    function syncTail(total: number) {
+      const more = shown < total;
       if (sentinel) sentinel.hidden = !more;
       if (verMasBtn) {
         verMasBtn.hidden = !(more && !io);
@@ -297,12 +296,41 @@ const paisBase = "inline-flex items-center min-h-11 px-[13px] rounded-full borde
       if (more && io && sentinel) requestAnimationFrame(() => io.observe(sentinel));
     }
 
+    function appendBatch() {
+      if (io && sentinel) io.unobserve(sentinel);
+      if (ssrMode) {
+        let n = 0;
+        while (shown < ssrCards.length && n < BATCH) {
+          ssrCards[shown].classList.remove("hidden");
+          shown++;
+          n++;
+        }
+        syncTail(ssrCards.length);
+        return;
+      }
+      const next = filtered.slice(shown, shown + BATCH);
+      if (next.length) {
+        grid.insertAdjacentHTML("beforeend", next.map(cardHtml).join(""));
+        shown += next.length;
+        bindCopy();
+      }
+      syncTail(filtered.length);
+    }
+
     function paisMatch(o: any) {
       if (state.pais === "todos") return true;
       return state.pais === "Venezuela" ? o.pais === "Venezuela" : o.pais !== "Venezuela";
     }
 
+    function initSSR() {
+      shown = Math.min(BATCH, ssrCards.length);
+      ssrCards.forEach((c, i) => c.classList.toggle("hidden", i >= shown));
+      bindCopy();
+      syncTail(ssrCards.length);
+    }
+
     function render() {
+      ssrMode = false;
       const q = norm(state.query);
       filtered = SRC.filter((o) =>
         (state.enfoque === "todos" || o.enfoque === state.enfoque) &&
@@ -367,6 +395,7 @@ const paisBase = "inline-flex items-center min-h-11 px-[13px] rounded-full borde
       render();
     }, 250));
 
-    render();
+    if (ssrMode) initSSR();
+    else render();
   }
 </script>
