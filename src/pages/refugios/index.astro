@@ -283,7 +283,17 @@ import SugerirRefugioModal from "../../components/SugerirRefugioModal.astro";
   citySelect.addEventListener('change', handleFilter);
   if (typeSelect) typeSelect.addEventListener('change', handleFilter);
 
+  function startVisibilityInterval(fn: () => void, ms: number) {
+    fn();
+    setInterval(() => {
+      if (document.visibilityState === 'visible') fn();
+    }, ms);
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') fn();
+    });
+  }
+
   ("requestIdleCallback" in window
-    ? (window as any).requestIdleCallback(() => { loadData(); setInterval(loadData, 300000); }, { timeout: 2000 })
-    : setTimeout(() => { loadData(); setInterval(loadData, 300000); }, 200));
+    ? (window as any).requestIdleCallback(() => startVisibilityInterval(loadData, 300000), { timeout: 2000 })
+    : setTimeout(() => startVisibilityInterval(loadData, 300000), 200));
 </script>

@@ -625,17 +625,24 @@ const fallbackEnlaces = [
   initCitySelect();
   handleFilter();
 
+  function startVisibilityInterval(fn: () => void, ms: number) {
+    fn();
+    setInterval(() => {
+      if (document.visibilityState === 'visible') fn();
+    }, ms);
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') fn();
+    });
+  }
+
   const onIdle = (cb: () => void) =>
     "requestIdleCallback" in window
       ? (window as any).requestIdleCallback(cb, { timeout: 2000 })
       : setTimeout(cb, 200);
 
   onIdle(() => {
-    loadData();
-    loadNecesidadesPreview();
-    // Refresh every 5 minutes (300000 ms)
-    setInterval(loadData, 300000);
-    setInterval(loadNecesidadesPreview, 300000);
+    startVisibilityInterval(loadData, 300000);
+    startVisibilityInterval(loadNecesidadesPreview, 300000);
   });
 </script>
 

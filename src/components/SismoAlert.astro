@@ -69,6 +69,29 @@
   import { safeUrl } from "../lib/escape.js";
 
   const DISMISS_KEY = "sismoAlertDismissed";
+  const CACHE_KEY = "sismoData";
+  const CACHE_TTL = 300000; // 5 min
+
+  function getCachedData() {
+    try {
+      const cached = sessionStorage.getItem(CACHE_KEY);
+      if (!cached) return null;
+      const { data, timestamp } = JSON.parse(cached);
+      if (Date.now() - timestamp > CACHE_TTL) {
+        sessionStorage.removeItem(CACHE_KEY);
+        return null;
+      }
+      return data;
+    } catch {
+      return null;
+    }
+  }
+
+  function setCachedData(data: any) {
+    try {
+      sessionStorage.setItem(CACHE_KEY, JSON.stringify({ data, timestamp: Date.now() }));
+    } catch {}
+  }
 
   function relativeTime(ms: number): string {
     const diff = Date.now() - ms;
@@ -93,9 +116,19 @@
 
     if (sessionStorage.getItem(DISMISS_KEY) === "1") return;
 
-    fetch("/api/sismos.json")
-      .then((r) => (r.ok ? r.json() : null))
-      .then((data) => {
+    const cached = getCachedData();
+    const dataPromise = cached
+      ? Promise.resolve(cached)
+      : fetch("/api/sismos.json").then((r) =>
+          r.ok
+            ? r.json().then((d) => {
+                setCachedData(d);
+                return d;
+              })
+            : null
+        );
+
+    dataPromise.then((data) => {
         if (!data || !data.max || data.max.mag <= 4.0) return;
         const href = safeUrl(data.max.url);
         if (!href) return;
