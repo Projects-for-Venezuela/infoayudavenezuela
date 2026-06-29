@@ -13,10 +13,10 @@ const orgs = [...organizaciones].sort((a, b) => (a.orden || 0) - (b.orden || 0))
 
 const enfoqueChips = [{ id: "todos", label: "Todos" }, ...enfoques];
 
-const ordenPaises = ["Venezuela", "Internacional", "España", "México", "Chile", "Colombia", "Argentina"];
 const paisChips = [
   { id: "todos", label: "Todos" },
-  ...ordenPaises.filter((p) => orgs.some((o) => o.pais === p)).map((p) => ({ id: p, label: p })),
+  { id: "Venezuela", label: "Venezuela" },
+  { id: "Internacional", label: "Internacional" },
 ];
 
 const enfBase = "inline-flex items-center min-h-11 px-[13px] rounded-full border-[1.5px] text-[0.82rem] font-semibold cursor-pointer whitespace-nowrap transition-colors duration-150";
@@ -40,6 +40,14 @@ const paisBase = "inline-flex items-center min-h-11 px-[13px] rounded-full borde
   <div role="note" class="flex items-start gap-2.5 bg-[#EFF3FB] border border-[#C7D7F0] rounded-lg px-3 py-2.5 mb-4">
     <svg class="shrink-0 mt-px text-blue" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
     <p class="m-0 text-[0.8rem] leading-relaxed text-text text-pretty"><strong class="text-blue">InfoAyuda no recibe ni gestiona donaciones y nunca te pedirá dinero.</strong> Tu aporte va directo a la organización que elijas, a través de su sitio oficial.</p>
+  </div>
+
+  <div class="mb-3.5">
+    <label for="donacionesBuscar" class="block mb-2 text-[0.68rem] font-bold tracking-[0.08em] uppercase text-muted">Buscar organización</label>
+    <div class="relative">
+      <svg class="absolute left-3 top-1/2 -translate-y-1/2 text-muted pointer-events-none" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input id="donacionesBuscar" type="search" inputmode="search" autocomplete="off" enterkeyhint="search" placeholder="Nombre, tipo u objetivo…" class="w-full min-h-11 pl-10 pr-3 rounded-lg border-[1.5px] border-border bg-white text-[0.88rem] text-text placeholder:text-muted transition-colors duration-150 hover:border-[#9CA3AF] focus-visible:border-blue" />
+    </div>
   </div>
 
   <div class="mb-3.5">
@@ -151,6 +159,8 @@ const paisBase = "inline-flex items-center min-h-11 px-[13px] rounded-full borde
     <p class="mt-1 mb-0 text-[0.82rem]">Prueba con otro enfoque o país.</p>
   </div>
 
+  <div id="donacionesSentinel" hidden aria-hidden="true" class="h-px w-full"></div>
+
   <button id="donacionesVerMas" type="button" hidden class="inline-flex items-center justify-center gap-1.5 w-full min-h-12 mt-3.5 p-2.5 rounded-lg border-2 border-border bg-white text-blue text-[0.9rem] font-bold cursor-pointer transition-colors duration-150 hover:bg-[#F8F9FB] hover:border-blue"></button>
 </section>
 
@@ -164,6 +174,8 @@ const paisBase = "inline-flex items-center min-h-11 px-[13px] rounded-full borde
   const countEl = document.getElementById("donacionesCount") as HTMLElement;
   const emptyEl = document.getElementById("donacionesEmpty") as HTMLElement;
   const verMasBtn = document.getElementById("donacionesVerMas") as HTMLButtonElement;
+  const sentinel = document.getElementById("donacionesSentinel") as HTMLElement;
+  const buscar = document.getElementById("donacionesBuscar") as HTMLInputElement;
   const enfoqueGroup = document.getElementById("enfoqueGroup") as HTMLElement;
   const paisGroup = document.getElementById("paisGroup") as HTMLElement;
   const toggle = document.getElementById("toggleExterior") as HTMLButtonElement;
@@ -178,7 +190,20 @@ const paisBase = "inline-flex items-center min-h-11 px-[13px] rounded-full borde
     const showSeals = dataEl.dataset.seals === "1";
     const showPago = dataEl.dataset.pago === "1";
 
-    const state = { enfoque: "todos", pais: "todos", exterior: false, showAll: false };
+    const BATCH = 8;
+    const state = { enfoque: "todos", pais: "todos", exterior: false, query: "" };
+
+    function norm(s: string) {
+      return (s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+    }
+
+    function debounce(fn: () => void, ms: number) {
+      let t = 0;
+      return () => {
+        clearTimeout(t);
+        t = window.setTimeout(fn, ms);
+      };
+    }
 
     const ENF_BASE = "inline-flex items-center min-h-11 px-[13px] rounded-full border-[1.5px] text-[0.82rem] font-semibold cursor-pointer whitespace-nowrap transition-colors duration-150";
     const ENF_ON = "bg-blue text-white border-blue";
@@ -233,7 +258,8 @@ const paisBase = "inline-flex items-center min-h-11 px-[13px] rounded-full borde
     }
 
     function bindCopy() {
-      grid.querySelectorAll("[data-copy]").forEach((btn) => {
+      grid.querySelectorAll("[data-copy]:not([data-bound])").forEach((btn) => {
+        btn.setAttribute("data-bound", "1");
         btn.addEventListener("click", () => {
           const val = btn.getAttribute("data-copy") || "";
           try { navigator.clipboard && navigator.clipboard.writeText(val); } catch (e) {}
@@ -245,38 +271,50 @@ const paisBase = "inline-flex items-center min-h-11 px-[13px] rounded-full borde
       });
     }
 
-    function applyVerMas(total: number) {
-      if (!verMasBtn) return;
-      void grid.offsetWidth;
-      const cols = getComputedStyle(grid).gridTemplateColumns.split(" ").filter(Boolean).length || 1;
-      const maxVisible = cols * 2;
-      const cards = grid.querySelectorAll("[data-card]");
-      if (total <= maxVisible) {
-        cards.forEach((c) => c.classList.remove("hidden"));
-        verMasBtn.hidden = true;
-        return;
+    let filtered: any[] = [];
+    let shown = 0;
+
+    const io = "IntersectionObserver" in window
+      ? new IntersectionObserver((entries) => {
+          for (const e of entries) if (e.isIntersecting) appendBatch();
+        }, { rootMargin: "240px" })
+      : null;
+
+    function appendBatch() {
+      if (io && sentinel) io.unobserve(sentinel);
+      const next = filtered.slice(shown, shown + BATCH);
+      if (next.length) {
+        grid.insertAdjacentHTML("beforeend", next.map(cardHtml).join(""));
+        shown += next.length;
+        bindCopy();
       }
-      verMasBtn.hidden = false;
-      if (state.showAll) {
-        cards.forEach((c) => c.classList.remove("hidden"));
-        verMasBtn.textContent = "Ver menos ↑";
-      } else {
-        cards.forEach((c, i) => c.classList.toggle("hidden", i >= maxVisible));
-        verMasBtn.textContent = "Ver " + (total - maxVisible) + " más ↓";
+      const more = shown < filtered.length;
+      if (sentinel) sentinel.hidden = !more;
+      if (verMasBtn) {
+        verMasBtn.hidden = !(more && !io);
+        if (more && !io) verMasBtn.textContent = "Ver más ↓";
       }
+      if (more && io && sentinel) requestAnimationFrame(() => io.observe(sentinel));
+    }
+
+    function paisMatch(o: any) {
+      if (state.pais === "todos") return true;
+      return state.pais === "Venezuela" ? o.pais === "Venezuela" : o.pais !== "Venezuela";
     }
 
     function render() {
-      const filtered = SRC.filter((o) =>
+      const q = norm(state.query);
+      filtered = SRC.filter((o) =>
         (state.enfoque === "todos" || o.enfoque === state.enfoque) &&
-        (state.pais === "todos" || o.pais === state.pais) &&
-        (!state.exterior || o.donable_exterior === true)
+        paisMatch(o) &&
+        (!state.exterior || o.donable_exterior === true) &&
+        (!q || norm(o.nombre + " " + o.descripcion + " " + o.tipo).includes(q))
       );
-      grid.innerHTML = filtered.map(cardHtml).join("");
       countEl.textContent = filtered.length === 1 ? "1 organización" : filtered.length + " organizaciones";
       if (emptyEl) emptyEl.hidden = filtered.length > 0;
-      applyVerMas(filtered.length);
-      bindCopy();
+      grid.innerHTML = "";
+      shown = 0;
+      appendBatch();
     }
 
     function paintToggle(on: boolean) {
@@ -296,7 +334,6 @@ const paisBase = "inline-flex items-center min-h-11 px-[13px] rounded-full borde
       const btn = (e.target as HTMLElement).closest("[data-enfoque]") as HTMLElement;
       if (!btn) return;
       state.enfoque = btn.dataset.enfoque || "todos";
-      state.showAll = false;
       enfoqueGroup.querySelectorAll("[data-enfoque]").forEach((b) => {
         const on = (b as HTMLElement).dataset.enfoque === state.enfoque;
         b.className = ENF_BASE + " " + (on ? ENF_ON : ENF_OFF);
@@ -309,7 +346,6 @@ const paisBase = "inline-flex items-center min-h-11 px-[13px] rounded-full borde
       const btn = (e.target as HTMLElement).closest("[data-pais]") as HTMLElement;
       if (!btn) return;
       state.pais = btn.dataset.pais || "todos";
-      state.showAll = false;
       paisGroup.querySelectorAll("[data-pais]").forEach((b) => {
         const on = (b as HTMLElement).dataset.pais === state.pais;
         b.className = PAIS_BASE + " " + (on ? PAIS_ON : PAIS_OFF);
@@ -320,21 +356,16 @@ const paisBase = "inline-flex items-center min-h-11 px-[13px] rounded-full borde
 
     toggle?.addEventListener("click", () => {
       state.exterior = !state.exterior;
-      state.showAll = false;
       paintToggle(state.exterior);
       render();
     });
 
-    verMasBtn?.addEventListener("click", () => {
-      state.showAll = !state.showAll;
-      render();
-    });
+    verMasBtn?.addEventListener("click", appendBatch);
 
-    let resizeRaf = 0;
-    window.addEventListener("resize", () => {
-      cancelAnimationFrame(resizeRaf);
-      resizeRaf = requestAnimationFrame(() => applyVerMas(grid.querySelectorAll("[data-card]").length));
-    });
+    buscar?.addEventListener("input", debounce(() => {
+      state.query = buscar.value;
+      render();
+    }, 250));
 
     render();
   }
