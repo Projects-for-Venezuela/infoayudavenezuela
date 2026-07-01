@@ -7,5 +7,6 @@ dist/
 .vercel
 skills-lock.json
 .agents
+.atl/
 .astro
 .pnpm-store-local
